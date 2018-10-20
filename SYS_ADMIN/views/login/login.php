@@ -37,16 +37,12 @@ if( Yii::$app->getSession()->hasFlash('success') ) {
 
 <div class="color-line"></div>
 
-<div class="back-link">
-    <a href="#" class="btn btn-primary">Back to Dashboard</a>
-</div>
-
 <div class="login-container">
     <div class="row">
         <div class="col-md-12">
             <div class="text-center m-b-md">
-                <h3>PLEASE LOGIN TO APP</h3>
-                <small>This is the best app ever!</small>
+                <h2>云窗直播</h2>
+                <small>This is the best idea ever!</small>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
@@ -71,7 +67,8 @@ if( Yii::$app->getSession()->hasFlash('success') ) {
     </div>
     <div class="row">
         <div class="col-md-12 text-center">
-            <strong>HOMER</strong> - AngularJS Responsive WebApp <br/> 2015 Copyright Company Name
+<!--            <strong></strong> - AngularJS Responsive WebApp <br/> 2018 Copyright 云窗直播-->
+            <strong></strong><br/> 2018 Copyright 云窗直播
         </div>
     </div>
 </div>

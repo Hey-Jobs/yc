@@ -9,7 +9,7 @@ use SYS_ADMIN\assets\AppAsset;
     </div>
     <div id="logo" class="light-version">
         <span>
-            Homer Theme
+            云窗直播
         </span>
     </div>
     <nav role="navigation">
