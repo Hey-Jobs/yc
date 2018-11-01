@@ -21,6 +21,12 @@ class AppAsset extends AssetBundle
         'yii\bootstrap\BootstrapAsset',
     ];
 
+
+    public $jsOptions = array(
+        'jquery.js',
+        'position' => \yii\web\View::POS_HEAD,
+    );
+
     /**
      * 定义按需加载JS方法，注意加载顺序在最后
      * @param $view
