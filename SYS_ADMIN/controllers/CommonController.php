@@ -25,7 +25,7 @@ class CommonController extends Controller
         $result = [
             'timestamp' => time(),
             'status' => 400,
-            'error' => \Yii::t('hrs/error', $code),
+            'error' => $code,
             'message' => is_array($extend_message) ? join("\n", $extend_message) : $extend_message,
             'code' => $code,
             'path' => $route,

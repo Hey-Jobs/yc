@@ -39,51 +39,61 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 </div>
                 <div class="panel-body">
                     <p>
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateDeptLeader()">添加信息</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateVideo()">添加信息</button>
                     </p>
 
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
                         <div class="modal-dialog">
                             <div class="modal-content">
+                                <form id="video-form" method="post" action="<?php echo yii\helpers\Url::to("/video/save"); ?>">
                                 <div class="color-line"></div>
                                 <div class="modal-header text-center">
-                                    <h4 class="modal-title"><span id="btnText">添加信息</span></h4>
+                                    <h4 class="modal-title"><span id="btnText">添加视频</span></h4>
                                 </div>
                                 <div class="modal-body" style="300px;">
                                     <div class="form-group row text-left" style="display: none;">
-                                        <label class="col-sm-3 control-label position">autoId：</label>
-                                        <div class="col-sm-9"><input style="display: none" type="text" name="autoId" class="form-control params" placeholder="autoId"></div>
+                                        <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                     </div>
                                     <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">审批领导：</label>
+                                        <label class="col-sm-3 control-label position">视频名称：</label>
                                         <div class="col-sm-9">
-                                            <select class="js-example-placeholder-single params" name="leader" style="width: 50%">
-                                                <option></option>
-                                            </select>
+                                            <input type="text" class="form-control" name="video_name"  placeholder="视频名称"/>
                                         </div>
                                     </div>
                                     <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">一级部门：</label>
+                                        <label class="col-sm-3 control-label position">视频链接：</label>
                                         <div class="col-sm-9">
-                                            <select class="js-example-placeholder-single params" name="costPrimDept" style="width: 50%">
-                                                <option></option>
-                                            </select>
+                                            <input type="text" class="form-control" name="video_url" placeholder="视频链接"/>
+                                            http....
                                         </div>
                                     </div>
                                     <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">二级部门：</label>
+                                        <label class="col-sm-3 control-label position">排序值：</label>
                                         <div class="col-sm-9">
-                                            <select class="js-example-placeholder-single params" name="costSecDept" style="width: 50%">
-                                                <option></option>
-                                            </select>
+                                            <input type="number" class="form-control"  name="sort_num" value="10" placeholder="排序值"/>
+                                            数据值越小越靠前
                                         </div>
                                     </div>
+
+                                    <div class="form-group row text-left">
+                                        <label class="col-sm-3 control-label position">状态：</label>
+                                        <div class="col-sm-9">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="status" id="status1" value="1" checked> 显示
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="status" id="status2"  value="2" > 不显示
+                                            </label>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                    <button type="button" class="btn btn-primary" onclick="save()">保存信息</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveVideo()">保存信息</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -110,30 +120,6 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
 <script type="application/javascript">
     $(function () {
-        /*var sec;
-        $("[name='leader']").select2({
-            placeholder: "-- 请选择 --",
-            dropdownParent: $("#myModal"),
-            allowClear: true,
-            data : getPersons(),
-        });
-
-        $("[name='costPrimDept']").select2({
-            placeholder: "-- 请选择 --",
-            dropdownParent: $("#myModal"),
-            data : getDepts(1),
-        });
-
-        $("[name='costPrimDept']").on("select2:select", function () {
-            let deptId = $(this).val();
-            $("[name='costSecDept']").empty();
-            $("[name='costSecDept']").select2({
-                placeholder: "-- 请选择 --",
-                dropdownParent: $("#myModal"),
-                allowClear: true,
-                data : getDepts(2, deptId),
-            });
-        });*/
 
         $("#video_table").DataTable({
             ajax: '<?php echo \yii\helpers\Url::to('/video/list?api=true')?>',
@@ -184,10 +170,10 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: '<?php echo \yii\helpers\Url::to('video/del')?>',
+                        url: '<?php echo \yii\helpers\Url::to('/video/del')?>',
                         dataType: 'json',
                         type: "POST",
-                        data: {'autoId' : autoId},
+                        data: {'id' : autoId},
                         success: function (result) {
                             if (result.status == 200) {
                                 affirmSwals('Deleted!', '删除成功！', 'success', confirmFunc);
@@ -205,27 +191,32 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
     {
         if (autoId.length != 0) {
             var data;
-            $("#btnText").html('修改信息');
-            $("[name='costSecDept']").empty();
+            $("#btnText").html('修改视频信息');
             $.ajax({
-                url: '<?php echo \yii\helpers\Url::to('video/info')?>',
+                url: '<?php echo \yii\helpers\Url::to('/video/info')?>',
                 dataType: 'json',
                 type: "POST",
                 async : false,
-                data: {'autoId' : autoId},
+                data: {'id' : autoId},
                 success: function (result) {
                     if (result.status == 200) {
                         data = result.data;
-                        $("[name='costSecDept']").select2({
-                            placeholder: "-- 请选择 --",
-                            dropdownParent: $("#myModal"),
-                            data : getDepts(2, data.costPrimDept),
-                        });
 
-                        $("[name='autoId']").val(data.autoId);
-                        $("[name='leader']").val(data.leader).trigger("change");
-                        $("[name='costPrimDept']").val(data.costPrimDept).trigger("change");
-                        $("[name='costSecDept']").val(data.costSecDept).trigger("change");
+                        $("[name='id']").val(data.id);
+                        $("[name='video_name']").val(data.video_name);
+                        $("[name='video_url']").val(data.video_url);
+                        $("[name='sort_num']").val(data.sort_num);
+
+                        if(data.status == 1){
+                            $("#status1").attr("checked","checked");
+                            $("#status2").removeAttr("checked");
+                        }
+
+                        if(data.status == 2){
+                            $("#status2").attr("checked","checked");
+                            $("#status1").removeAttr("checked");
+                        }
+
                     }
                 }
             });
@@ -237,18 +228,28 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         }
     }
 
-    function save()
+    function saveVideo()
     {
-        var post = {};
-        $('.params').each(function (index, element) {
-            post[$(element)[0].name] = $(element)[0].value;
-        });
+        if($("input[name='video_name']").val() == ""){
+            affirmSwals('失败', "请填写视频名称", 'error', placeholder);
+            return false;
+        }
+
+        if($("input[name='video_url']").val().indexOf('http') == -1){
+            affirmSwals('失败', "请填写正确的视频链接", 'error', placeholder);
+            return false;
+        }
+
+        if($("input[name='sort_num']").val() == ""){
+            affirmSwals('失败', "请填写排序值", 'error', placeholder);
+            return false;
+        }
 
         $.ajax({
             type:'POST',
             dataType: 'json',
-            url : '<?php yii\helpers\Url::to('video/save')?>',
-            data : post,
+            url : '<?php echo yii\helpers\Url::to('/video/save')?>',
+            data : $("#video-form").serialize(),
             success: function(result) {
                 if ('200' == result.status) {
                     affirmSwals('成功', '成功', 'success', confirmFunc);
