@@ -17,7 +17,7 @@ class Video extends ActiveRecord
     public function rules()
     {
         return [
-            [['video_name', 'video_url', 'sort_num'], 'required'],
+            [['video_name', 'video_url', 'sort_num'], 'required' ],
             ['sort_num', 'integer']
         ];
     }
@@ -26,7 +26,7 @@ class Video extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            //'video_name' => '视频名称',
+            'video_name' => '视频名称',
             'video_url' => '视频链接',
             'sort_num' => '排序值',
             'status' => '状态',
@@ -45,7 +45,7 @@ class Video extends ActiveRecord
             $model->andWhere(['v.room_id' => $data['room_id']]);
         }
 
-        $video_list = $model->select(['r.room_name', 'v.*'])->asArray()->all();
+        $video_list = $model->select(['r.room_name', 'v.*'])->orderBy("v.id desc")->asArray()->all();
         if(count($video_list) > 0){
             foreach ($video_list as &$video){
                 $video['created_at'] = date('Y-m-d H:i');
@@ -54,33 +54,6 @@ class Video extends ActiveRecord
         }
 
         return $video_list;
-    }
-
-    public function saveVideo($data)
-    {
-
-        $this->attributes = $data;
-        if($this->validate()){
-            $this->updated_at = time();
-            if(empty($data['id'])){
-                $this->room_id = 1;
-                $this->created_at = time();
-                $res = $this->save();
-            } else {
-                $res = $this->update();
-                var_dump($res);
-            }
-
-
-            if($res){
-                return ['status' => 1];
-            } else {
-                return ['status' => 400, 'info' => "添加失败，请稍后重试"];
-            }
-        } else {
-            return ['status' => 400, 'info' => implode($this->getFirstErrors(), "<br/>")];
-        }
-
     }
 
 }

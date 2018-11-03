@@ -224,7 +224,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             $('#myModal').modal('show');
 
         } else {
-            $("#btnText").html('添加信息');
+            $("#btnText").html('添加视频信息');
         }
     }
 

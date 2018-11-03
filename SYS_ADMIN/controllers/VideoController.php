@@ -83,12 +83,44 @@ class VideoController extends CommonController
     public function actionSave()
     {
         $data = \Yii::$app->request->post();
+        $id = \Yii::$app->request->post('id');
+        $video_name = \Yii::$app->request->post('video_name');
+        $video_url = \Yii::$app->request->post('video_url');
+        $sort_num = \Yii::$app->request->post('sort_num', 10);
+        $status = \Yii::$app->request->post('status', 1);
+
         $model = new Video();
-        $res = $model->saveVideo($data);
-        if($res['status'] == 1){
+        $model->attributes = $data;
+        if(!$model->validate()){
+            $errors = implode($model->getFirstErrors(), "\r\n");
+            return $this->errorInfo(400, $errors);
+        }
+
+        if(!empty($id)){
+            $model = Video::findOne($id);
+            $model->video_name = $video_name;
+            $model->video_url = $video_url;
+            $model->sort_num = $sort_num;
+            $model->status = $status;
+            $model->updated_at = time();
+        } else {
+            $room_id = 1; //
+            $model = new Video();
+            $model->video_name = $video_name;
+            $model->video_url = $video_url;
+            $model->sort_num = $sort_num;
+            $model->status = $status;
+            $model->room_id = $room_id;
+            $model->click_num = 1;
+            $model->updated_at = time();
+            $model->created_at = time();
+        }
+
+        if($model->save()){
             return $this->successInfo(true);
         } else {
-            return $this->errorInfo(400, $res['info']);
+            return $this->errorInfo(400);
         }
+
     }
 }
