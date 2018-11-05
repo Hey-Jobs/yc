@@ -10,38 +10,47 @@ namespace SYS_ADMIN\controllers;
 
 
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Pictrue;
 
 class LiveController extends CommonController
 {
 
     public function actionIndex()
     {
-        if(LiveRoom::getRoomId()){ // ÉÌ¼Ò ×ÊÁÏ
+        if(LiveRoom::getRoomId()){ // å•†å®¶ èµ„æ–™
             $this->redirect("/live/info");
         }
 
-        // ¹ÜÀíÔ±
+        // ç®¡ç†å‘˜
         if(\Yii::$app->request->get('api')){
+            ini_set('display_errors', 'on');
+            ini_set('error_reporting', E_ALL);
             $live_list = LiveRoom::find()
-                ->where(['<>', 'status', 0])
+                ->alias('r')
+                ->innerJoin('sys_user u', 'u.id = r.user_id')
+                ->leftJoin('sys_pictrue p', 'p.id = r.logo_img')
+                ->where(['<>', 'r.status', 0])
+                ->select(['r.*', 'u.name as uname', 'p.pic_name', 'p.pic_path', 'p.pic_size'])
                 ->asArray()
                 ->all();
             $this->successInfo($live_list);
         } else {
-            $this->render('list');
+            return $this->render('list');
         }
     }
 
     /**
-     * @return string|void
-     * ²é¿´ | ±à¼­Ö±²¥¼ä
+     * ç›´æ’­é—´ åŸºç¡€ä¿¡æ¯
      */
-    public function actionInfo()
+    public function actionBaseInfo()
     {
         $room_info = [];
-        $room_id = \Yii::$app->request->get('rid');
+        $pic_logo = [];
+        $pic_cover = [];
+        $room_extend = [];
+        $room_id = \Yii::$app->request->get('id');
 
-        if(LiveRoom::getRoomId()){ // ÉÌ¼Ò²é¿´×Ô¼º×ÊÁÏ
+        if(LiveRoom::getRoomId()){ // å•†å®¶æŸ¥çœ‹è‡ªå·±èµ„æ–™
             $room_id = LiveRoom::getRoomId();
         }
 
@@ -49,24 +58,56 @@ class LiveController extends CommonController
             $room_info = LiveRoom::getRoomInfo($room_id);
         }
 
-        return $this->render("detail", ['room_info' => $room_info]);
+
+        return $this->render("base", [
+            'info' => $room_info,
+            'room_id' => $room_id,
+        ]);
     }
+
+    /**
+     * @return string|void
+     * ç›´æ’­é—´ æ‰©å±•ä¿¡æ¯
+     */
+    public function actionExtInfo()
+    {
+        $room_info = [];
+        $pic_logo = [];
+        $pic_cover = [];
+        $room_extend = [];
+        $room_id = \Yii::$app->request->get('id');
+
+        if(LiveRoom::getRoomId()){ // å•†å®¶æŸ¥çœ‹è‡ªå·±èµ„æ–™
+            $room_id = LiveRoom::getRoomId();
+        }
+
+        if(!empty($room_id)){
+            $room_info = LiveRoom::getRoomInfo($room_id);
+        }
+
+
+        return $this->render("detail", [
+            'info' => $room_info,
+        ]);
+    }
+
+
 
 
     /**
      * @return array|void
-     * É¾³ıÖ±²¥¼ä
+     * åˆ é™¤ç›´æ’­é—´
      */
     public function actionDel()
     {
         $id = \Yii::$app->request->post('rid');
         $id = intval($id);
         if(empty($id)){
-            return $this->errorInfo(400, "²ÎÊı´íÎó");
+            return $this->errorInfo(400, "å‚æ•°é”™è¯¯");
         }
 
         if(LiveRoom::getRoomId() && LiveRoom::getRoomId() !== $id){
-            return $this->errorInfo(400, "ÎŞÈ¨²Ù×÷");
+            return $this->errorInfo(400, "æ— æƒæ“ä½œ");
         }
 
         $where['id'] = $id;
@@ -81,7 +122,7 @@ class LiveController extends CommonController
         if($model->save()){
             return $this->successInfo(true);
         } else {
-            return $this->errorInfo(400, "²Ù×÷Ê§°Ü£¬ÇëÉÔºóÖØÊÔ");
+            return $this->errorInfo(400, "æ“ä½œå¤±è´¥ï¼Œè¯·ç¨åé‡è¯•");
         }
     }
 

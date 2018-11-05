@@ -1,9 +1,11 @@
 <?php
 /**
- * User: liwj
- * Date:2018/11/1
- * Time:20:30
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2018/11/4
+ * Time: 23:38
  */
+
 
 use SYS_ADMIN\assets\AppAsset;
 use yii\widgets\ActiveForm;
@@ -30,6 +32,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         padding-top: 7px;
         margin-bottom: 0;
     }
+
+    #allmap{height: 300px;}
 </style>
 
 <div class="content animate-panel">
@@ -41,10 +45,17 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    <a href="<?php echo \yii\helpers\Url::to('/lens/list')?>">镜头管理</a> /
-                    <?php echo count($info) > 0 ? "编辑镜头" : "新增镜头";?>
+                    <?php echo count($info) > 0 ? "直播间资料" : "新增直播间";?>
                 </div>
 
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#home" data-toggle="tab">
+                            基础信息
+                        </a>
+                    </li>
+                    <li><a href="#ios" data-toggle="tab">扩展信息</a></li>
+                </ul>
 
                 <div class="panel-body">
                     <?php
@@ -64,48 +75,48 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     ]) ?>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">镜头名称</label>
+                        <label class="col-sm-2 control-label">直播间名称</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="lens_name" value="<?= $info['lens_name'] ?? "" ?>"></div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="room_name" value="<?= $info['room_name'] ?? "" ?>"></div>
                     </div>
+                    <div class="hr-line-dashed"></div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">镜头缩略图</label>
+                        <label class="col-sm-2 control-label">直播间LOGO</label>
 
                         <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播流地址</label>
+                        <label class="col-sm-2 control-label">地址链接URL</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="online_url" value="<?= $info['online_url'] ?? "" ?>"></div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="addr_url" id="addr_url" value="<?= $info['addr_url'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">直播间地址</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="addr" id="addr" value="<?= $info['addr'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">回放地址</label>
+                        <label class="col-sm-2 control-label">直播间坐标地址</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="playback_url" value="<?= $info['playback_url'] ?? "" ?>"></div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="coordinate" id="coordinate" value="<?= $info['coordinate'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">背景音乐地址</label>
-
-                        <div class="col-sm-10"><input type="text" class="form-control" name="bgm_url" value="<?= $info['bgm_url'] ?? "" ?>"></div>
+                        <div id="allmap"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">精彩回放地址</label>
-
-                        <div class="col-sm-10"><input type="text" class="form-control" name="marvellous_url" value="<?= $info['marvellous_url'] ?? "" ?>"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="hr-line-dashed"></div>
+                    <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">排序值</label>
 
@@ -132,12 +143,15 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
+                    <?php endif;?>
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
-                            <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
+                            <input type="hidden" name="logo_img" id="logo_img" value="<?= $info['logo_img'] ?? '' ?>"/>
                             <input type="hidden" name="id" value="<?= $info['id'] ?? 0 ?>"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
-                            <a href="<?php echo yii\helpers\Url::to('/lens/list')?>" class="btn btn-default">返回列表</a>
+                            <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
+                            <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
+                            <?php endif;?>
                         </div>
                     </div>
                     <?php ActiveForm::end() ?>
@@ -147,7 +161,31 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     </div>
 </div>
 
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=CpL8hnDBQj8WH8GbqE9ihN2DhtU7L1YR"></script>
 <script type="application/javascript">
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom("深圳", 12);
+    map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+
+    map.addEventListener("click", function(e){
+        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度
+        var pt = e.point;
+        geoc.getLocation(pt, function(rs){
+            //addressComponents对象可以获取到详细的地址信息
+            var addComp = rs.addressComponents;
+            var site = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+            //将对应的HTML元素设置值
+            $("#site").val(site);
+            $("#longitude").val(pt.lng);
+            $("#latitude").val(pt.lat);
+        });
+    });
+
+
     $(function () {
         $("#pcover_img").fileinput({
             language: 'zh', //设置语言
@@ -167,10 +205,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
             //minFileCount: 0,
             maxFileCount: 1, //表示允许同时上传的最大文件个数,
-            <?php if(count($pic_info)): ?>
+            <?php if(isset($info['pic_path'])): ?>
             initialPreviewAsData: true,
             initialPreview: [
-                "/<?= $pic_info['pic_path'] ?? '' ?>",
+                "/<?= $info['pic_path'] ?? '' ?>",
             ],
             initialPreviewConfig: [
                 {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},

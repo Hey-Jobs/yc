@@ -48,7 +48,7 @@ class Video extends ActiveRecord
         $video_list = $model->select(['r.room_name', 'v.*'])->orderBy("v.id desc")->asArray()->all();
         if(count($video_list) > 0){
             foreach ($video_list as &$video){
-                $video['created_at'] = date('Y-m-d H:i');
+                $video['created_at'] = date('Y-m-d H:i', $video['created_at']);
                 $video['status'] = \Yii::$app->params['status'][$video['status']];
             }
         }

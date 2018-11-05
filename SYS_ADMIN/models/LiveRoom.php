@@ -24,13 +24,21 @@ class LiveRoom extends ActiveRecord
     public function attributeLabels()
     {
         return [
-
+            'id' => '直播间ID',
+            'user_id' => '所属用户',
+            'room_name' => '直播间名称',
+            'logo_img' => '直播间LOGO',
+            'click_num' => '点击数',
+            'valid_time' => '到期时间',
+            'addr_url' => '链接地址',
+            'addr' => '地址',
+            'coordinate' => '坐标地址',
+            'sort_num' => '排序值',
+            'status' => '状态',
         ];
     }
 
-    /**
-     * 获取所属 直播间 id
-     */
+
     public static function getRoomId()
     {
         $room_id = 0;
@@ -43,17 +51,24 @@ class LiveRoom extends ActiveRecord
         if(!empty($room_info)){
             $room_id = $room_info['id'];
         }
-        $room_id = 1;
+        $room_id = 0;
         return $room_id;
     }
 
     public static function getRoomInfo($room_id)
     {
-        $model = self::find()
+        $room_info = self::find()
             ->alias('r')
-            ->innerJoin('sys_room_extend as e', 'r.id = e.room_id')
+            ->leftJoin('sys_pictrue as l', 'l.id = r.logo_img')
             ->where(['<>', 'status', 0])
-            ->andWhere(['r.id' => $room_id]);
+            ->andWhere(['r.id' => $room_id])
+            ->select(['r.*',
+                'l.pic_name as logo_name', 'l.pic_path as logo_path', 'l.pic_size as logo_size',
+                ])
+            ->asArray()
+            ->one();
+
+        return $room_info;
     }
 
 }

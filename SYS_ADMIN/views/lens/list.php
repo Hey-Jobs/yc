@@ -24,6 +24,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         padding-top: 7px;
         margin-bottom: 0;
     }
+    .show-img{width: 200px; height:  100px;}
 </style>
 
 <div class="content animate-panel">
@@ -77,7 +78,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {"data": "id"},
                 {"data": "room_name"},
                 {"data": "lens_name"},
-                {"data": "cover_img"},
+                {"data": "pic_path"},
                 {"data": "click_num"},
                 {"data": "sort_num"},
                 {"data": "status"},
@@ -91,10 +92,21 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteLens('"+ row.id +"')\"> 删除 </a>";
                         return html;
                     }
+                },
+                {
+                    "render":function(data,type,row){
+                        return showPic(data);
+                    },
+                    "targets":3,
                 }
             ],
         });
     });
+
+
+    function showPic(path){
+        return path ? "<img src=\"/"+path+"\" class=\"show-img\">" : "";
+    }
 
     function deleteLens(autoId)
     {
@@ -130,74 +142,10 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
     function updateLens(autoId = '')
     {
-        if (autoId.length != 0) {
-            var data;
-            $("#btnText").html('修改镜头信息');
-            $.ajax({
-                url: '<?php echo \yii\helpers\Url::to('/video/info')?>',
-                dataType: 'json',
-                type: "POST",
-                async : false,
-                data: {'id' : autoId},
-                success: function (result) {
-                    if (result.status == 200) {
-                        data = result.data;
-
-                        $("[name='id']").val(data.id);
-                        $("[name='video_name']").val(data.video_name);
-                        $("[name='video_url']").val(data.video_url);
-                        $("[name='sort_num']").val(data.sort_num);
-
-                        if(data.status == 1){
-                            $("#status1").attr("checked","checked");
-                            $("#status2").removeAttr("checked");
-                        }
-
-                        if(data.status == 2){
-                            $("#status2").attr("checked","checked");
-                            $("#status1").removeAttr("checked");
-                        }
-
-                    }
-                }
-            });
-
-            $('#myModal').modal('show');
-
-        } else {
-            $("#btnText").html('添加镜头信息');
-        }
+        var url = "<?php echo yii\helpers\Url::to('/lens/info'); ?>";
+        url += "?id="+autoId;
+        window.location.href = url;
     }
 
-    function saveVideo()
-    {
-        if($("input[name='video_name']").val() == ""){
-            affirmSwals('失败', "请填写视频名称", 'error', placeholder);
-            return false;
-        }
 
-        if($("input[name='video_url']").val().indexOf('http') == -1){
-            affirmSwals('失败', "请填写正确的视频链接", 'error', placeholder);
-            return false;
-        }
-
-        if($("input[name='sort_num']").val() == ""){
-            affirmSwals('失败', "请填写排序值", 'error', placeholder);
-            return false;
-        }
-
-        $.ajax({
-            type:'POST',
-            dataType: 'json',
-            url : '<?php echo yii\helpers\Url::to('/video/save')?>',
-            data : $("#video-form").serialize(),
-            success: function(result) {
-                if ('200' == result.status) {
-                    affirmSwals('成功', '成功', 'success', confirmFunc);
-                } else {
-                    affirmSwals('失败', result.message, 'error', placeholder);
-                }
-            },
-        });
-    }
 </script>

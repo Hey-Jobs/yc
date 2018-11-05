@@ -10,17 +10,20 @@ namespace SYS_ADMIN\controllers;
 use Codeception\Lib\Connector\Yii2;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Pictrue;
+use yii\web\UploadedFile;
+
 
 /**
  * Class LensController
  * @package SYS_ADMIN\controllers
- * ��ͷ����
+ * 镜头管理
  */
 
 class LensController extends  CommonController
 {
     /**
-     * ��ͷ�б�
+     * 镜头列表
      */
     public function actionList()
     {
@@ -33,13 +36,16 @@ class LensController extends  CommonController
     }
 
     /**
-     * ��ȡ��ͷ��Ϣ
+     * 获取镜头信息
      */
     public function actionInfo()
     {
         $lens_info = [];
+        $pic_info = [];
         $id = \Yii::$app->request->get('id');
         $id = intval($id);
+
+        $model = new  Lens();
         if(!empty($id)){
             $model = Lens::find()->where(['<>', 'status', 0]);
             $model->andWhere(['id' => $id]);
@@ -47,20 +53,30 @@ class LensController extends  CommonController
                 $model->andWhere(['room_id' => LiveRoom::getRoomId()]);
             }
             $lens_info = $model->asArray()->one();
+
+            if(isset($lens_info['cover_img'])){ // 封面图信息
+                $pic_info = Pictrue::find()
+                    ->where(['id' => $lens_info['cover_img']])
+                    ->asArray()
+                    ->one();
+            }
         }
 
-
-        return $this->render("detail", ['info' => $lens_info, ]);
+        return $this->render("detail", [
+            'info' => $lens_info,
+            'model' => $model,
+            'pic_info' => $pic_info
+        ]);
     }
 
     /**
-     * ��ͷ�༭
+     * 镜头编辑
      */
     public function actionSave()
     {
         $id =\Yii::$app->request->post('id');
         $lens_name =\Yii::$app->request->post('lens_name');
-        $cover_img =\Yii::$app->request->post('cover_img');
+        $cover_img =\Yii::$app->request->post('cover_img', '');
         $online_url =\Yii::$app->request->post('online_url');
         $playback_url =\Yii::$app->request->post('playback_url');
         $bgm_url =\Yii::$app->request->post('bgm_url');
@@ -75,7 +91,7 @@ class LensController extends  CommonController
             return $this->errorInfo(400, $errors);
         }
 
-        if(!empty($id)){ // ����
+        if(!empty($id)){ // 更新
             $where['id'] = $id;
             if(LiveRoom::getRoomId()){
                 $where['room_id'] = LiveRoom::getRoomId();
@@ -87,27 +103,39 @@ class LensController extends  CommonController
                 ->one();
 
 
-        } else { // ����
+        } else { // 新增
             $room_id = LiveRoom::getRoomId();
             if(empty($room_id)){
-                return $this->errorInfo(400, "��������room_id");
+                return $this->errorInfo(400, "参数错误room_id");
             }
 
             $model->click_num = 1;
+            $model->room_id = $room_id;
             $model->created_at = time();
         }
 
+
         $model->lens_name = $lens_name;
-        $model->cover_img = $cover_img;
         $model->online_url = $online_url;
         $model->playback_url = $playback_url;
         $model->bgm_url = $bgm_url;
-        $model->cover_img = $cover_img;
         $model->marvellous_url = $marvellous_url;
         $model->status = $status;
         $model->sort_num = $sort_num;
-        $model->room_id = $room_id;
         $model->updated_at = time();
+        $model->cover_img = $cover_img;
+
+        if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){
+            $picModel = new Pictrue();
+            $picModel->imageFile = UploadedFile::getInstanceByName('pcover_img');
+            $img_list = $picModel->upload();
+            if(isset($img_list['images'])){
+                $model->cover_img = $img_list['images'];
+            } else {
+                return $this->errorInfo(400, $img_list['info']);
+            }
+        }
+
 
         if($model->save()){
             return $this->successInfo(true);
@@ -118,7 +146,7 @@ class LensController extends  CommonController
     }
 
     /**
-     * ��ͷɾ��
+     * 镜头删除
      */
     public function actionDel()
     {
@@ -127,7 +155,7 @@ class LensController extends  CommonController
         $id = intval($id);
 
         if(empty($id)){
-            return $this->errorInfo(400, "��������");
+            return $this->errorInfo(400, "参数错误");
         }
 
         $where['id'] = $id;
@@ -147,7 +175,7 @@ class LensController extends  CommonController
         if($model->save()){
             return $this->successInfo(true);
         } else {
-            return $this->errorInfo(400, "����ʧ�ܣ����Ժ�����");
+            return $this->errorInfo(400, "操作失败，请稍后重试");
         }
 
     }

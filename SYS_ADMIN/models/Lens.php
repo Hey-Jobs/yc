@@ -13,11 +13,10 @@ use yii\db\ActiveRecord;
 
 class Lens extends ActiveRecord
 {
-
     public function rules()
     {
         return [
-            [['lens_name', 'cover_img',], 'required'],
+            [['lens_name',], 'required'],
             [['sort_num', 'status'], 'integer'],
         ];
     }
@@ -25,22 +24,22 @@ class Lens extends ActiveRecord
 
     public function attributeLabels()
     {
-       return [
-           'id' => '±àºÅ',
-           'room_id' => 'ËùÊôÖ±²¥¼ä',
-           'lens_name' => '¾µÍ·Ãû³Æ',
-           'cover_img' => '·âÃæÍ¼Æ¬',
-           'online_url' => 'Ö±²¥Á÷µØÖ·',
-           'playback_url' => '¾µÍ·»Ø·ÅµØÖ·',
-           'bgm_url' => '±³¾°ÒôÀÖµØÖ·',
-           'marvellous_url' => '¾«²Ê»Ø·ÅµØÖ·',
-           'sort_num' => 'ÅÅÐòÖµ',
-           'status' => '×´Ì¬',
-       ];
+        return [
+            'id' => 'ç¼–å·',
+            'room_id' => 'æ‰€å±žç›´æ’­é—´',
+            'lens_name' => 'é•œå¤´åç§°',
+            'cover_img' => 'é•œå¤´ç¼©ç•¥å›¾',
+            'online_url' => 'ç›´æ’­æµåœ°å€',
+            'playback_url' => 'é•œå¤´å›žæ”¾åœ°å€',
+            'bgm_url' => 'èƒŒæ™¯éŸ³ä¹åœ°å€',
+            'marvellous_url' => 'ç²¾å½©å›žæ”¾åœ°å€',
+            'sort_num' => 'æŽ’åºå€¼',
+            'status' => 'çŠ¶æ€',
+        ];
     }
 
     /**
-     * »ñÈ¡¾µÍ·ÁÐ±í
+     * èŽ·å–é•œå¤´åˆ—è¡¨
      */
     public static function  getLensList()
     {
@@ -48,13 +47,14 @@ class Lens extends ActiveRecord
         $model = self::find()
             ->alias('l')
             ->innerJoin('sys_live_room r', 'r.id = l.room_id')
+            ->leftJoin('sys_pictrue p', 'p.id = l.cover_img')
             ->where(['<>', 'l.status', 0]);
 
         if($room_id  > 0){
             $model->andWhere(['l.room_id' => $room_id]);
         }
 
-        $lens_list = $model->select(['r.room_name', 'l.*'])->orderBy('l.id desc')->asArray()->all();
+        $lens_list = $model->select(['r.room_name', 'l.*', 'p.pic_path'])->orderBy('l.id desc')->asArray()->all();
         if(count($lens_list)){
             foreach ($lens_list as &$len){
                 $len['created_at'] = date('Y-m-d H:i');
@@ -64,6 +64,7 @@ class Lens extends ActiveRecord
 
         return $lens_list;
     }
+
 
 
 }

@@ -6,6 +6,7 @@
  */
 
 use SYS_ADMIN\assets\AppAsset;
+use yii\widgets\ActiveForm;
 
 $this->title = count($info) > 0 ? "编辑镜头" : "新增镜头";
 
@@ -17,6 +18,10 @@ AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yi
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/jquery.validate.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addCss($this, '/vendor/bootstrap-fileinput/css/fileinput.min.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/fileinput.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app->params['versionJS']);
+
 ?>
 
 
@@ -36,12 +41,28 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
+                    <a href="<?php echo \yii\helpers\Url::to('/lens/list')?>">镜头管理</a> /
                     <?php echo count($info) > 0 ? "编辑镜头" : "新增镜头";?>
                 </div>
 
 
                 <div class="panel-body">
-                    <form id="lens_form" method="post" action="<?php echo \yii\helpers\Url::to("/lens/save")?>" class="form-horizontal col-sm-10">
+                    <?php
+                        $form = ActiveForm::begin([
+                        'id' => 'lens_form',
+                        'options' => ['class' => 'form-horizontal col-sm-10', 'enctype' => 'multipart/form-data'],
+                            'fieldConfig' => [
+                                    'template' => '<div class="form-group">
+                                                        <label class="col-sm-2 control-label">{label}</label>
+                            
+                                                        <div class="col-sm-10">
+                                                            {input}
+                                                        </div>
+                                                    </div>
+                                                    <div class="hr-line-dashed"></div>'
+                            ],
+                        ]) ?>
+
                         <div class="form-group">
                             <label class="col-sm-2 control-label">镜头名称</label>
 
@@ -52,7 +73,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                         <div class="form-group">
                             <label class="col-sm-2 control-label">镜头缩略图</label>
 
-                            <div class="col-sm-10"><input type="text" class="form-control" name="cover_img" value="<?= $info['cover_img'] ?? "" ?>" ></div>
+                            <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>
                         </div>
                         <div class="hr-line-dashed"></div>
 
@@ -83,10 +104,15 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                             <div class="col-sm-10"><input type="text" class="form-control" name="marvellous_url" value="<?= $info['marvellous_url'] ?? "" ?>"></div>
                         </div>
                         <div class="hr-line-dashed"></div>
+
+                        <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">排序值</label>
 
-                            <div class="col-sm-2"><input type="number" class="form-control" name="sort_num" value="<?= $info['sort_num'] ?? 10?>"></div>
+                            <div class="col-sm-2">
+                                <input type="number" min="1"  max="1000" class="form-control" name="sort_num" value="<?= $info['sort_num'] ?? 10?>">
+                                数值越小靠前
+                            </div>
                         </div>
                         <div class="hr-line-dashed"></div>
 
@@ -95,21 +121,26 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
                             <div class="col-sm-10">
                                 <div class="">
-                                    <label> <input type="radio" id="status1" value="1" class="" <?php echo isset($info['status']) && $info['status'] != 2 ? "checked" : '' ?> > 显示</label>
-                                    <label> <input type="radio" id="status2" value="2" class="" <?php echo isset($info['status']) && $info['status'] == 2 ? "checked" : '' ?> >隐藏</label>
+                                    <?php if(count($info)):?>
+                                        <label> <input type="radio" name="status" id="status1" value="1" class="" <?php echo $info['status'] != 2 ? "checked" : "" ?>> 显示</label>
+                                        <label> <input type="radio" name="status" id="status2" value="2" class="" <?php echo $info['status'] == 2 ? "checked" : "" ?> >隐藏</label>
+                                    <?php else :?>
+                                        <label> <input type="radio" name="status" id="status1" value="1" class="" checked> 显示</label>
+                                        <label> <input type="radio" name="status" id="status2" value="2" class="" >隐藏</label>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-8 col-sm-offset-2">
-                                <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
+                                <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
                                 <input type="hidden" name="id" value="<?= $info['id'] ?? 0 ?>"/>
                                 <button class="btn btn-primary" type="button" id="sub-form">保存</button>
-                                <a href="<?php echo yii\helpers\Url::to('/lens/list')?>" class="btn btn-default">取消</a>
+                                <a href="<?php echo yii\helpers\Url::to('/lens/list')?>" class="btn btn-default">返回列表</a>
                             </div>
                         </div>
-                    </form>
+                        <?php ActiveForm::end() ?>
                 </div>
             </div>
         </div>
@@ -118,6 +149,43 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
 <script type="application/javascript">
     $(function () {
+        $("#pcover_img").fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: '', //上传的地址
+            allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: false, //是否显示上传按钮
+            showRemove: true, //显示移除按钮
+            showPreview: true, //是否显示预览
+            showCaption: false,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            //dropZoneEnabled: false,//是否显示拖拽区域
+            //minImageWidth: 50, //图片的最小宽度
+            //minImageHeight: 50,//图片的最小高度
+            //maxImageWidth: 1000,//图片的最大宽度
+            //maxImageHeight: 1000,//图片的最大高度
+            //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+            //minFileCount: 0,
+            maxFileCount: 1, //表示允许同时上传的最大文件个数,
+            <?php if(count($pic_info)): ?>
+            initialPreviewAsData: true,
+            initialPreview: [
+                "/<?= $pic_info['pic_path'] ?? '' ?>",
+            ],
+            initialPreviewConfig: [
+                {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
+            ]
+            <?php endif;?>
+        }).on("filebatchselected", function(event, files) {
+            $(this).fileinput("upload");
+            })
+            .on("fileuploaded", function(event, data) {
+                if(data.response)
+                {
+                    alert('处理成功');
+                }
+            });;
+
         $("#status1").click(function () {
             $("#status1").attr("checked","checked");
             $("#status2").removeAttr("checked");
@@ -154,26 +222,38 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                     number: true
                 },
             },
-            submitHandler: function(form) {
-                form.submit();
-            }
+
         });
         
         
         $("#sub-form").click(function () {
-            $.ajax({
-                type:'POST',
-                dataType: 'json',
-                url : '<?php echo yii\helpers\Url::to('/lens/save')?>',
-                data : $("#lens_form").serialize(),
-                success: function(result) {
-                    if ('200' == result.status) {
-                        affirmSwals('成功', '成功', 'success', confirmFunc);
-                    } else {
-                        affirmSwals('失败', result.message, 'error', placeholder);
-                    }
-                },
-            });
+            if($("#lens_form").valid()){
+                if($("#cover_img").val() == '' && $("#pcover_img").val() == ''){
+                    affirmSwals('失败', "请上传封面图片", 'error', placeholder);
+                    return false;
+                }
+
+                var form_data = new FormData($( "#lens_form" )[0]);
+                $.ajax({
+                    type:'POST',
+                    dataType: 'json',
+                    url : '<?php echo yii\helpers\Url::to('/lens/save')?>',
+                    data : form_data,
+                    async: false,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(result) {
+                        if ('200' == result.status) {
+                            affirmSwals('成功', '成功', 'success', confirmFunc);
+                        } else {
+                            affirmSwals('失败', result.message, 'error', placeholder);
+                        }
+                    },
+                });
+            }
+
         });
 
     });
