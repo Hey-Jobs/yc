@@ -15,7 +15,8 @@ AppAsset::addCss($this, '/vendor/data-tables/css/dataTables.bootstrap.css?v=' . 
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
-
+AppAsset::addScript($this, '/vendor/jquery-validation/jquery.validate.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Yii::$app->params['versionJS']);
 ?>
 
 
@@ -51,41 +52,43 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                                     <h4 class="modal-title"><span id="btnText">添加视频</span></h4>
                                 </div>
                                 <div class="modal-body" style="300px;">
-                                    <div class="form-group row text-left" style="display: none;">
-                                        <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
-                                    </div>
-                                    <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">视频名称：</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" name="video_name"  placeholder="视频名称"/>
+                                    <form id="video_form" method="post" >
+                                        <div class="form-group row text-left" style="display: none;">
+                                            <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">视频链接：</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" name="video_url" placeholder="视频链接"/>
-                                            http....
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">视频名称：</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="video_name"  placeholder="视频名称"/>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">排序值：</label>
-                                        <div class="col-sm-9">
-                                            <input type="number" class="form-control"  name="sort_num" value="10" placeholder="排序值"/>
-                                            数据值越小越靠前
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">视频链接：</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="video_url" placeholder="视频链接"/>
+                                                http....
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">排序值：</label>
+                                            <div class="col-sm-9">
+                                                <input type="number" class="form-control"  name="sort_num" value="10" placeholder="排序值"/>
+                                                数据值越小越靠前
+                                            </div>
+                                        </div>
 
-                                    <div class="form-group row text-left">
-                                        <label class="col-sm-3 control-label position">状态：</label>
-                                        <div class="col-sm-9">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="status" id="status1" value="1" checked> 显示
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="status" id="status2"  value="2" > 不显示
-                                            </label>
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">状态：</label>
+                                            <div class="col-sm-9">
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="status" id="status1" value="1" checked> 显示
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="status" id="status2"  value="2" > 不显示
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
 
                                 </div>
 
@@ -120,6 +123,23 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
 <script type="application/javascript">
     $(function () {
+
+
+        $("#video-form").validate({
+            rules:{
+                video_name:{
+                    required: true,
+                },
+                video_url: {
+                    required: true,
+                    url: true
+                },
+                sort_num: {
+                    required: true,
+                },
+            },
+
+        });
 
         $("#video_table").DataTable({
             ajax: '<?php echo \yii\helpers\Url::to('/video/list?api=true')?>',
@@ -230,18 +250,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
     function saveVideo()
     {
-        if($("input[name='video_name']").val() == ""){
-            affirmSwals('失败', "请填写视频名称", 'error', placeholder);
-            return false;
-        }
-
-        if($("input[name='video_url']").val().indexOf('http') == -1){
-            affirmSwals('失败', "请填写正确的视频链接", 'error', placeholder);
-            return false;
-        }
-
-        if($("input[name='sort_num']").val() == ""){
-            affirmSwals('失败', "请填写排序值", 'error', placeholder);
+        if(!$("#video-form").valid()){
             return false;
         }
 

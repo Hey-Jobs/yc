@@ -86,8 +86,9 @@ class LiveController extends CommonController
         }
 
 
-        return $this->render("detail", [
+        return $this->render("ext", [
             'info' => $room_info,
+            'room_id' => $room_id,
         ]);
     }
 

@@ -20,9 +20,17 @@ AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yi
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/jquery.validate.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Yii::$app->params['versionJS']);
+
+AppAsset::addCss($this, '/vendor/summernote/dist/summernote.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addCss($this, '/vendor/summernote/dist/summernote-bs3.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/summernote/dist/summernote.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/summernote/lang/summernote-zh-CN.js?v=' . Yii::$app->params['versionJS']);
+
 AppAsset::addCss($this, '/vendor/bootstrap-fileinput/css/fileinput.min.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/fileinput.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app->params['versionJS']);
+
+
 
 ?>
 
@@ -34,6 +42,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     }
 
     #allmap{height: 300px;}
+    .introduce{height: 100px !important;}
+    .summernote{height: 400px !important;}
 </style>
 
 <div class="content animate-panel">
@@ -49,12 +59,12 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                 </div>
 
                 <ul id="myTab" class="nav nav-tabs">
-                    <li class="active">
-                        <a href="#home" >
+                    <li class="">
+                        <a href="javascript:;" onclick=goLink('<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>')>
                             基础信息
                         </a>
                     </li>
-                    <li><a href="javascript:;" onclick=goLink("<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>") >扩展信息</a></li>
+                    <li class="active"><a href="#" >扩展信息</a></li>
                 </ul>
 
                 <div class="panel-body">
@@ -77,80 +87,48 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="form-group">
                         <label class="col-sm-2 control-label">直播间名称</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="room_name" value="<?= $info['room_name'] ?? "" ?>"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" readonly="readonly" name="room_name" value="<?= $info['room_name'] ?? "" ?>">
+                        </div>
                     </div>
                     <div class="hr-line-dashed"></div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间LOGO</label>
+                        <label class="col-sm-2 control-label">封面图</label>
 
                         <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">地址链接URL</label>
+                        <label class="col-sm-2 control-label">直播间简介</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="addr_url" id="addr_url" value="<?= $info['addr_url'] ?? "" ?>"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间地址</label>
-
-                        <div class="col-sm-10"><input type="text" class="form-control" name="addr" id="addr" value="<?= $info['addr'] ?? "" ?>"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间坐标地址</label>
-
-                        <div class="col-sm-10"><input type="text" class="form-control" name="coordinate" id="coordinate" value="<?= $info['coordinate'] ?? "" ?>"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <div id="allmap"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">排序值</label>
-
-                        <div class="col-sm-2">
-                            <input type="number" min="1"  max="1000" class="form-control" name="sort_num" value="<?= $info['sort_num'] ?? 10?>">
-                            数值越小靠前
+                        <div class="col-sm-10">
+                            <textarea class="form-control introduce"  name="introduce" id="introduce"><?= $info['introduce'] ?? "" ?></textarea>
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">状态</label>
+                        <label class="col-sm-2 control-label">内容</label>
 
                         <div class="col-sm-10">
-                            <div class="">
-                                <?php if(count($info)):?>
-                                    <label> <input type="radio" name="status" id="status1" value="1" class="" <?php echo $info['status'] != 2 ? "checked" : "" ?>> 显示</label>
-                                    <label> <input type="radio" name="status" id="status2" value="2" class="" <?php echo $info['status'] == 2 ? "checked" : "" ?> >隐藏</label>
-                                <?php else :?>
-                                    <label> <input type="radio" name="status" id="status1" value="1" class="" checked> 显示</label>
-                                    <label> <input type="radio" name="status" id="status2" value="2" class="" >隐藏</label>
-                                <?php endif;?>
+                            <div class="summernote">
+
                             </div>
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
-                    <?php endif;?>
+
+
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
-                            <input type="hidden" name="logo_img" id="logo_img" value="<?= $info['logo_img'] ?? '' ?>"/>
-                            <input type="hidden" name="id" value="<?= $info['id'] ?? 0 ?>"/>
+                            <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
+                            <input type="hidden" name="id" value="<?= $info['room_id'] ?? 0 ?>"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
                             <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
-                            <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
+                                <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
                             <?php endif;?>
                         </div>
                     </div>
@@ -161,32 +139,72 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     </div>
 </div>
 
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=CpL8hnDBQj8WH8GbqE9ihN2DhtU7L1YR"></script>
 <script type="application/javascript">
-    var map = new BMap.Map("allmap");
-    map.centerAndZoom("深圳", 12);
-    map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
-    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
-    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
-    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
-    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
-
-    map.addEventListener("click", function(e){
-        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度
-        var pt = e.point;
-        geoc.getLocation(pt, function(rs){
-            //addressComponents对象可以获取到详细的地址信息
-            var addComp = rs.addressComponents;
-            var site = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
-            //将对应的HTML元素设置值
-            $("#site").val(site);
-            $("#longitude").val(pt.lng);
-            $("#latitude").val(pt.lat);
-        });
-    });
-
 
     $(function () {
+        $('.summernote').summernote({
+            height:400,
+            lang: 'zh-CN',
+
+            // toolbar工具栏默认
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', /*'codeview', 'help'*/]]
+            ],
+            popover: {
+                image: [
+                    ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                    ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                    ['remove', ['removeMedia']]
+                ],
+                link: [
+                    ['link', ['linkDialogShow', 'unlink']]
+                ],
+                air: [
+                    ['color', ['color']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['para', ['ul', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture']]
+                ]
+            },
+            callbacks:{
+                onImageUpload: function(files, editor, $editable) {
+                    UploadFiles(files,insertImg);
+                }
+            },
+        });
+
+
+        function UploadFiles(files,func){
+            var formData = new FormData();
+            for(f in files){
+                formData.append("file", files[f]);
+            }
+
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: "/uploadMultipleFile",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(imageUrl) {
+                    func(imageUrl);
+
+                },
+                error: function() {
+                    console.log("uploadError");
+                }
+            })
+        }
+
         $("#pcover_img").fileinput({
             language: 'zh', //设置语言
             uploadUrl: '', //上传的地址
@@ -296,9 +314,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
     });
 
-
     function goLink(url) {
         window.location.href = url;
     }
+
 
 </script>
