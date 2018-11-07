@@ -24,17 +24,17 @@ class LiveRoom extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'Ö±²¥¼äID',
-            'user_id' => 'ËùÊôÓÃ»§',
-            'room_name' => 'Ö±²¥¼äÃû³Æ',
-            'logo_img' => 'Ö±²¥¼äLOGO',
-            'click_num' => 'µã»÷Êý',
-            'valid_time' => 'µ½ÆÚÊ±¼ä',
-            'addr_url' => 'Á´½ÓµØÖ·',
-            'addr' => 'µØÖ·',
-            'coordinate' => '×ø±êµØÖ·',
-            'sort_num' => 'ÅÅÐòÖµ',
-            'status' => '×´Ì¬',
+            'id' => 'ç›´æ’­é—´ID',
+            'user_id' => 'æ‰€å±žç”¨æˆ·',
+            'room_name' => 'ç›´æ’­é—´åç§°',
+            'logo_img' => 'ç›´æ’­é—´LOGO',
+            'click_num' => 'ç‚¹å‡»æ•°',
+            'valid_time' => 'åˆ°æœŸæ—¶é—´',
+            'addr_url' => 'é“¾æŽ¥åœ°å€',
+            'addr' => 'åœ°å€',
+            'coordinate' => 'åæ ‡åœ°å€',
+            'sort_num' => 'æŽ’åºå€¼',
+            'status' => 'çŠ¶æ€',
         ];
     }
 
@@ -64,7 +64,7 @@ class LiveRoom extends ActiveRecord
             ->andWhere(['r.id' => $room_id])
             ->select(['r.*',
                 'l.pic_name as logo_name', 'l.pic_path as logo_path', 'l.pic_size as logo_size',
-                ])
+            ])
             ->asArray()
             ->one();
 
