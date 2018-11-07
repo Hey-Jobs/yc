@@ -75,9 +75,10 @@ class LiveController extends CommonController
         $pic_logo = [];
         $pic_cover = [];
         $room_extend = [];
-        $room_id = \Yii::$app->request->get('id');
+        $room_id = LiveRoom::getRoomId();
+        $id = \Yii::$app->request->get('id');
 
-        if(LiveRoom::getRoomId()){ // 商家查看自己资料
+        if($room_id > 0 ){ // 商家查看自己资料
             $room_id = LiveRoom::getRoomId();
         }
 
@@ -93,7 +94,19 @@ class LiveController extends CommonController
     }
 
 
+    /**
+     * 扩展信息保存
+     */
+    public function actionSaveExtInfo()
+    {
+        $id = \Yii::$app->request->post('id');
+        $room_id = LiveRoom::getRoomId();
+        if($room_id>  0 && $id != $room_id){
+            return $this->errorInfo(400, "参数错误");
+        }
 
+        var_dump(\Yii::$app->request->post());
+    }
 
     /**
      * @return array|void

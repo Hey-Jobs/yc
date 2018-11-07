@@ -47,11 +47,11 @@ class Pictrue extends ActiveRecord
                 $model->save(false);
 
                 $pic_list = \Yii::$app->db->getLastInsertID();
+                return ['status' => 1, 'images' => $pic_list, 'img_path' => '/'.$file_path];
             } else {
                 return ['status' => 401, 'info' => '上传失败'];
             }
 
-            return ['status' => 1, 'images' => $pic_list];
         } else {
             return ['status' => 401, 'info' => implode(',', $this->getFirstErrors())];
         }
@@ -63,7 +63,7 @@ class Pictrue extends ActiveRecord
         $err = "";
         $pic_list = [];
         $this->setScenario('pics');
-        $base_path = "uploads/images/".date('Ymd').'/';
+        $base_path = "/uploads/images/".date('Ymd').'/';
         if($this->validate()){
             if(!is_dir($base_path) || !is_writable($base_path)){
                 \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);

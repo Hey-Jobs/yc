@@ -12,9 +12,6 @@ use yii\widgets\ActiveForm;
 
 $this->title = count($info) > 0 ? "直播间资料" : "新增直播间";
 
-AppAsset::addScript($this, '/vendor/data-tables/js/jquery.dataTables.js?v=' . Yii::$app->params['versionJS']);
-AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' . Yii::$app->params['versionJS']);
-AppAsset::addCss($this, '/vendor/data-tables/css/dataTables.bootstrap.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
@@ -160,31 +157,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=CpL8hnDBQj8WH8GbqE9ihN2DhtU7L1YR"></script>
 <script type="application/javascript">
-    var map = new BMap.Map("allmap");
-    map.centerAndZoom("深圳", 12);
-    map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
-    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
-    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
-    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
-    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
-
-    map.addEventListener("click", function(e){
-        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度
-        var pt = e.point;
-        geoc.getLocation(pt, function(rs){
-            //addressComponents对象可以获取到详细的地址信息
-            var addComp = rs.addressComponents;
-            var site = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
-            //将对应的HTML元素设置值
-            $("#site").val(site);
-            $("#longitude").val(pt.lng);
-            $("#latitude").val(pt.lat);
-        });
-    });
-
 
     $(function () {
         $("#pcover_img").fileinput({
