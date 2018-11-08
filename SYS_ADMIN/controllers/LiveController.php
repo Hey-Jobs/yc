@@ -9,8 +9,11 @@
 namespace SYS_ADMIN\controllers;
 
 
+use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Pictrue;
+use yii\web\UploadedFile;
 
 class LiveController extends CommonController
 {
@@ -75,20 +78,26 @@ class LiveController extends CommonController
         $pic_logo = [];
         $pic_cover = [];
         $room_extend = [];
-        $room_id = LiveRoom::getRoomId();
-        $id = \Yii::$app->request->get('id');
+        $user_room = LiveRoom::getRoomId();
+        $room_id = \Yii::$app->request->get('id');
 
-        if($room_id > 0 ){ // 商家查看自己资料
-            $room_id = LiveRoom::getRoomId();
+        if($user_room > 0 && $room_id != $user_room ){ // 商家查看自己资料
+            $room_id = $user_room;
         }
 
-        if(!empty($room_id)){
-            $room_info = LiveRoom::getRoomInfo($room_id);
+        if($user_room == 0 && empty($room_id)){
+            return $this->redirect("/live/index");
         }
 
+        $room_info = LiveRoomExtend::getExtRoomInfo($room_id);
+        $room_name = LiveRoom::getRoomNameById($room_id);
+        if(isset($room_info['cover_img'])){ // 封面图片
+            $pic_info = Pictrue::getPictrueById($room_info['cover_img']);
+        }
 
         return $this->render("ext", [
             'info' => $room_info,
+            'room_name' => $room_name,
             'room_id' => $room_id,
         ]);
     }
@@ -100,12 +109,48 @@ class LiveController extends CommonController
     public function actionSaveExtInfo()
     {
         $id = \Yii::$app->request->post('id');
-        $room_id = LiveRoom::getRoomId();
-        if($room_id>  0 && $id != $room_id){
+        $cover_img = \Yii::$app->request->post('cover_img');
+        $introduce = \Yii::$app->request->post('introduce');
+        $content = \Yii::$app->request->post('content');
+
+        $user_room = LiveRoom::getRoomId();
+        if($user_room > 0 && $id != $user_room){ // 普通人编辑直播间不一致
             return $this->errorInfo(400, "参数错误");
         }
 
-        var_dump(\Yii::$app->request->post());
+        if($user_room == 0 && empty($id)){ // 超级管理员
+            return $this->errorInfo(400, "参数错误");
+        }
+
+
+        $model = LiveRoomExtend::findOne(['room_id' => $id]);
+        if(empty($model)){
+            $model = new LiveRoomExtend();
+            $model->created_at = time();
+            $model->room_id = $id;
+        }
+
+        $model->content = $content;
+        $model->introduce = $introduce;
+        $model->cover_img = $cover_img;
+        $model->updated_at = time();
+
+        if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){ // 新上传图片
+            $picModel = new Pictrue();
+            $picModel->imageFile = UploadedFile::getInstanceByName('pcover_img');
+            $img_list = $picModel->upload();
+            if(isset($img_list['images'])){
+                $model->cover_img = $img_list['images'];
+            } else {
+                return $this->errorInfo(400, $img_list['info']);
+            }
+        }
+
+        if($model->save()){
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(400);
+        }
     }
 
     /**
@@ -127,10 +172,10 @@ class LiveController extends CommonController
         $where['id'] = $id;
         $model = LiveRoom::find()
             ->where($where)
-            ->andWhere(['<>', 'status', 0])
+            ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
             ->one();
 
-        $model->status = 0;
+        $model->status = ConStatus::$STATUS_DELETED;
         $model->updated_at = time();
 
         if($model->save()){

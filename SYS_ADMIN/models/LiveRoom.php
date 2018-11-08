@@ -55,6 +55,18 @@ class LiveRoom extends ActiveRecord
         return $room_id;
     }
 
+    public static function getRoomNameById($room_id)
+    {
+        $room_info = self::find()
+            ->select(['room_name'])
+            ->where(['id' => $room_id])
+            ->asArray()
+            ->one();
+
+        return $room_info['room_name'] ?? "";
+    }
+    
+
     public static function getRoomInfo($room_id)
     {
         $room_info = self::find()

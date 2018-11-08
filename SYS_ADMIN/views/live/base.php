@@ -51,7 +51,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             基础信息
                         </a>
                     </li>
-                    <li><a href="javascript:;" onclick=goLink("<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>") >扩展信息</a></li>
+                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>">扩展信息</a></li>
                 </ul>
 
                 <div class="panel-body">

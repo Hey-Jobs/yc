@@ -10,7 +10,7 @@
 use SYS_ADMIN\assets\AppAsset;
 use yii\widgets\ActiveForm;
 
-$this->title = count($info) > 0 ? "直播间资料" : "新增直播间";
+$this->title = "直播间资料";
 
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yii::$app->params['versionJS']);
@@ -54,12 +54,12 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    <?php echo count($info) > 0 ? "直播间资料" : "新增直播间";?>
+                    直播间资料
                 </div>
 
                 <ul id="myTab" class="nav nav-tabs">
                     <li class="">
-                        <a href="javascript:;" onclick=goLink('<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>')>
+                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>">
                             基础信息
                         </a>
                     </li>
@@ -124,7 +124,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
                             <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
-                            <input type="hidden" name="id" value="<?= $info['room_id'] ?? 0 ?>"/>
+                            <input type="hidden" name="id" value="<?= $room_id ?>"/>
                             <input type="hidden" name="content" id="content"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
                             <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
@@ -142,93 +142,91 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 <script type="application/javascript">
 
     $(function () {
-        var content = "<?= $info['content'] ?? "" ?>";
-        $('.summernote').summernote({
-            height:300,
-            lang: 'zh-CN',
+        var content = '<?= $info['content'] ?? "" ?>';
+                $('.summernote').summernote({
+                    height:300,
+                    lang: 'zh-CN',
 
-            // toolbar工具栏默认
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['fontname', ['fontname']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', /*'codeview', 'help'*/]]
-            ],
-            popover: {
-                image: [
-                    ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
-                    ['float', ['floatLeft', 'floatRight', 'floatNone']],
-                    ['remove', ['removeMedia']]
-                ],
-                link: [
-                    ['link', ['linkDialogShow', 'unlink']]
-                ],
-                air: [
-                    ['color', ['color']],
-                    ['font', ['bold', 'underline', 'clear']],
-                    ['para', ['ul', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture']]
-                ]
-            },
-            callbacks: {
-                onImageUpload: function(files) { //the onImageUpload API
-                    img = sendFile(files[0]);
-                }
-            }
-        });
-
-        $('.summernote').summernote('code', content);
-
-        
-        function sendFile(file) {
-            var formdata = new FormData();
-            formdata.append("img", file);
-            $.ajax({
-                data: formdata,
-                type: "POST",
-                url: "<?php echo yii\helpers\Url::to('/upload/img')?>",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    var res = eval("("+data+")");
-                    if(res.status == 200){
-                        $(".summernote").summernote('insertImage', res.data.img_path, 'image name');
+                    // toolbar工具栏默认
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', /*'codeview', 'help'*/]]
+                    ],
+                    popover: {
+                        image: [
+                            ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                            ['remove', ['removeMedia']]
+                        ],
+                        link: [
+                            ['link', ['linkDialogShow', 'unlink']]
+                        ],
+                        air: [
+                            ['color', ['color']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['para', ['ul', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture']]
+                        ]
+                    },
+                    callbacks: {
+                        onImageUpload: function(files) { //the onImageUpload API
+                            img = sendFile(files[0]);
+                        }
                     }
+                });
+
+                $('.summernote').summernote('code', content);
+                function sendFile(file) {
+                    var formdata = new FormData();
+                    formdata.append("img", file);
+                    $.ajax({
+                        data: formdata,
+                        type: "POST",
+                        url: "<?php echo yii\helpers\Url::to('/upload/img')?>",
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            var res = eval("("+data+")");
+                            if(res.status == 200){
+                                $(".summernote").summernote('insertImage', res.data.img_path, 'image name');
+                            }
+                        }
+                    });
                 }
-            });
-        }
-        $("#lives_ext_form").validate({
-            rules: {
-                introduce: {
-                    required: true,
-                },
-            }
-        });
-        $("#pcover_img").fileinput({
-            language: 'zh', //设置语言
-            uploadUrl: '', //上传的地址
-            allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
-            uploadAsync: true, //默认异步上传
-            showUpload: false, //是否显示上传按钮
-            showRemove: true, //显示移除按钮
-            showPreview: true, //是否显示预览
-            showCaption: true,//是否显示标题
-            browseClass: "btn btn-primary", //按钮样式
-            dropZoneEnabled: false,//是否显示拖拽区域
-            maxFileCount: 1, //表示允许同时上传的最大文件个数,
-            <?php if(isset($info['pic_path'])): ?>
+                $("#lives_ext_form").validate({
+                    rules: {
+                        introduce: {
+                            required: true,
+                        },
+                    }
+                });
+                $("#pcover_img").fileinput({
+                    language: 'zh', //设置语言
+                    uploadUrl: '', //上传的地址
+                    allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
+                    uploadAsync: true, //默认异步上传
+                    showUpload: false, //是否显示上传按钮
+                    showRemove: true, //显示移除按钮
+                    showPreview: true, //是否显示预览
+                    showCaption: true,//是否显示标题
+                    browseClass: "btn btn-primary", //按钮样式
+                    dropZoneEnabled: false,//是否显示拖拽区域
+                    maxFileCount: 1, //表示允许同时上传的最大文件个数,
+                    <?php if(isset($info['pic_path'])): ?>
             initialPreviewAsData: true,
             initialPreview: [
-                "/<?= $info['pic_path'] ?? '' ?>",
+                "<?= $info['pic_path'] ?? '' ?>",
             ],
             initialPreviewConfig: [
-                {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
+                {caption: "<?= $info['pic_name'] ?? '' ?>", size: "<?= $info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
             ]
             <?php endif;?>
         }).on("filebatchselected", function(event, files) {

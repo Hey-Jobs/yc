@@ -9,6 +9,7 @@
 namespace SYS_ADMIN\models;
 
 
+use SYS_ADMIN\components\CommonHelper;
 use yii\base\Model;
 use yii\db\ActiveRecord;
 
@@ -99,4 +100,23 @@ class Pictrue extends ActiveRecord
     }
 
 
+    /**
+     * @param $pic_id 图片ID
+     * 获取图片信息
+     */
+    public static function getPictrueById($pic_id)
+    {
+        $pictrue_info = self::find()
+            ->where(['id' => $pic_id])
+            ->select(['pic_name', 'pic_path', 'pic_size'])
+            ->asArray()
+            ->one();
+
+        if($pictrue_info['pic_path']){
+            $pictrue_info['pic_path'] = CommonHelper::getPicPath($pictrue_info['pic_path']);
+        }
+
+        return $pictrue_info;
+
+    }
 }
