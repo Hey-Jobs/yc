@@ -61,9 +61,7 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">商城直播间：</label>
                                             <div class="col-sm-9">
-                                                <select class="js-example-placeholder-single params" name="room_id" style="width: 50%">
-                                                    <option></option>
-                                                </select>
+                                                <?=\SYS_ADMIN\components\SearchWidget::instance()->liveRoom('room_id')?>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
