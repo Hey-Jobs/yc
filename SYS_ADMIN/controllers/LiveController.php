@@ -9,6 +9,7 @@
 namespace SYS_ADMIN\controllers;
 
 
+use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\LiveRoomExtend;
@@ -20,22 +21,25 @@ class LiveController extends CommonController
 
     public function actionIndex()
     {
-        if(LiveRoom::getRoomId()){ // 商家 资料
-            $this->redirect("/live/info");
-        }
-
         // 管理员
         if(\Yii::$app->request->get('api')){
-            ini_set('display_errors', 'on');
-            ini_set('error_reporting', E_ALL);
             $live_list = LiveRoom::find()
-                ->alias('r')
                 ->innerJoin('sys_user u', 'u.id = r.user_id')
-                ->leftJoin('sys_pictrue p', 'p.id = r.logo_img')
                 ->where(['<>', 'r.status', 0])
-                ->select(['r.*', 'u.name as uname', 'p.pic_name', 'p.pic_path', 'p.pic_size'])
+                ->select(['r.*', 'u.name as uname'])
                 ->asArray()
                 ->all();
+
+            if(count($live_list)){
+                $pic_List = BaseDataBuilder::instance('Pictrue', true);
+                foreach ($live_list as &$live){
+                    $live['pic_name'] = $pic_List['pic_name'];
+                    $live['pic_path'] = $pic_List['pic_path'];
+                    $live['pic_size'] = $pic_List['pic_size'];
+                }
+            }
+
+
             $this->successInfo($live_list);
         } else {
             return $this->render('list');
@@ -75,14 +79,13 @@ class LiveController extends CommonController
     public function actionExtInfo()
     {
         $room_info = [];
-        $pic_logo = [];
-        $pic_cover = [];
+        $pic_info = [];
         $room_extend = [];
         $user_room = LiveRoom::getRoomId();
         $room_id = \Yii::$app->request->get('id');
 
-        if($user_room > 0 && $room_id != $user_room ){ // 商家查看自己资料
-            $room_id = $user_room;
+        if(!array_key_exists($room_id, $user_room) && !$this->isAdmin){ // 商家查看自己资料
+            return $this->errorInfo(400, "参数错误");
         }
 
         if($user_room == 0 && empty($room_id)){
@@ -98,6 +101,7 @@ class LiveController extends CommonController
         return $this->render("ext", [
             'info' => $room_info,
             'room_name' => $room_name,
+            'pic_info' => $pic_info,
             'room_id' => $room_id,
         ]);
     }

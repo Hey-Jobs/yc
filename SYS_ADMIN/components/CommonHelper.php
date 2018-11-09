@@ -21,6 +21,14 @@ class CommonHelper
     }
 
 
+    /**
+     * @return bool
+     * 检测是否为管理员
+     */
+    public static function isAdmin()
+    {
+        return true;
+    }
 
 
 }

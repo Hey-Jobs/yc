@@ -87,7 +87,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                         <label class="col-sm-2 control-label">直播间名称</label>
 
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" readonly="readonly" name="room_name" value="<?= $info['room_name'] ?? "" ?>">
+                            <input type="text" class="form-control" readonly="readonly" name="room_name" value="<?= $room_name ?? "" ?>">
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
@@ -96,7 +96,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                     <div class="form-group">
                         <label class="col-sm-2 control-label">封面图</label>
 
-                        <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>
+                        <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" ></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
@@ -127,9 +127,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                             <input type="hidden" name="id" value="<?= $room_id ?>"/>
                             <input type="hidden" name="content" id="content"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
-                            <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
-                                <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
-                            <?php endif;?>
+                            <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
                         </div>
                     </div>
                     <?php ActiveForm::end() ?>
@@ -220,13 +218,13 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                     browseClass: "btn btn-primary", //按钮样式
                     dropZoneEnabled: false,//是否显示拖拽区域
                     maxFileCount: 1, //表示允许同时上传的最大文件个数,
-                    <?php if(isset($info['pic_path'])): ?>
+                    <?php if(isset($pic_info['pic_path'])): ?>
             initialPreviewAsData: true,
             initialPreview: [
-                "<?= $info['pic_path'] ?? '' ?>",
+                "<?= $pic_info['pic_path'] ?? '' ?>",
             ],
             initialPreviewConfig: [
-                {caption: "<?= $info['pic_name'] ?? '' ?>", size: "<?= $info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
+                {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
             ]
             <?php endif;?>
         }).on("filebatchselected", function(event, files) {
