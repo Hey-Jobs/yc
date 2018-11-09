@@ -38,22 +38,39 @@ class LiveRoom extends ActiveRecord
         ];
     }
 
-
-    public static function getRoomId()
+    /**
+     * @return int|mixed
+     */
+    public static function getUserRoomId()
     {
         $room_id = 0;
         $user_id = \Yii::$app->user->identity->getId();
 
         $room_info = self::find()
             ->where(['user_id' => $user_id])
+            ->select(['id', 'user_id', 'room_name'])
+            ->indexBy('id')
             ->asArray()
-            ->one();
-        if(!empty($room_info)){
+            ->all();
+
+        /*if(!empty($room_info)){
             $room_id = $room_info['id'];
         }
-        $room_id = 0;
-        return $room_id;
+        $room_id = 0;*/
+        return $room_info;
     }
+
+    public static function getRoomNameById($room_id)
+    {
+        $room_info = self::find()
+            ->select(['room_name'])
+            ->where(['id' => $room_id])
+            ->asArray()
+            ->one();
+
+        return $room_info['room_name'] ?? "";
+    }
+    
 
     public static function getRoomInfo($room_id)
     {
