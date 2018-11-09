@@ -31,7 +31,9 @@ class BaseDataBuilder
             case "LiveRoom" :
                 $list = self::defaultPair($modelBuild, 'id', 'room_name');
                 break;
-//            case
+            case "LiveRoomUser" :
+                $list = $list = self::roomUserPair($modelBuild, 'user_id', 'id');
+                break;
             default :
                 return false;
         }
@@ -40,6 +42,16 @@ class BaseDataBuilder
             $list = array_column($list, 'text', 'id');
         }
 
+        return $list;
+    }
+
+    private static function roomUserPair()
+    {
+        $list = \SYS_ADMIN\models\LiveRoom::find()
+            ->select(['id', 'user_id as text'])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->asArray()
+            ->all();
         return $list;
     }
 
