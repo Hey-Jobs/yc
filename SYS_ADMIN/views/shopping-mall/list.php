@@ -105,7 +105,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         </div>
                     </div>
 
-                    <table id="video_table" class="table table-striped table-bordered table-hover" width="100%">
+                    <table id="data_table" class="table table-striped table-bordered table-hover" width="100%">
                         <thead>
                         <tr>
                             <th>编号</th>
@@ -133,7 +133,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         editImage(initialPreview, initialPreviewConfig);
 
 
-        $("#video_table").DataTable({
+        $("#data_table").DataTable({
             ajax: '<?php echo \yii\helpers\Url::to('/shopping-mall/index?api=true')?>',
             bAutoWidth: false,
             ordering: true,

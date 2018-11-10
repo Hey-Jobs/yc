@@ -11,7 +11,7 @@ use Yii;
  * @property string $order_id
  * @property integer $room_id
  * @property integer $client_id
- * @property string $order_status
+ * @property integer $order_status
  * @property string $product_money
  * @property string $deliver_type
  * @property string $deliver_money
@@ -55,11 +55,11 @@ class Order extends CommonModel
     {
         return [
             [['id', 'client_id'], 'required'],
-            [['id', 'room_id', 'client_id', 'pay_type', 'pay_from', 'is_pay', 'is_invoice', 'order_source', 'is_appraise', 'is_finished', 'express_id', 'trade_no'], 'integer'],
+            [['id', 'room_id', 'client_id', 'pay_type', 'pay_from', 'is_pay', 'is_invoice', 'order_source', 'is_appraise', 'is_finished', 'express_id', 'trade_no', 'order_status'], 'integer'],
             [['product_money', 'deliver_money', 'total_money', 'real_total_money'], 'number'],
             [['delivery_time', 'receive_time', 'create_time', 'updated_time'], 'safe'],
             [['order_id', 'user_name'], 'string', 'max' => 32],
-            [['order_status', 'deliver_type', 'user_address', 'invoice_client', 'order_remarks', 'cancel_reason_id'], 'string', 'max' => 255],
+            [['deliver_type', 'user_address', 'invoice_client', 'order_remarks', 'cancel_reason_id'], 'string', 'max' => 255],
             [['user_phone', 'express_no'], 'string', 'max' => 20],
         ];
     }

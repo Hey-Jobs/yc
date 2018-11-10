@@ -10,6 +10,7 @@ namespace SYS_ADMIN\controllers;
 
 
 use SYS_ADMIN\components\BaseDataBuilder;
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\ShoppingMall;
 use Yii;
@@ -67,6 +68,10 @@ class ShoppingMallController extends CommonController
         }
 
         $shoreMapM = ShoppingMall::findOne($id);
+        if (!CommonHelper::checkRoomId($shoreMapM->room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
         $shoreMapM->status = ConStatus::$STATUS_DELETED;
         if (!$shoreMapM->save()) {
             return $this->errorInfo('400', 'error');
@@ -87,6 +92,10 @@ class ShoppingMallController extends CommonController
         }
 
         $shoreMapM = ShoppingMall::findOne($id);
+        if (!CommonHelper::checkRoomId($shoreMapM->room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
         if (ConStatus::$STATUS_ENABLE == $shoreMapM->status) {
             $shoreMapM->status = ConStatus::$STATUS_DISABLE;
         } else {
@@ -122,6 +131,10 @@ class ShoppingMallController extends CommonController
         $liveUserPairs = BaseDataBuilder::instance('LiveRoomUser');
         if ($id) {
             $shoreMapM = ShoppingMall::findOne($id);
+            if (!CommonHelper::checkRoomId($shoreMapM->room_id)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+
             $shoreMapM->room_id = $roomId;
             $shoreMapM->user_id = $liveUserPairs[$roomId] ?? '';
             $shoreMapM->title = $title;
