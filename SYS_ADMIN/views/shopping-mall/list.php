@@ -113,8 +113,8 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                             <th>商城名称</th>
                             <th>商城子标题</th>
                             <th>商城介绍</th>
-                            <th>状态</th>
                             <th>添加时间</th>
+                            <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -139,12 +139,12 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
             },
             columns: [
                 {"data": "id"},
-                {"data": "user_id"},
+                {"data": "room_name"},
                 {"data": "title"},
                 {"data": "sub_title"},
                 {"data": "introduction"},
-                {"data": "status"},
                 {"data": "created_at"},
+                {"data": "status_name"},
             ],
             aoColumnDefs: [
                 {
@@ -192,20 +192,13 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
     }
 
     function updateInfo(autoId = '') {
-        $("[name='room_id']").select2({
-            placeholder : "-- 请选择 --",
-            dropdownParent : $("#myModal"),
-            allowClear : true,
-            data : getRoom(),
-        });
-
         if (autoId.length != 0) {
             var data;
             $("#btnText").html('修改信息');
             $.ajax({
-                url: '<?php echo \yii\helpers\Url::to('/video/info')?>',
+                url: '<?php echo \yii\helpers\Url::to('/shopping-mall/one')?>',
                 dataType: 'json',
-                type: "POST",
+                type: "GET",
                 async: false,
                 data: {'id': autoId},
                 success: function (result) {
