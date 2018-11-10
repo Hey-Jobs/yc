@@ -13,7 +13,9 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 AppAsset::addCss($this, '/vendor/select2/css/select2.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/select2/js/select2.full.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii::$app->params['versionJS']);
-
+AppAsset::addCss($this, '/vendor/bootstrap-fileinput/css/fileinput.min.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/fileinput.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app->params['versionJS']);
 ?>
 
 
@@ -54,14 +56,13 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                                     </div>
                                     <div class="modal-body" style="300px;">
                                         <div class="form-group row text-left" style="display: none;">
-                                            <div class="col-sm-9"><input style="display: none" type="text" name="id"
-                                                                         class="form-control params"
-                                                                         placeholder="autoId"></div>
+                                            <div class="col-sm-9"><input style="display: none" type="hidden" name="id"
+                                                                         class="form-control params"></div>
                                         </div>
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">商城直播间：</label>
                                             <div class="col-sm-9">
-                                                <?=\SYS_ADMIN\components\SearchWidget::instance()->liveRoom('room_id')?>
+                                                <?= \SYS_ADMIN\components\SearchWidget::instance()->liveRoom('room_id') ?>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
@@ -81,15 +82,14 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">商城简介：</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="introduction"
-                                                       placeholder="商城简介"/>
+                                                <textarea class="form-control" id="introduction" name="introduction" rows="6" placeholder="商城简介" style="min-width: 90%"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">商城商标：</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="image_src"
-                                                       placeholder="商城商标"/>
+                                                <input type="file" class="form-control" name="img" id="img" multiple="multiple" data-show-preview="true" placeholder="商城商标" ">
+                                                <input type="hidden" class="form-control" name="image_src" id="image_src" placeholder="商城商标" ">
                                             </div>
                                         </div>
 
@@ -127,6 +127,12 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
 
 <script type="application/javascript">
     $(function () {
+
+        var initialPreview = [];
+        var initialPreviewConfig = [];
+        editImage(initialPreview, initialPreviewConfig);
+
+
         $("#video_table").DataTable({
             ajax: '<?php echo \yii\helpers\Url::to('/shopping-mall/index?api=true')?>',
             bAutoWidth: false,
@@ -151,6 +157,12 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                     "targets": 7,
                     "render": function (data, type, row) {
                         var html = '';
+                        if (row.status == 1) {
+                            html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"savePut('" + row.id + "', 2)\"> 下架 </a>";
+                        } else if (row.status == 2) {
+                            html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"savePut('" + row.id + "', 1)\"> 上架 </a>";
+                        }
+
                         html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateInfo('" + row.id + "')\"> 编辑 </a>";
                         html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteInfo('" + row.id + "')\"> 删除 </a>";
                         return html;
@@ -174,7 +186,7 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
             function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: '<?php echo \yii\helpers\Url::to('/video/del')?>',
+                        url: '<?php echo \yii\helpers\Url::to('/shopping-mall/delete')?>',
                         dataType: 'json',
                         type: "POST",
                         data: {'id': id},
@@ -192,7 +204,7 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
     }
 
     function updateInfo(autoId = '') {
-        if (autoId.length != 0) {
+        if (autoId.length > 0) {
             var data;
             $("#btnText").html('修改信息');
             $.ajax({
@@ -204,48 +216,28 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                 success: function (result) {
                     if (result.status == 200) {
                         data = result.data;
-//                        $("[name='id']").val(data.id);
-//                        $("[name='video_name']").val(data.video_name);
-//                        $("[name='video_url']").val(data.video_url);
-//                        $("[name='sort_num']").val(data.sort_num);
-
-//                        if (data.status == 1) {
-//                            $("#status1").attr("checked", "checked");
-//                            $("#status2").removeAttr("checked");
-//                        }
-//
-//                        if (data.status == 2) {
-//                            $("#status2").attr("checked", "checked");
-//                            $("#status1").removeAttr("checked");
-//                        }
-
+                        $("[name='id']").val(data.id);
+                        $("[name='room_id']").val(data.room_id).trigger('change');
+                        $("[name='title']").val(data.title);
+                        $("[name='sub_title']").val(data.sub_title);
+                        $("[name='introduction']").val(data.introduction);
+                        $("[name='image_src']").val(data.image_src);
+                        var initialPreview = [data.image_src];
+                        var initialPreviewConfig = [{showRemove: false}];
+                        $("#img").fileinput('destroy');
+                        console.log(initialPreview);
+                        console.log(initialPreviewConfig);
+                        editImage(initialPreview, initialPreviewConfig);
                     }
                 }
             });
-
             $('#myModal').modal('show');
-
         } else {
             $("#btnText").html('添加信息');
         }
     }
 
     function saveInfo() {
-//        if ($("input[name='video_name']").val() == "") {
-//            affirmSwals('失败', "请填写视频名称", 'error', placeholder);
-//            return false;
-//        }
-//
-//        if ($("input[name='video_url']").val().indexOf('http') == -1) {
-//            affirmSwals('失败', "请填写正确的视频链接", 'error', placeholder);
-//            return false;
-//        }
-//
-//        if ($("input[name='sort_num']").val() == "") {
-//            affirmSwals('失败', "请填写排序值", 'error', placeholder);
-//            return false;
-//        }
-
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -258,6 +250,56 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                     affirmSwals('失败', result.message, 'error', placeholder);
                 }
             },
+        });
+    }
+
+    function savePut(id, status)
+    {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '<?php echo yii\helpers\Url::to('/shopping-mall/put')?>',
+            data: {'id': id, 'status': status},
+            success: function (result) {
+                if ('200' == result.status) {
+                    affirmSwals('成功', '成功', 'success', confirmFunc);
+                } else {
+                    affirmSwals('失败', result.message, 'error', placeholder);
+                }
+            },
+        });
+    }
+
+    function editImage(initialPreview, initialPreviewConfig)
+    {
+        $("#img").fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: '/upload/img', //上传的地址
+            allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: false, //是否显示上传按钮
+            showRemove: true, //显示移除按钮
+            showPreview: true, //是否显示预览
+            showCaption: true,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            dropZoneEnabled: true,//是否显示拖拽区域
+            maxFileCount: 1, //表示允许同时上传的最大文件个数,
+            initialPreviewAsData: true,
+            initialPreview: initialPreview,
+            initialPreviewConfig: initialPreviewConfig
+        });
+
+        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
+            console.log(data.response);
+            if (data.response.status == 200) {
+                $("#image_src").val(data.response.data.img_path)
+            }
+            // var img = JSON.parse(data.response);//接收后台传过来的json数据
+            // alert(img.imgUrl);
+        });
+
+        $("#img").on('fileerror', function (event, data, msg) {//异步上传失败结果处理
+            alert("uploadError");
         });
     }
 </script>

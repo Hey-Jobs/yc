@@ -16,6 +16,7 @@ use Yii;
  * @property string $image_src
  * @property string $created_at
  * @property string $updated_at
+ * @property integer $status
  */
 class ShoppingMall extends CommonModel
 {
