@@ -59,7 +59,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                 <div class="panel-body">
                     <?php
                     $form = ActiveForm::begin([
-                        'id' => 'lens_form',
+                        'id' => 'live_form',
                         'options' => ['class' => 'form-horizontal col-sm-10', 'enctype' => 'multipart/form-data'],
                         'fieldConfig' => [
                             'template' => '<div class="form-group">
@@ -159,7 +159,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             language: 'zh', //设置语言
             uploadUrl: '', //上传的地址
             allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
-            uploadAsync: true, //默认异步上传
+            uploadAsync: false, //默认异步上传
             showUpload: false, //是否显示上传按钮
             showRemove: true, //显示移除按钮
             showPreview: true, //是否显示预览
@@ -173,10 +173,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
             //minFileCount: 0,
             maxFileCount: 1, //表示允许同时上传的最大文件个数,
-            <?php if(isset($info['pic_path'])): ?>
+            <?php if(isset($pic_info['pic_path'])): ?>
             initialPreviewAsData: true,
             initialPreview: [
-                "/<?= $info['pic_path'] ?? '' ?>",
+                "<?= $pic_info['pic_path'] ?? '' ?>",
             ],
             initialPreviewConfig: [
                 {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
@@ -202,48 +202,32 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             $("#status1").removeAttr("checked");
         });
 
-        $("#lens_form").validate({
+        $("#live_form").validate({
             rules:{
-                lens_name:{
+                room_name:{
                     required: true,
                 },
-                online_url: {
-                    required: true,
+                addr_url: {
                     url: true
                 },
-                playback_url: {
-                    required: true,
-                    url: true
-                },
-                bgm_url:{
-                    required: true,
-                    url: true
-                },
-                marvellous_url:{
-                    required: true,
-                    url: true
-                },
-                number: {
-                    required: true,
-                    number: true
-                },
+
             },
 
         });
 
 
         $("#sub-form").click(function () {
-            if($("#lens_form").valid()){
+            if($("#live_form").valid()){
                 if($("#cover_img").val() == '' && $("#pcover_img").val() == ''){
                     affirmSwals('失败', "请上传封面图片", 'error', placeholder);
                     return false;
                 }
 
-                var form_data = new FormData($( "#lens_form" )[0]);
+                var form_data = new FormData($( "#live_form" )[0]);
                 $.ajax({
                     type:'POST',
                     dataType: 'json',
-                    url : '<?php echo yii\helpers\Url::to('/lens/save')?>',
+                    url : '<?php echo yii\helpers\Url::to('/live/save')?>',
                     data : form_data,
                     async: false,
                     async: false,
@@ -263,10 +247,5 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         });
 
     });
-
-
-    function goLink(url) {
-        window.location.href = url;
-    }
 
 </script>

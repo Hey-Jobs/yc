@@ -122,7 +122,6 @@ class VideoController extends CommonController
             }
 
         } else {
-            $model = new Video();
             $model->click_num = 1;
             $model->created_at = time();
         }

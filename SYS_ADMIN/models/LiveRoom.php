@@ -19,6 +19,7 @@ class LiveRoom extends ActiveRecord
     public function rules()
     {
         return [
+            [[ 'room_name', ], 'required'],
 
         ];
     }
@@ -47,7 +48,7 @@ class LiveRoom extends ActiveRecord
      */
     public static function getUserRoomId()
     {
-        $user_id = \Yii::$app->user->identity->getId();
+        $user_id = \Yii::$app->user->id;
 
         $model = self::find()
             ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);

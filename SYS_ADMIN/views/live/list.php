@@ -41,7 +41,11 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                     直播间管理
                 </div>
                 <div class="panel-body">
-
+                    <?php if($is_admin === true) :?>
+                    <div style="margin-bottom: 10px;">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info') ?>" class="btn btn-primary">新增直播间</a>
+                    </div>
+                    <?php endif;?>
                     <table id="lens_table"  class="table table-striped table-bordered table-hover" width="100%">
                         <thead>
                         <tr>
@@ -79,17 +83,17 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {"data": "id"},
                 {"data": "uname"},
                 {"data": "room_name"},
-                {"data": "logo_img"},
+                {"data": "pic_path"},
                 {"data": "click_num"},
                 {"data": "status"},
             ],
+            order: [[ 0, "desc" ]],
             aoColumnDefs: [
                 {
                     "targets": 6,
                     "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLive('"+ row.id +"')\"> 编辑 </a>";
-                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteLive('"+ row.id +"')\"> 删除 </a>";
                         return html;
                     }
                 },
@@ -105,7 +109,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
 
     function showPic(path){
-        return path ? "<img src=\"/"+path+"\" class=\"show-img\">" : "";
+        return path ? "<img src=\""+path+"\" class=\"show-img\">" : "";
     }
 
     function deleteLive(autoId)

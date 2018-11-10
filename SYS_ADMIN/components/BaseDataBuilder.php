@@ -36,7 +36,7 @@ class BaseDataBuilder
                 break;
 
             case "User":
-                $list = self::defaultPair($modelBuild, 'id', 'username');
+                $list = self::UserPair();
                 break;
 
             default :
@@ -65,6 +65,16 @@ class BaseDataBuilder
         $list = \SYS_ADMIN\models\LiveRoom::find()
             ->select(['id', 'room_name as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->asArray()
+            ->all();
+        return $list;
+    }
+
+    private static function UserPair()
+    {
+        $list = \SYS_ADMIN\models\User::find()
+            ->select(['id', 'name as text'])
+            ->where(['status' => ConStatus::$USER_ENABLE])
             ->asArray()
             ->all();
         return $list;

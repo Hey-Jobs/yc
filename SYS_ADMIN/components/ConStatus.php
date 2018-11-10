@@ -19,6 +19,8 @@ class ConStatus
     static $STATUS_DISABLE = 2;
     static $STATUS_DELETED = 4;
 
+    static $USER_ENABLE = 10;
+
     static $STATUS_LIST = [
         '1' => '正常',
         '2' => '暂停',

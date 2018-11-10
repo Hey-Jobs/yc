@@ -33,21 +33,4 @@ class LiveRoomExtend extends ActiveRecord
         ];
     }
 
-    public static function getExtRoomInfo($room_id)
-    {
-        $room_info = self::find()
-            ->alias('e')
-            ->innerJoin('sys_live_room as r', 'r.id = e.room_id')
-            ->leftJoin('sys_pictrue as p', 'p.id = cover_img')
-            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
-            ->andWhere(['r.id' => $room_id])
-            ->select(['e.*', 'p.pic_name', 'p.pic_path', 'p.pic_size',])
-            ->asArray()
-            ->one();
-
-        if($room_info['pic_path']){
-            $room_info['pic_path'] = CommonHelper::getPicPath($room_info['pic_path']);
-        }
-        return $room_info;
-    }
 }

@@ -49,7 +49,7 @@ class SearchWidget
             'options' => ['placeholder' => $placeholder],
             'value'   => $defaultValue ?? "",
             'pluginOptions' => [
-                'allowClear' => true
+                'allowClear' => false
             ],
         ]);
         return $result;

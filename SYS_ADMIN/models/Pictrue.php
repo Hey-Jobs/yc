@@ -113,8 +113,9 @@ class Pictrue extends ActiveRecord
             ->asArray()
             ->one();
 
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         if($pictrue_info['pic_path']){
-            $pictrue_info['pic_path'] = $_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pictrue_info['pic_path']);
+            $pictrue_info['pic_path'] = $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pictrue_info['pic_path']);
         }
 
         return $pictrue_info;
