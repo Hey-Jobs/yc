@@ -9,6 +9,8 @@
 namespace SYS_ADMIN\components;
 
 
+use SYS_ADMIN\models\LiveRoom;
+
 class BaseDataBuilder
 {
     private static $_instance = null;
@@ -39,6 +41,10 @@ class BaseDataBuilder
                 $list = self::UserPair();
                 break;
 
+            case "UserLiveRoom":
+                $list = self::liveRoomPair();
+                break;
+
             default :
                 return false;
         }
@@ -62,9 +68,11 @@ class BaseDataBuilder
 
     private static function liveRoomPair()
     {
+        $room_id = CommonHelper::isAdmin() ? [] : array_keys(LiveRoom::getUserRoomId());
         $list = \SYS_ADMIN\models\LiveRoom::find()
             ->select(['id', 'room_name as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->filterWhere(['in',  'id', $room_id ])
             ->asArray()
             ->all();
         return $list;

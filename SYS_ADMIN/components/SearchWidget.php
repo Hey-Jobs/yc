@@ -25,7 +25,7 @@ class SearchWidget
 
     public function liveRoom($name = 'room_id', $defaultValue = '', $placeholder = '')
     {
-        $data = BaseDataBuilder::instance('LiveRoom', true);
+        $data = BaseDataBuilder::instance('UserLiveRoom', true);
         $result = Select2::widget([
             'name'    => $name,
             'data'    => $data,
