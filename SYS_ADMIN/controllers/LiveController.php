@@ -9,6 +9,7 @@
 namespace SYS_ADMIN\controllers;
 
 
+use common\models\User;
 use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\LiveRoom;
@@ -21,24 +22,43 @@ class LiveController extends CommonController
 
     public function actionIndex()
     {
-        // 管理员
-        if(\Yii::$app->request->get('api')){
-            $live_list = LiveRoom::find()
-                ->innerJoin('sys_user u', 'u.id = r.user_id')
-                ->where(['<>', 'r.status', 0])
-                ->select(['r.*', 'u.name as uname'])
-                ->asArray()
-                ->all();
 
-            if(count($live_list)){
-                $pic_List = BaseDataBuilder::instance('Pictrue', true);
-                foreach ($live_list as &$live){
-                    $live['pic_name'] = $pic_List['pic_name'];
-                    $live['pic_path'] = $pic_List['pic_path'];
-                    $live['pic_size'] = $pic_List['pic_size'];
-                }
+        if(\Yii::$app->request->get('api')){
+
+            // 管理员
+            $model = LiveRoom::find()
+                ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+
+            if(!$this->isAdmin){
+                $model->andWhere(['user_id', \Yii::$app->user->id]);
             }
 
+            $live_list = $model->asArray()->all();
+            if(count($live_list) > 0){
+                $picid_list = array_column($live_list, 'logo_img');
+                $userid_list = array_column($live_list, 'user_id');
+                $user_list = User::find()
+                    ->where(['in', 'id', $userid_list])
+                    ->select(['name', 'id'])
+                    ->indexBy('id')
+                    ->asArray()
+                    ->all(); // 所属用户
+
+
+                $pic_list = Pictrue::find()
+                    ->where(['in', 'id', $picid_list])
+                    ->indexBy('id')
+                    ->asArray()
+                    ->all(); // logo
+
+                foreach ($live_list as &$live){
+                    $live['pic_name'] = isset($pic_list[$live['logo_img']]) ? $pic_list[$live['logo_img']]['pic_name'] : "";
+                    $live['pic_path'] = isset($pic_list[$live['logo_img']]) ?  $pic_list[$live['logo_img']]['pic_path'] : "";
+                    $live['pic_size'] = isset($pic_list[$live['logo_img']]) ?  $pic_list[$live['logo_img']]['pic_size'] : "";
+                    $live['uname'] = $user_list[$live['user_id']]['name'];
+                }
+
+            }
 
             $this->successInfo($live_list);
         } else {
@@ -52,23 +72,29 @@ class LiveController extends CommonController
     public function actionBaseInfo()
     {
         $room_info = [];
-        $pic_logo = [];
-        $pic_cover = [];
-        $room_extend = [];
+        $pic_info = [];
+        $user_room = LiveRoom::getUserRoomId();
         $room_id = \Yii::$app->request->get('id');
 
-        if(LiveRoom::getRoomId()){ // 商家查看自己资料
-            $room_id = LiveRoom::getRoomId();
+        if(!array_key_exists($room_id, $user_room) && !$this->isAdmin){ // 商家查看自己资料
+            \Yii::$app->getSession()->setFlash('info', 'This is the message');
         }
 
-        if(!empty($room_id)){
-            $room_info = LiveRoom::getRoomInfo($room_id);
+        $room_info = LiveRoom::findOne(['id' => $room_id]);
+        if($room_info){
+            $room_info = $room_info ->toArray();
+            $room_name = LiveRoom::getRoomNameById($room_id);
+            if(isset($room_info['logo_img'])){ // 封面图片
+                $pic_info = Pictrue::getPictrueById($room_info['logo_img']);
+            }
         }
 
 
         return $this->render("base", [
             'info' => $room_info,
             'room_id' => $room_id,
+            'pic_info' => $pic_info,
+            'is_admin' => $this->isAdmin,
         ]);
     }
 
@@ -78,18 +104,12 @@ class LiveController extends CommonController
      */
     public function actionExtInfo()
     {
-        $room_info = [];
         $pic_info = [];
-        $room_extend = [];
-        $user_room = LiveRoom::getRoomId();
+        $user_room = LiveRoom::getUserRoomId();
         $room_id = \Yii::$app->request->get('id');
 
         if(!array_key_exists($room_id, $user_room) && !$this->isAdmin){ // 商家查看自己资料
             return $this->errorInfo(400, "参数错误");
-        }
-
-        if($user_room == 0 && empty($room_id)){
-            return $this->redirect("/live/index");
         }
 
         $room_info = LiveRoomExtend::getExtRoomInfo($room_id);
@@ -103,6 +123,7 @@ class LiveController extends CommonController
             'room_name' => $room_name,
             'pic_info' => $pic_info,
             'room_id' => $room_id,
+            'is_admin' => $this->isAdmin,
         ]);
     }
 

@@ -8,6 +8,7 @@
 
 namespace SYS_ADMIN\controllers;
 use Codeception\Lib\Connector\Yii2;
+use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
@@ -47,7 +48,7 @@ class LensController extends  CommonController
 
         $model = new  Lens();
         if(!empty($id)){
-            $model = Lens::find()->where(['<>', 'status', 0]);
+            $model = Lens::find()->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
             $model->andWhere(['id' => $id]);
             if(LiveRoom::getRoomId()){
                 $model->andWhere(['room_id' => LiveRoom::getRoomId()]);

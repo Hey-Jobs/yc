@@ -105,7 +105,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
 
     function showPic(path){
-        return path ? "<img src=\"/"+path+"\" class=\"show-img\">" : "";
+        return path ? "<img src=\""+path+"\" class=\"show-img\">" : "";
     }
 
     function deleteLens(autoId)

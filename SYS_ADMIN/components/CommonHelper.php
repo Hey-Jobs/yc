@@ -27,7 +27,14 @@ class CommonHelper
      */
     public static function isAdmin()
     {
-        return true;
+        $user_role = \Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id);
+        $role = key($user_role);
+        if($role == 'admin'){
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 

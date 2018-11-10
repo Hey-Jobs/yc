@@ -77,7 +77,6 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <div class="col-sm-10"><input type="text" class="form-control" name="room_name" value="<?= $info['room_name'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
-                    <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
                         <label class="col-sm-2 control-label">直播间LOGO</label>
@@ -108,12 +107,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
-                        <div id="allmap"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
+                    <?php if($is_admin === true) :?>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">排序值</label>
 
@@ -146,9 +140,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             <input type="hidden" name="logo_img" id="logo_img" value="<?= $info['logo_img'] ?? '' ?>"/>
                             <input type="hidden" name="id" value="<?= $info['id'] ?? 0 ?>"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
-                            <?php if(\SYS_ADMIN\models\LiveRoom::getRoomId() == 0) :?>
                             <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
-                            <?php endif;?>
+
                         </div>
                     </div>
                     <?php ActiveForm::end() ?>
@@ -168,9 +161,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             showUpload: false, //是否显示上传按钮
             showRemove: true, //显示移除按钮
             showPreview: true, //是否显示预览
-            showCaption: false,//是否显示标题
+            showCaption: true,//是否显示标题
             browseClass: "btn btn-primary", //按钮样式
-            //dropZoneEnabled: false,//是否显示拖拽区域
+            dropZoneEnabled: false,//是否显示拖拽区域
             //minImageWidth: 50, //图片的最小宽度
             //minImageHeight: 50,//图片的最小高度
             //maxImageWidth: 1000,//图片的最大宽度

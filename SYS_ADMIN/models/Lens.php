@@ -9,6 +9,8 @@
 namespace SYS_ADMIN\models;
 
 
+use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\components\ConStatus;
 use yii\db\ActiveRecord;
 
 class Lens extends ActiveRecord
@@ -43,22 +45,31 @@ class Lens extends ActiveRecord
      */
     public static function  getLensList()
     {
-        $room_id = LiveRoom::getRoomId();
+        $user_room = LiveRoom::getUserRoomId();
+        $room_id = array_keys($user_room);
         $model = self::find()
-            ->alias('l')
-            ->innerJoin('sys_live_room r', 'r.id = l.room_id')
-            ->leftJoin('sys_pictrue p', 'p.id = l.cover_img')
-            ->where(['<>', 'l.status', 0]);
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
 
-        if($room_id  > 0){
-            $model->andWhere(['l.room_id' => $room_id]);
+        if(!CommonHelper::isAdmin()){
+            $model->andWhere(['in', 'room_id', $room_id]);
         }
 
-        $lens_list = $model->select(['r.room_name', 'l.*', 'p.pic_path'])->orderBy('l.id desc')->asArray()->all();
+        $lens_list = $model->orderBy('id desc')->asArray()->all();
         if(count($lens_list)){
+            $pic_id = array_column($lens_list,'cover_img');
+            $pic_list = Pictrue::find()
+                ->where(['in', 'id', $pic_id])
+                ->select(['id', 'pic_name', 'pic_path'])
+                ->indexBy('id')
+                ->asArray()
+                ->all();
+
             foreach ($lens_list as &$len){
+                $len['room_name'] = $user_room[$len['room_id']]['room_name'];
                 $len['created_at'] = date('Y-m-d H:i');
                 $len['status'] = \Yii::$app->params['status'][$len['status']];
+                $len['pic_path'] = isset($pic_list[$len['cover_img']])  ? CommonHelper::getPicPath($pic_list[$len['cover_img']]['pic_path']) : "";
+
             }
         }
 
