@@ -11,7 +11,9 @@ namespace SYS_ADMIN\controllers;
 
 use common\models\User;
 use SYS_ADMIN\components\BaseDataBuilder;
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Pictrue;
@@ -24,13 +26,13 @@ class LiveController extends CommonController
     {
 
         if(\Yii::$app->request->get('api')){
-
+            $room_id = array_keys($this->user_room);
             // 管理员
             $model = LiveRoom::find()
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
 
             if(!$this->isAdmin){
-                $model->andWhere(['user_id', \Yii::$app->user->id]);
+                $model->andWhere(['in', 'id', $room_id]);
             }
 
             $live_list = $model->asArray()->all();
@@ -44,13 +46,7 @@ class LiveController extends CommonController
                     ->asArray()
                     ->all(); // 所属用户
 
-
-                $pic_list = Pictrue::find()
-                    ->where(['in', 'id', $picid_list])
-                    ->indexBy('id')
-                    ->asArray()
-                    ->all(); // logo
-
+                $pic_list = Pictrue::getPictrueList($picid_list);
                 foreach ($live_list as &$live){
                     $live['pic_name'] = isset($pic_list[$live['logo_img']]) ? $pic_list[$live['logo_img']]['pic_name'] : "";
                     $live['pic_path'] = isset($pic_list[$live['logo_img']]) ?  $pic_list[$live['logo_img']]['pic_path'] : "";
@@ -74,27 +70,32 @@ class LiveController extends CommonController
         $room_info = [];
         $pic_info = [];
         $user_room = LiveRoom::getUserRoomId();
-        $room_id = \Yii::$app->request->get('id');
+        $id = \Yii::$app->request->get('id', 0);
+        $user_id = 0;
 
-        if(!array_key_exists($room_id, $user_room) && !$this->isAdmin){ // 商家查看自己资料
-            \Yii::$app->getSession()->setFlash('info', 'This is the message');
-        }
-
-        $room_info = LiveRoom::findOne(['id' => $room_id]);
-        if($room_info){
+        if(!empty($id)){ // 编辑
+            $room_info = LiveRoom::findOne(['id' => $id]);
             $room_info = $room_info ->toArray();
-            $room_name = LiveRoom::getRoomNameById($room_id);
-            if(isset($room_info['logo_img'])){ // 封面图片
+            if(!CommonHelper::checkRoomId($room_info['id'])){
+                return $this->render('/site/error', [
+                    "message" => ConStatus::$ERROR_PARAMS_MSG
+                ]);
+            }
+
+            if(!empty($room_info['logo_img'])){ // 封面图片
                 $pic_info = Pictrue::getPictrueById($room_info['logo_img']);
             }
+            $user_id = $room_info['user_id'];
         }
 
-
+        $title = empty($id) ? "新增直播间" : "编辑直播间";
+        $user_html = SearchWidget::instance()->userList('user_id', $user_id);
         return $this->render("base", [
             'info' => $room_info,
-            'room_id' => $room_id,
+            'user_html' => $user_html,
             'pic_info' => $pic_info,
             'is_admin' => $this->isAdmin,
+            'title' => $title,
         ]);
     }
 

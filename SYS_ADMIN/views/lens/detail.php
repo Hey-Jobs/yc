@@ -63,6 +63,15 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             ],
                         ]) ?>
 
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属直播间</label>
+
+                        <div class="col-sm-10">
+                            <?= $room_html ?>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
                         <div class="form-group">
                             <label class="col-sm-2 control-label">镜头名称</label>
 
@@ -105,7 +114,6 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         </div>
                         <div class="hr-line-dashed"></div>
 
-                        <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">排序值</label>
 
@@ -157,9 +165,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             showUpload: false, //是否显示上传按钮
             showRemove: true, //显示移除按钮
             showPreview: true, //是否显示预览
-            showCaption: false,//是否显示标题
+            showCaption: true,//是否显示标题
             browseClass: "btn btn-primary", //按钮样式
-            //dropZoneEnabled: false,//是否显示拖拽区域
+            dropZoneEnabled: false,//是否显示拖拽区域
             //minImageWidth: 50, //图片的最小宽度
             //minImageHeight: 50,//图片的最小高度
             //maxImageWidth: 1000,//图片的最大宽度

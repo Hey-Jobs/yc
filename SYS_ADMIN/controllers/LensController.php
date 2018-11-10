@@ -8,7 +8,9 @@
 
 namespace SYS_ADMIN\controllers;
 use Codeception\Lib\Connector\Yii2;
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
@@ -43,17 +45,30 @@ class LensController extends  CommonController
     {
         $lens_info = [];
         $pic_info = [];
+        $room_id = 0;
         $id = \Yii::$app->request->get('id');
         $id = intval($id);
 
-        $model = new  Lens();
-        if(!empty($id)){
-            $model = Lens::find()->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
-            $model->andWhere(['id' => $id]);
-            if(LiveRoom::getRoomId()){
-                $model->andWhere(['room_id' => LiveRoom::getRoomId()]);
-            }
+        $model = new Lens();
+        $title = $id ? "编辑镜头" : "新增镜头";
+
+        if(!empty($id)){ // 编辑资料
+
+            $model = Lens::find()
+                ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+                ->andWhere(['id' => $id]);
+
             $lens_info = $model->asArray()->one();
+            if($lens_info){
+                if(!$this->isAdmin && !array_key_exists($lens_info['room_id'], $this->user_room)){
+                    return $this->render('/site/error', [
+                        'name' => $title,
+                        'message' => '访问错误'
+                    ]);
+                }
+
+                $room_id = $lens_info['room_id'];
+            }
 
             if(isset($lens_info['cover_img'])){ // 封面图信息
                 $pic_info = Pictrue::find()
@@ -63,10 +78,13 @@ class LensController extends  CommonController
             }
         }
 
+        $room_html = SearchWidget::instance()->liveRoom('room_id', $room_id);
         return $this->render("detail", [
             'info' => $lens_info,
             'model' => $model,
-            'pic_info' => $pic_info
+            'pic_info' => $pic_info,
+            'name' => $title,
+            'room_html' => $room_html,
         ]);
     }
 
@@ -77,6 +95,7 @@ class LensController extends  CommonController
     {
         $id =\Yii::$app->request->post('id');
         $lens_name =\Yii::$app->request->post('lens_name');
+        $room_id = \Yii::$app->request->post('room_id');
         $cover_img =\Yii::$app->request->post('cover_img', '');
         $online_url =\Yii::$app->request->post('online_url');
         $playback_url =\Yii::$app->request->post('playback_url');
@@ -89,32 +108,29 @@ class LensController extends  CommonController
         $model->attributes = \Yii::$app->request->post();
         if(!$model->validate()){
             $errors = implode($model->getFirstErrors(), "\r\n");
-            return $this->errorInfo(400, $errors);
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
+        }
+
+        if(!$this->isAdmin && !array_key_exists($room_id, $this->user_room)){
+            if(empty($room_id)){
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
+            }
         }
 
         if(!empty($id)){ // 更新
-            $where['id'] = $id;
-            if(LiveRoom::getRoomId()){
-                $where['room_id'] = LiveRoom::getRoomId();
-            }
-
             $model = Lens::find()
-                ->where($where)
-                ->andWhere(['<>', 'status', 0])
+                ->where(['id' => $id])
+                ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
                 ->one();
 
-
         } else { // 新增
-            $room_id = LiveRoom::getRoomId();
             if(empty($room_id)){
-                return $this->errorInfo(400, "参数错误room_id");
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
             }
 
             $model->click_num = 1;
-            $model->room_id = $room_id;
             $model->created_at = time();
         }
-
 
         $model->lens_name = $lens_name;
         $model->online_url = $online_url;
@@ -125,6 +141,7 @@ class LensController extends  CommonController
         $model->sort_num = $sort_num;
         $model->updated_at = time();
         $model->cover_img = $cover_img;
+        $model->room_id = $room_id;
 
         if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){
             $picModel = new Pictrue();
@@ -133,10 +150,9 @@ class LensController extends  CommonController
             if(isset($img_list['images'])){
                 $model->cover_img = $img_list['images'];
             } else {
-                return $this->errorInfo(400, $img_list['info']);
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_Upload, $img_list['info']);
             }
         }
-
 
         if($model->save()){
             return $this->successInfo(true);
@@ -156,21 +172,23 @@ class LensController extends  CommonController
         $id = intval($id);
 
         if(empty($id)){
-            return $this->errorInfo(400, "参数错误");
-        }
-
-        $where['id'] = $id;
-        $room_id = LiveRoom::getRoomId();
-        if($room_id){
-            $where['room_id'] = $room_id;
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, "参数错误");
         }
 
         $model = Lens::find()
-            ->where($where)
-            ->andWhere(['<>', 'status', 0])
+            ->where(['id' => $id])
+            ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
             ->one();
 
-        $model->status = 0;
+        if(empty($model)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, "参数错误");
+        }
+
+        if(!$this->isAdmin && array_key_exists($model->room_id, $this->user_room)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
+        }
+
+        $model->status = ConStatus::$STATUS_DELETED;
         $model->updated_at = time();
 
         if($model->save()){

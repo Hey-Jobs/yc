@@ -8,6 +8,8 @@
 namespace SYS_ADMIN\components;
 
 
+use SYS_ADMIN\models\LiveRoom;
+
 class CommonHelper
 {
     /**
@@ -34,7 +36,21 @@ class CommonHelper
         } else {
             return false;
         }
+    }
 
+    /**
+     * @param $room_id
+     * 检测是否 有权操作该直播间
+     */
+    public static function checkRoomId($room_id)
+    {
+        $flag = true;
+        $user_room = LiveRoom::getUserRoomId();
+        if(!CommonHelper::isAdmin() && !array_keys($room_id, $user_room)){
+            $flag = false;
+        }
+
+        return $flag;
     }
 
 

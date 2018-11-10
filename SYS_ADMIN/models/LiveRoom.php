@@ -9,6 +9,8 @@
 namespace SYS_ADMIN\models;
 
 
+use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\components\ConStatus;
 use yii\db\ActiveRecord;
 
 class LiveRoom extends ActiveRecord
@@ -39,24 +41,26 @@ class LiveRoom extends ActiveRecord
     }
 
     /**
-     * @return int|mixed
+     * @return array|ActiveRecord[]
+     * 返回 所属用户的直播间
+     * 管理员 返回所有直播间
      */
     public static function getUserRoomId()
     {
-        $room_id = 0;
         $user_id = \Yii::$app->user->identity->getId();
 
-        $room_info = self::find()
-            ->where(['user_id' => $user_id])
-            ->select(['id', 'user_id', 'room_name'])
+        $model = self::find()
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+
+        if(!CommonHelper::isAdmin()){
+            $model->andWhere(['user_id' => $user_id]);
+        }
+
+        $room_info = $model->select(['id', 'user_id', 'room_name'])
             ->indexBy('id')
             ->asArray()
             ->all();
 
-        /*if(!empty($room_info)){
-            $room_id = $room_info['id'];
-        }
-        $room_id = 0;*/
         return $room_info;
     }
 

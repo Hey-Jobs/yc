@@ -56,12 +56,21 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                                         <div class="form-group row text-left" style="display: none;">
                                             <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                         </div>
+
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">所属直播间：</label>
+                                            <div class="col-sm-9">
+                                                <?= $room_html?>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">视频名称：</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="video_name"  placeholder="视频名称"/>
                                             </div>
                                         </div>
+
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">视频链接：</label>
                                             <div class="col-sm-9">
@@ -137,6 +146,9 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                 sort_num: {
                     required: true,
                 },
+                room_id: {
+                    required: true,
+                }
             },
 
         });
@@ -161,6 +173,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                 {"data": "status"},
                 {"data": "created_at"},
             ],
+            order: [[ 0, "desc" ]],
             aoColumnDefs: [
                 {
                     "targets": 7,
@@ -210,6 +223,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     function updateVideo(autoId = '')
     {
         if (autoId.length != 0) {
+            // 初始化选中 所属直播间
             var data;
             $("#btnText").html('修改视频信息');
             $.ajax({
@@ -226,7 +240,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                         $("[name='video_name']").val(data.video_name);
                         $("[name='video_url']").val(data.video_url);
                         $("[name='sort_num']").val(data.sort_num);
-
+                        $("#w0").select2('val',data.room_id);
                         if(data.status == 1){
                             $("#status1").attr("checked","checked");
                             $("#status2").removeAttr("checked");

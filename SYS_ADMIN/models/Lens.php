@@ -18,7 +18,7 @@ class Lens extends ActiveRecord
     public function rules()
     {
         return [
-            [['lens_name',], 'required'],
+            [['lens_name', 'room_id'], 'required'],
             [['sort_num', 'status'], 'integer'],
         ];
     }
@@ -50,26 +50,20 @@ class Lens extends ActiveRecord
         $model = self::find()
             ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
 
-        if(!CommonHelper::isAdmin()){
+        if(!CommonHelper::isAdmin()){ // 非管理员
             $model->andWhere(['in', 'room_id', $room_id]);
         }
 
         $lens_list = $model->orderBy('id desc')->asArray()->all();
         if(count($lens_list)){
             $pic_id = array_column($lens_list,'cover_img');
-            $pic_list = Pictrue::find()
-                ->where(['in', 'id', $pic_id])
-                ->select(['id', 'pic_name', 'pic_path'])
-                ->indexBy('id')
-                ->asArray()
-                ->all();
+            $pic_list = Pictrue::getPictrueList($pic_id);
 
             foreach ($lens_list as &$len){
-                $len['room_name'] = $user_room[$len['room_id']]['room_name'];
+                $len['room_name'] = isset($user_room[$len['room_id']]) ? $user_room[$len['room_id']]['room_name'] : "";
                 $len['created_at'] = date('Y-m-d H:i');
-                $len['status'] = \Yii::$app->params['status'][$len['status']];
-                $len['pic_path'] = isset($pic_list[$len['cover_img']])  ? CommonHelper::getPicPath($pic_list[$len['cover_img']]['pic_path']) : "";
-
+                $len['status'] = ConStatus::$STATUS_LIST[$len['status']];
+                $len['pic_path'] = isset($pic_list[$len['cover_img']])  ? $pic_list[$len['cover_img']]['pic_path'] : "";
             }
         }
 

@@ -8,6 +8,8 @@
 namespace SYS_ADMIN\models;
 
 
+use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\components\ConStatus;
 use yii\data\Pagination;
 use yii\db\ActiveRecord;
 
@@ -17,7 +19,7 @@ class Video extends ActiveRecord
     public function rules()
     {
         return [
-            [['video_name', 'video_url', 'sort_num'], 'required' ],
+            [['room_id', 'video_name', 'video_url', 'sort_num'], 'required' ],
             ['sort_num', 'integer']
         ];
     }
@@ -26,6 +28,7 @@ class Video extends ActiveRecord
     public function attributeLabels()
     {
         return [
+            'room_id' => '所属直播间',
             'video_name' => '视频名称',
             'video_url' => '视频链接',
             'sort_num' => '排序值',
@@ -33,23 +36,24 @@ class Video extends ActiveRecord
         ];
     }
 
-    public function getVideoList($data = [])
+    public static function getVideoList($data = [])
     {
-        $where = ['<>', 'v.status', 0];
+        $user_room = LiveRoom::getUserRoomId();
+        $room_id = array_keys($user_room);
+        $where = ['<>', 'status', ConStatus::$STATUS_DELETED];
         $model = self::find()
-            ->alias('v')
-            ->leftJoin('sys_live_room as r', 'r.id = v.room_id')
             ->where($where);
 
-        if (isset($data['room_id']) && $data['room_id'] > 0) { // 普通管理员，只能查看自己的视频
-            $model->andWhere(['v.room_id' => $data['room_id']]);
+        if (!CommonHelper::isAdmin()) { // 普通管理员，只能查看自己的视频
+            $model->andWhere(['in', 'room_id', $room_id]);
         }
 
-        $video_list = $model->select(['r.room_name', 'v.*'])->orderBy("v.id desc")->asArray()->all();
+        $video_list = $model->asArray()->all();
         if(count($video_list) > 0){
             foreach ($video_list as &$video){
                 $video['created_at'] = date('Y-m-d H:i', $video['created_at']);
-                $video['status'] = \Yii::$app->params['status'][$video['status']];
+                $video['status'] = ConStatus::$STATUS_LIST[$video['status']];
+                $video['room_name'] = $user_room[$video['room_id']]['room_name'];
             }
         }
 

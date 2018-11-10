@@ -10,7 +10,7 @@
 use SYS_ADMIN\assets\AppAsset;
 use yii\widgets\ActiveForm;
 
-$this->title = count($info) > 0 ? "直播间资料" : "新增直播间";
+$this->title = $title;
 
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yii::$app->params['versionJS']);
@@ -42,7 +42,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    <?php echo count($info) > 0 ? "直播间资料" : "新增直播间";?>
+                    <?= $title?>
                 </div>
 
                 <ul id="myTab" class="nav nav-tabs">
@@ -51,7 +51,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             基础信息
                         </a>
                     </li>
-                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>">扩展信息</a></li>
+                    <?php if(count($info) > 0) :?>
+                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$info['id'])?>">扩展信息</a></li>
+                    <?php endif; ?>
                 </ul>
 
                 <div class="panel-body">
@@ -86,14 +88,6 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">地址链接URL</label>
-
-                        <div class="col-sm-10"><input type="text" class="form-control" name="addr_url" id="addr_url" value="<?= $info['addr_url'] ?? "" ?>"></div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
                         <label class="col-sm-2 control-label">直播间地址</label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="addr" id="addr" value="<?= $info['addr'] ?? "" ?>"></div>
@@ -101,13 +95,21 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间坐标地址</label>
+                        <label class="col-sm-2 control-label">地址链接URL</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="coordinate" id="coordinate" value="<?= $info['coordinate'] ?? "" ?>"></div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="addr_url" id="addr_url" value="<?= $info['addr_url'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
                     <?php if($is_admin === true) :?>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属用户</label>
+                        <div class="col-sm-10">
+                            <?= $user_html?>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
                     <div class="form-group">
                         <label class="col-sm-2 control-label">排序值</label>
 

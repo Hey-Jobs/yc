@@ -10,6 +10,7 @@ namespace SYS_ADMIN\models;
 
 
 use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\components\ConStatus;
 use yii\base\Model;
 use yii\db\ActiveRecord;
 
@@ -20,8 +21,8 @@ class Pictrue extends ActiveRecord
     public function rules()
     {
         return [
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'gif'], 'on' => 'pic'],
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'gif'], 'maxFiles' => 4, 'on' => 'pics'],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'gif'], 'on' => 'pic'],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'gif'], 'maxFiles' => 4, 'on' => 'pics'],
         ];
     }
 
@@ -113,10 +114,38 @@ class Pictrue extends ActiveRecord
             ->one();
 
         if($pictrue_info['pic_path']){
-            $pictrue_info['pic_path'] = CommonHelper::getPicPath($pictrue_info['pic_path']);
+            $pictrue_info['pic_path'] = $_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pictrue_info['pic_path']);
         }
 
         return $pictrue_info;
 
+    }
+
+    /**
+     * @param Array $pic_id 图片id
+     * @param bool $domain 图片路径是否需要带域名
+     * 获取 图片列表
+     */
+    public static function getPictrueList($pic_id)
+    {
+        if(empty($pic_id) || !is_array($pic_id)){
+            return [];
+        }
+
+        $pic_list =self::find()
+            ->where(['in', 'id', $pic_id])
+            ->select(['id', 'pic_name', 'pic_path', 'pic_size'])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        if(count($pic_list)){
+            foreach ($pic_list as &$pic){
+                $pic['pic_path'] = $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pic['pic_path']);
+            }
+        }
+
+        return $pic_list;
     }
 }

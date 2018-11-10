@@ -24,4 +24,14 @@ class ConStatus
         '2' => '暂停',
         '4' => '删除'
     ];
+
+    Static $ERROR_PARAMS_MSG = "参数错误";
+    static $STATUS_SUCCESS = 200; // 获取成功
+    static $STATUS_ERROR_PARAMS = 4001; //validate 校验不通过
+    static $STATUS_ERROR_ROOMID = 4002; // 无效质检ID
+    static $STATUS_ERROR_Upload = 4003; // 图片上传失败
+    static $STATUS_ERROR_ID = 4004; // ID 不能为空
+    static $STATUS_ERROR_NONE = 4005; // 信息不存在
+
+
 }

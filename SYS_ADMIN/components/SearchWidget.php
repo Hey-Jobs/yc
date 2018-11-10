@@ -38,4 +38,20 @@ class SearchWidget
         ]);
         return $result;
     }
+
+    public function userList($name = 'user_id',  $defaultValue = '', $placeholder = '')
+    {
+        $data = BaseDataBuilder::instance('User', true);
+        $result = Select2::widget([
+            'name'    => $name,
+            'data'    => $data,
+            'theme'   => Select2::THEME_BOOTSTRAP,
+            'options' => ['placeholder' => $placeholder],
+            'value'   => $defaultValue ?? "",
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+        return $result;
+    }
 }

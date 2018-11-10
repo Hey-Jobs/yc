@@ -83,6 +83,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {"data": "sort_num"},
                 {"data": "status"},
             ],
+            order: [[ 0, "desc" ]],
             aoColumnDefs: [
                 {
                     "targets": 7,

@@ -34,6 +34,11 @@ class BaseDataBuilder
             case "LiveRoomUser" :
                 $list = $list = self::roomUserPair($modelBuild, 'user_id', 'id');
                 break;
+
+            case "User":
+                $list = self::defaultPair($modelBuild, 'id', 'username');
+                break;
+
             default :
                 return false;
         }
