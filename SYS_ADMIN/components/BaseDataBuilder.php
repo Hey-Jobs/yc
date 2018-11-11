@@ -45,6 +45,9 @@ class BaseDataBuilder
                 $list = self::liveRoomPair();
                 break;
 
+            case "Product":
+                $list = self::defaultPair($modelBuild, 'id', 'title');
+                break;
             default :
                 return false;
         }

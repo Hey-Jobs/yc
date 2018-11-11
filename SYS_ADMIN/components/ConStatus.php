@@ -11,10 +11,12 @@ namespace SYS_ADMIN\components;
 
 class ConStatus
 {
-// default page
+    // default page
     static $PAGE_NUM = 1;
     static $PAGE_SIZE = 10;
 
+    // common 公共
+    static $STATUS_PENDING = 0;
     static $STATUS_ENABLE = 1;
     static $STATUS_DISABLE = 2;
     static $STATUS_DELETED = 4;
@@ -27,6 +29,7 @@ class ConStatus
         '4' => '删除'
     ];
 
+    // ORDER 订单
     static $ORDER_PENDING = 0;  // 待发货
     static $ORDER_SENDED = 1;   // 已发货
     static $ORDER_DELIVERY = 2; // 配送中
@@ -47,6 +50,13 @@ class ConStatus
         7 => '用户取消',
     ];
 
+    // COMMENT 评论
+    static $COMMENT_TYPE_ROOM = 1;
+    static $COMMENT_TYPE_PROD = 2;
+
+
+
+    // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";
     static $STATUS_SUCCESS = 200; // 获取成功
     static $STATUS_ERROR_SYS = 4000; // 服务器错误
