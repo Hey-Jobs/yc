@@ -67,6 +67,7 @@ class Pictrue extends ActiveRecord
         $this->setScenario('pics');
         $base_path = "/uploads/images/".date('Ymd').'/';
         if($this->validate()){
+            var_dump('aaa');
             if(!is_dir($base_path) || !is_writable($base_path)){
                 \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
             }
@@ -96,6 +97,7 @@ class Pictrue extends ActiveRecord
 
             return ['status' => 1, 'images' => $pic_list];
         } else {
+            var_dump('aaaa12');
             return ['status' => 401, 'info' => implode(',', $this->getFirstErrors())];
         }
     }

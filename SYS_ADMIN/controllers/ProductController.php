@@ -183,6 +183,9 @@ class ProductController extends CommonController
             }
         }
 
+
+        // 上传图片
+
         $title = "商品详情";
         return $this->render("ext_detail",[
             'info' => $detail,
@@ -198,7 +201,9 @@ class ProductController extends CommonController
     {
         $id = \Yii::$app->request->post('product_id');
         $content = \Yii::$app->request->post('content');
+        $banner_img = \Yii::$app->request->post('banner_img', ',');
 
+        $banner  = array_filter(explode(',', $banner_img));
         $model = new ProductDetail();
         $model->attributes = \Yii::$app->request->post();
 
@@ -207,12 +212,22 @@ class ProductController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
-
         $product_info = Product::findOne($id);
         if(empty($product_info) || !CommonHelper::checkRoomId($product_info->room_id)){
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
+        if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){ // 多图上传
+            $picModel = new Pictrue();
+            $picModel->imageFile = UploadedFile::getInstanceByName('pcover_img');
+            $img_list = $picModel->multiUpload();
+            if(isset($img_list['images'])){
+                var_dump($img_list['images']);
+                $banner = array_merge($banner, $img_list['images']);
+            } else {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_Upload, $img_list['info']);
+            }
+        }
 
         $model = ProductDetail::findOne(['product_id' => $id]);
         if(empty($model)){
@@ -222,6 +237,7 @@ class ProductController extends CommonController
 
         $model->product_id = $id;
         $model->content = $content;
+        $model->banner_img = implode($banner, ',');
 
         if($model->save()){
             return $this->successInfo(true);
