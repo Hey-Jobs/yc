@@ -48,6 +48,11 @@ class BaseDataBuilder
             case "ShoppingMall":
                 $list = self::defaultPair($modelBuild, 'id', 'title');
                 break;
+                
+            case "Product":
+
+                $list = self::defaultPair($modelBuild, 'id', 'title');
+                break;
             default :
                 return false;
         }
