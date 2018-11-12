@@ -87,7 +87,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <label class="col-sm-2 control-label">商品图片</label>
 
                         <div class="col-sm-10">
-                            <input type="file" class="form-control pcover_img" accept="image/*"  name="pcover_img"  multiple >
+                            <input type="file" class="form-control pcover_img" accept="image/*"  name="pcover_img[]"  multiple >
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
@@ -108,7 +108,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <div class="col-sm-8 col-sm-offset-2">
                             <input type="hidden" name="product_id" value="<?= $id ?>"/>
                             <input type="hidden" name="content" id="content"/>
-                            <input type="hidden" name="banner_img" id="banner_img" />
+                            <input type="hidden" name="banner_img" id="banner_img" value="<?= $info['banner_img']?>"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
                             <a href="<?php echo yii\helpers\Url::to('/product/index')?>" class="btn btn-default">返回列表</a>
                         </div>
@@ -124,20 +124,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
     $(function () {
         $(".pcover_img").fileinput({
-            uploadUrl: '#', // you must set a valid URL here else you will get an error
-            allowedFileExtensions : ['jpg', 'png','gif'],
-            overwriteInitial: false,
-            maxFileSize: 1000,
-            maxFilesNum: 10,
-            //allowedFileTypes: ['image', 'video', 'flash'],
-            slugCallback: function(filename) {
-                return filename.replace('(', '_').replace(']', '_');
-            }
-        });
-
-        $("#pcover_img22").fileinput({
             language: 'zh', //设置语言
-            uploadUrl: '', //上传的地址
+            uploadUrl: '#', //上传的地址
             allowedFileExtensions: ['png', 'jpg', 'gif', 'jpeg'],//接收的文件后缀
             uploadAsync: false, //默认异步上传
             showUpload: false, //是否显示上传按钮
@@ -146,17 +134,38 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             showCaption: true,//是否显示标题
             browseClass: "btn btn-primary", //按钮样式
             dropZoneEnabled: true,//是否显示拖拽区域
-            //maxFileCount: 10, //表示允许同时上传的最大文件个数,
-            uploadExtraData: {kvId: '10'},
-            initialPreviewAsData: false,
-            initialPreview: [],
-            initialPreviewConfig: [],
+            overwriteInitial: false,
+            initialPreviewAsData: true,
+            <?php if(count($pic_list)): ?>
+            initialPreview: [
+                <?php foreach ($pic_list as $pic) :?>
+                    '<?= $pic['pic_path']?>',
+                <?php endforeach;?>
+            ],
 
-        }).on("filebatchselected", function(event, files) {
-            $(this).fileinput("upload");
-        }).on("fileuploaded", function(event, data, previewId, index) {
+            initialPreviewConfig: [
+                <?php foreach ($pic_list as $pic) :?>
+                {
+                    caption: "<?= $pic['pic_name'] ?? '' ?>",
+                    size: "<?= $pic['pic_size'] ?? '' ?>",
+                    width: "120px",
+                    key: "<?= $pic['id'] ?? '' ?>",
+                },
+                <?php endforeach;?>
+            ],
+
+            <?php endif;?>
         });
 
+
+        $(".kv-file-remove").click(function () {
+            if($(this).data('key')){
+                var banner_img = $("#banner_img").val();
+                banner_img.replace($(this).data('key'), "");
+                $("#banner_img").val(banner_img.replace($(this).data('key'), ""));
+                $(this).closest(".file-preview-frame").remove();
+            }
+        });
 
         var content = '<?= $info['content'] ?? "" ?>';
         $('.summernote').summernote({

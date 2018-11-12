@@ -160,7 +160,7 @@ class ProductController extends CommonController
         }
 
         if($model->save()){
-            return $this->successInfo(true);
+            return $this->successInfo(['id' => $model->id]);
         } else {
             return $this->errorInfo(400);
         }
@@ -174,6 +174,7 @@ class ProductController extends CommonController
     {
         $id = \Yii::$app->request->get('id');
         $detail = [];
+        $pic_list = [];
 
         $product_info = Product::findOne($id);
         $detail = ProductDetail::findOne(['product_id' => $id]);
@@ -181,16 +182,20 @@ class ProductController extends CommonController
             if(!CommonHelper::checkRoomId($product_info->room_id)){
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
             }
+
+            if(!empty($detail['banner_img'])){
+                $pic_id = explode(',', $detail['banner_img']);
+                $pic_list = Pictrue::getPictrueList($pic_id);
+            }
         }
 
-
-        // 上传图片
 
         $title = "商品详情";
         return $this->render("ext_detail",[
             'info' => $detail,
             'title' => $title,
             'id' => $id,
+            'pic_list' => $pic_list,
         ]);
     }
 
@@ -217,16 +222,21 @@ class ProductController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){ // 多图上传
+        if(isset($_FILES['pcover_img']) && isset($_FILES['pcover_img']['name'])
+            && !empty($_FILES['pcover_img']['name'][0])){ // 多图上传
             $picModel = new Pictrue();
-            $picModel->imageFile = UploadedFile::getInstanceByName('pcover_img');
+            $picModel->imageFile = UploadedFile::getInstancesByName('pcover_img');
             $img_list = $picModel->multiUpload();
             if(isset($img_list['images'])){
-                var_dump($img_list['images']);
                 $banner = array_merge($banner, $img_list['images']);
             } else {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_Upload, $img_list['info']);
             }
+        }
+
+
+        if(count($banner) > ConStatus::$PRODUCT_MAX_NUM){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_IMG_NUM, ConStatus::$ERROR_MSG_IMG_NUM);
         }
 
         $model = ProductDetail::findOne(['product_id' => $id]);
