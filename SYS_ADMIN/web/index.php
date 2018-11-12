@@ -3,6 +3,10 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 defined('YII_FRAMEWORK_PATH') or define('YII_FRAMEWORK_PATH', __DIR__ . '/../../SYS_YiiFramework');
 
+header("Access-Control-Allow-Origin:*");
+header("Access-Control-Allow-Method: GET, POST, PUT");
+header("Access-Control-Allow-Credentials: true");
+
 require(YII_FRAMEWORK_PATH . '/vendor/autoload.php');
 require(YII_FRAMEWORK_PATH . '/vendor/yiisoft/yii2/Yii.php');
 require(YII_FRAMEWORK_PATH . '/common/config/bootstrap.php');

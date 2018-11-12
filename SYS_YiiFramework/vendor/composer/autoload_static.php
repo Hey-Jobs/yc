@@ -75,6 +75,7 @@ class ComposerStaticInit0da678e43b8020007e6aa6b8b4affe98
         ),
         'F' => 
         array (
+            'Firebase\\JWT\\' => 13,
             'Faker\\' => 6,
         ),
         'D' => 
@@ -200,6 +201,10 @@ class ComposerStaticInit0da678e43b8020007e6aa6b8b4affe98
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Faker\\' => 
         array (
