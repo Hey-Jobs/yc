@@ -33,7 +33,7 @@ class SearchWidget
             'options' => ['placeholder' => $placeholder],
             'value'   => $defaultValue ?? "",
             'pluginOptions' => [
-                'allowClear' => true
+                'allowClear' => false
             ],
         ]);
         return $result;
@@ -61,6 +61,22 @@ class SearchWidget
     public function userList($name = 'user_id',  $defaultValue = '', $placeholder = '')
     {
         $data = BaseDataBuilder::instance('User', true);
+        $result = Select2::widget([
+            'name'    => $name,
+            'data'    => $data,
+            'theme'   => Select2::THEME_BOOTSTRAP,
+            'options' => ['placeholder' => $placeholder],
+            'value'   => $defaultValue ?? "",
+            'pluginOptions' => [
+                'allowClear' => false
+            ],
+        ]);
+        return $result;
+    }
+
+    public function mallList($name = 'mall_id', $defaultValue = '', $placeholder = '')
+    {
+        $data = BaseDataBuilder::instance('ShoppingMall', true);
         $result = Select2::widget([
             'name'    => $name,
             'data'    => $data,

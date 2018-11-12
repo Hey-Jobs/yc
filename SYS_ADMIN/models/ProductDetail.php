@@ -29,9 +29,9 @@ class ProductDetail extends CommonModel
     public function rules()
     {
         return [
-            [['id', 'product_id'], 'required'],
+            [['product_id'], 'required'],
             [['id', 'product_id'], 'integer'],
-            [['content'], 'string'],
+            [['content', 'banner_img'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -47,6 +47,7 @@ class ProductDetail extends CommonModel
             'content' => 'Content',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'banner_img' => '商品图片'
         ];
     }
 }
