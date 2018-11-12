@@ -257,7 +257,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     processData: false,
                     success: function(result) {
                         if ('200' == result.status) {
-                            affirmSwals('成功', '成功', 'success', confirmFunc);
+                            affirmSwals('成功', '成功', 'success', function () {
+                                window.location.href = "/product/detail?id="+result.data.id
+                            });
                         } else {
                             affirmSwals('失败', result.message, 'error', placeholder);
                         }

@@ -22,7 +22,7 @@ class Pictrue extends ActiveRecord
     {
         return [
             [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'gif'], 'on' => 'pic'],
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'gif'], 'maxFiles' => 4, 'on' => 'pics'],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'gif'], 'maxFiles' => 10, 'on' => 'pics'],
         ];
     }
 
@@ -65,7 +65,7 @@ class Pictrue extends ActiveRecord
         $err = "";
         $pic_list = [];
         $this->setScenario('pics');
-        $base_path = "/uploads/images/".date('Ymd').'/';
+        $base_path = "uploads/images/".date('Ymd').'/';
         if($this->validate()){
             if(!is_dir($base_path) || !is_writable($base_path)){
                 \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
@@ -76,10 +76,11 @@ class Pictrue extends ActiveRecord
                 $file_path = $base_path.$file_name;
 
                 if($file->saveAS($file_path)){
-                    $model = self::find();
+                    $model = new Pictrue();
                     $model->pic_name = $file->baseName;
                     $model->md5_name = $file_name;
                     $model->pic_path = $file_path;
+                    $model->pic_size = $file->size;
                     $model->created_at = time();
                     $model->save(false);
 
@@ -148,5 +149,37 @@ class Pictrue extends ActiveRecord
         }
 
         return $pic_list;
+    }
+
+    /**
+     * @param $pic_id
+     * 获取 fileinput 预览图片
+     */
+    public static function getPreImgList($pic_id = [])
+    {
+        $lists = [
+            'path_list' => [],
+            'preview_list' => [],
+        ];
+
+        if(empty($lists)){
+            return $lists;
+        }
+
+        $pic_list = self::getPictrueList($pic_id);
+        if(count($pic_list)){
+            foreach ($pic_list as $pic){
+                $lists['path_list'][] = '<img src="'.$pic['pic_path'].'" class="file-preview-image">';
+                $lists['preview_list'][] = [
+                    'caption' => $pic['pic_path'],
+                    'size' => $pic['pic_size'],
+                    'caption' => $pic['pic_path'],
+                    'key' => $pic['id'],
+                ];
+
+            }
+        }
+
+        return $lists;
     }
 }

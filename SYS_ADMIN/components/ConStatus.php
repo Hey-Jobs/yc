@@ -55,9 +55,14 @@ class ConStatus
     static $COMMENT_TYPE_PROD = 2;
 
 
+    //商品图片数量
+    static $PRODUCT_MAX_NUM = 10;
+    static $ERROR_MSG_IMG_NUM = "最多只能上传10张图片";
+
 
     // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";
+
     static $STATUS_SUCCESS = 200; // 获取成功
     static $STATUS_ERROR_SYS = 4000; // 服务器错误
     static $STATUS_ERROR_PARAMS = 4001; //validate 校验不通过
@@ -65,4 +70,5 @@ class ConStatus
     static $STATUS_ERROR_Upload = 4003; // 图片上传失败
     static $STATUS_ERROR_ID = 4004; // ID 不能为空
     static $STATUS_ERROR_NONE = 4005; // 信息不存在
+    static $STATUS_ERROR_IMG_NUM = 4006; // 信息不存在
 }

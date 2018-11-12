@@ -12,6 +12,7 @@ use Yii;
  * @property string $content
  * @property string $created_at
  * @property string $updated_at
+ * @property string $banner_img
  */
 class ProductDetail extends CommonModel
 {
