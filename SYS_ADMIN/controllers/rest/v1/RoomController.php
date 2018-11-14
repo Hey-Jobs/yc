@@ -1,0 +1,44 @@
+<?php
+/**
+ * User: liwj
+ * Date:2018/11/14
+ * Time:20:57
+ */
+
+namespace SYS_ADMIN\controllers\rest\v1;
+
+
+use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\models\Video;
+
+class RoomController extends CommonController
+{
+    /**
+     * 获取 所有视频
+     */
+
+    public function actionVideos()
+    {
+        $id = \Yii::$app->request->get('id');
+        $videos = [];
+        $video_list = Video::find()
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->andWhere(['room_id' => $id])
+            ->select(['id', 'video_name', 'video_url', 'start_num', 'room_id'])
+            ->asArray()
+            ->orderBy('id desc')
+            ->all();
+
+        if(count($video_list)){
+            foreach ($video_list as $v){
+                $videos[] = [
+                    'start' => $v['start_num'] ?? 1,
+                    'name' => $v['video_name'],
+                    'vurl' => $v['video_url'],
+                ];
+            }
+        }
+
+        return $this->successInfo(['videos' => $videos]);
+    }
+}
