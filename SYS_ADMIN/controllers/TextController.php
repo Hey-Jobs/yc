@@ -59,10 +59,11 @@ class TextController extends \yii\rest\Controller
 
     public function actionAdd()
     {
-        $content = \Yii::$app->request->post();
+//        $content = \Yii::$app->request->post();
+        $content = file_get_contents("php://input");
 
         $testM = new Test();
-        $testM->content = json_encode($content);
+        $testM->content = ($content);
         if (!$testM->save()) {
             return $this->errorInfo(400);
         }
