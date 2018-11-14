@@ -82,7 +82,7 @@ class TextController extends \yii\rest\Controller
         $testInfo = Test::find()
             ->filterWhere(['stream' => $stream])
             ->filterWhere(['>=', 'start_time', $start_time])
-            ->limit(3)
+            ->limit(1)
             ->orderBy('id desc')
             ->asArray()
             ->all();
