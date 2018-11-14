@@ -79,6 +79,7 @@ return [
             'rest/v1/test/*',
             'login/*',
             'demo/*',
+            'text/*',
         ]
     ],
 
