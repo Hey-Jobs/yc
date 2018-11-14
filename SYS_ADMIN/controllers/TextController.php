@@ -62,7 +62,7 @@ class TextController extends \yii\rest\Controller
         $content = \Yii::$app->request->post();
 
         $testM = new Test();
-        $testM->content = $content;
+        $testM->content = json_encode($content);
         if (!$testM->save()) {
             return $this->errorInfo(400);
         }
