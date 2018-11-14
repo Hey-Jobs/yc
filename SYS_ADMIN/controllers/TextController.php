@@ -77,9 +77,9 @@ class TextController extends \yii\rest\Controller
             ->asArray()
             ->all();
 
-//        foreach ($testInfo as $key => $row) {
-//            $testInfo[$key]['content'] = json_decode($row['content']);
-//        }
+        foreach ($testInfo as $key => $row) {
+            $testInfo[$key]['content'] = json_decode($row['content']);
+        }
         return $this->successInfo($testInfo);
     }
 }
