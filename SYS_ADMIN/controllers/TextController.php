@@ -74,6 +74,7 @@ class TextController extends \yii\rest\Controller
     {
         $testInfo = Test::find()
             ->limit(3)
+            ->orderBy('id desc')
             ->asArray()
             ->all();
 
