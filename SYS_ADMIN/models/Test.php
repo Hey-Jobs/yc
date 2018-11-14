@@ -9,6 +9,8 @@ use Yii;
  *
  * @property integer $id
  * @property string $content
+ * @property string $stream
+ * @property string $start_time
  * @property string $created_at
  * @property string $updated_at
  */

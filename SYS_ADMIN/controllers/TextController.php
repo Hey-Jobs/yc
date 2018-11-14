@@ -59,11 +59,14 @@ class TextController extends \yii\rest\Controller
 
     public function actionAdd()
     {
-//        $content = \Yii::$app->request->post();
         $content = file_get_contents("php://input");
 
+        $info = json_decode($content, true);
         $testM = new Test();
-        $testM->content = ($content);
+        $testM->content = $content;
+        $testM->stream = $info['stream'];
+        $testM->start_time = date('Y-m-d H:i:s', $info['start_time']);
+
         if (!$testM->save()) {
             return $this->errorInfo(400);
         }
@@ -84,4 +87,16 @@ class TextController extends \yii\rest\Controller
         }
         return $this->successInfo($testInfo);
     }
+
+
+    public function actionA()
+    {
+        $a = 6;
+        $b = 12;
+        $this->swap($a, $b);
+        echo $a . '-' . $b;
+        exit;
+    }
+
+
 }
