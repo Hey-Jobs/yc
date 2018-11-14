@@ -76,7 +76,12 @@ class TextController extends \yii\rest\Controller
 
     public function actionOne()
     {
+        $stream = \Yii::$app->request->get("stream", null);
+        $start_time = \Yii::$app->request->get("start_time", null);
+
         $testInfo = Test::find()
+            ->filterWhere(['stream' => $stream])
+            ->filterWhere(['>=', 'start_time', $start_time])
             ->limit(3)
             ->orderBy('id desc')
             ->asArray()
