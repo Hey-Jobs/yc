@@ -59,7 +59,7 @@ class TextController extends \yii\rest\Controller
 
     public function actionAdd()
     {
-        $content = \Yii::$app->request->post('content');
+        $content = \Yii::$app->request->post();
 
         $testM = new Test();
         $testM->content = $content;
