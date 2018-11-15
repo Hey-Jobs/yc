@@ -9,6 +9,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Video;
 
 class RoomController extends CommonController
@@ -40,5 +41,26 @@ class RoomController extends CommonController
         }
 
         return $this->successInfo(['videos' => $videos]);
+    }
+
+    /**
+     * 根据ID获取直播间信息
+     */
+    public function actionInfo()
+    {
+        $id = \Yii::$app->request->get('id');
+
+        $list = LiveRoom::find()
+            ->alias('lr')
+            ->select(['lr.*', 'lre.cover_img', 'lre.introduce', 'lre.content'])
+            ->leftJoin('sys_live_room_extend as lre', 'lr.id = lre.room_id')
+            ->where(['lr.id' => $id])
+            ->asArray()
+            ->one();
+        if (empty($list)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS);
+        }
+
+        return $this->successInfo($list);
     }
 }
