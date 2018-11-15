@@ -287,6 +287,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             initialPreviewAsData: true,
             initialPreview: initialPreview,
             initialPreviewConfig: initialPreviewConfig
+        }).on('filebatchselected', function (event, files) {//选中文件事件
+            $(this).fileinput("upload");
         });
 
         $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
