@@ -9,6 +9,7 @@ namespace SYS_ADMIN\controllers;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
+use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Video;
 
 /**
@@ -52,6 +53,12 @@ class VideoController extends CommonController
         if(!empty($info)){
             if(!$this->isAdmin && !array_keys($info['room_id'], $this->user_room)){
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
+            }
+
+            $info['pic_path'] = "";
+            if(!empty($info['cover_img'])){
+                $pic_info = Pictrue::getPictrueById($info['cover_img']);
+                $info['pic_path'] = $pic_info['pic_path'] ?? "";
             }
 
             return $this->successInfo($info);
@@ -101,6 +108,8 @@ class VideoController extends CommonController
         $room_id = \Yii::$app->request->post('room_id');
         $video_name = \Yii::$app->request->post('video_name');
         $video_url = \Yii::$app->request->post('video_url');
+        $cover_img = \Yii::$app->request->post('cover_img');
+        $video_length = \Yii::$app->request->post('video_length');
         $sort_num = \Yii::$app->request->post('sort_num', 10);
         $status = \Yii::$app->request->post('status', 1);
 
@@ -131,6 +140,8 @@ class VideoController extends CommonController
         $model->sort_num = $sort_num;
         $model->room_id = $room_id;
         $model->status = $status;
+        $model->video_length = $video_length;
+        $model->cover_img = $cover_img;
         $model->updated_at = time();
 
         if($model->save()){

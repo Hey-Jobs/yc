@@ -17,6 +17,11 @@ AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yi
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/jquery.validate.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Yii::$app->params['versionJS']);
+
+AppAsset::addCss($this, '/vendor/bootstrap-fileinput/css/fileinput.min.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/fileinput.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app->params['versionJS']);
+
 ?>
 
 
@@ -75,9 +80,24 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                                             <label class="col-sm-3 control-label position">视频链接：</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="video_url" placeholder="视频链接"/>
-                                                http....
                                             </div>
                                         </div>
+
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">视频封面：</label>
+                                            <div class="col-sm-9">
+                                                <input type="file" class="form-control" name="img" id="img" data-show-preview="true" placeholder="视频封面" ">
+                                                <input type="hidden" class="form-control" name="cover_img" id="cover_img">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">视频长度：</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control"  name="video_length" value="" placeholder="视频长度"/>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">排序值：</label>
                                             <div class="col-sm-9">
@@ -133,6 +153,9 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 <script type="application/javascript">
     $(function () {
 
+        var initialPreview = [];
+        var initialPreviewConfig = [];
+        editImage(initialPreview, initialPreviewConfig);
 
         $("#video-form").validate({
             rules:{
@@ -147,6 +170,9 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                     required: true,
                 },
                 room_id: {
+                    required: true,
+                },
+                video_length:{
                     required: true,
                 }
             },
@@ -240,6 +266,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                         $("[name='video_name']").val(data.video_name);
                         $("[name='video_url']").val(data.video_url);
                         $("[name='sort_num']").val(data.sort_num);
+                        $("[name='video_length']").val(data.video_length);
                         $("#w0").select2('val',data.room_id);
                         if(data.status == 1){
                             $("#status1").attr("checked","checked");
@@ -250,6 +277,13 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                             $("#status2").attr("checked","checked");
                             $("#status1").removeAttr("checked");
                         }
+
+
+                        $("[name='cover_img']").val(data.cover_img);
+                        var initialPreview = [data.pic_path];
+                        var initialPreviewConfig = [{showRemove: false}];
+                        $("#img").fileinput('destroy');
+                        editImage(initialPreview, initialPreviewConfig);
 
                     }
                 }
@@ -280,6 +314,41 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                     affirmSwals('失败', result.message, 'error', placeholder);
                 }
             },
+        });
+    }
+
+    function editImage(initialPreview, initialPreviewConfig)
+    {
+        $("#img").fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: '/upload/img', //上传的地址
+            allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: false, //是否显示上传按钮
+            showRemove: true, //显示移除按钮
+            showPreview: true, //是否显示预览
+            showCaption: true,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            dropZoneEnabled: true,//是否显示拖拽区域
+            maxFileCount: 1, //表示允许同时上传的最大文件个数,
+            initialPreviewAsData: true,
+            initialPreview: initialPreview,
+            initialPreviewConfig: initialPreviewConfig
+        }).on('filebatchselected', function (event, files) {//选中文件事件
+            $(this).fileinput("upload");
+        });
+
+        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
+            console.log(data.response);
+            if (data.response.status == 200) {
+                $("#cover_img").val(data.response.data.images)
+            }
+            // var img = JSON.parse(data.response);//接收后台传过来的json数据
+            // alert(img.imgUrl);
+        });
+
+        $("#img").on('fileerror', function (event, data, msg) {//异步上传失败结果处理
+            alert("uploadError");
         });
     }
 </script>

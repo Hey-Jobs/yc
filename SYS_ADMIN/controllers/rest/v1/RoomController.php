@@ -10,6 +10,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Video;
 
 class RoomController extends CommonController
@@ -25,17 +26,23 @@ class RoomController extends CommonController
         $video_list = Video::find()
             ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
             ->andWhere(['room_id' => $id])
-            ->select(['id', 'video_name', 'video_url', 'start_num', 'room_id'])
             ->asArray()
-            ->orderBy('id desc')
+            ->orderBy('sort_num asc, id desc')
             ->all();
 
         if(count($video_list)){
+            $pic_id = array_column($video_list, 'cover_img');
+            $pic_list = Pictrue::getPictrueList($pic_id);
+
             foreach ($video_list as $v){
+                $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $videos[] = [
                     'start' => $v['start_num'] ?? 1,
                     'name' => $v['video_name'],
                     'vurl' => $v['video_url'],
+                    'vlength' => $v['video_length'],
+                    'click' => number_format($v['click_num']),
+                    'pic' => $pic_path,
                 ];
             }
         }
