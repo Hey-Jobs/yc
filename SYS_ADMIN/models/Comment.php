@@ -56,7 +56,7 @@ class Comment extends \yii\db\ActiveRecord
             'id' => 'ID',
             'type' => 'Type',
             'from_id' => 'From ID',
-            'client_id' => 'Client ID',
+            'client_id' => 'ClientController ID',
             'nickname' => 'Nickname',
             'thumb_img' => 'Thumb Img',
             'content' => 'Content',
