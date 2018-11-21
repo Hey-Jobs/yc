@@ -50,6 +50,11 @@ class ConStatus
         7 => '用户取消',
     ];
 
+    static $SEX = [
+        1 => '男',
+        2 => '女',
+    ];
+
     // COMMENT 评论
     static $COMMENT_TYPE_ROOM = 1;
     static $COMMENT_TYPE_PROD = 2;
