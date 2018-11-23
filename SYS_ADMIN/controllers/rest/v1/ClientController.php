@@ -7,6 +7,7 @@
  */
 
 namespace SYS_ADMIN\controllers\rest\v1;
+use Codeception\Module\Cli;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\ClientAddr;
 
@@ -32,6 +33,7 @@ class ClientController extends CommonController
         if(count($addr)){
             foreach ($addr as $v){
                 $addr_list[] = [
+                    'aid' => $v['id'],
                     'sex' => $v['client_sex'],
                     'name' => $v['client_name'],
                     'mobile' => $v['mobile'],
@@ -50,7 +52,22 @@ class ClientController extends CommonController
      */
     public function actionAddrDefault()
     {
+        $user_id = 1;
         $aid = \Yii::$app->request->post('aid');
+
+        $model = ClientAddr::find()
+            ->where(['id' => $aid, 'user_id' => $user_id])
+            ->one();
+
+        if(empty($model)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        ClientAddr::updateAll(['common' => 0], ['user_id' => $user_id]);
+        $model->common = ConStatus::$ADDR_COMMON;
+        $model->save();
+
+        $this->successInfo(true);
     }
 
     /**
@@ -62,6 +79,7 @@ class ClientController extends CommonController
         $add_info = [];
         $add_info = ClientAddr::find()
             ->where(['user_id' => $user_id])
+            ->orderBy('id desc')
             ->asArray()
             ->one();
 

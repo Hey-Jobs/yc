@@ -64,6 +64,8 @@ class ConStatus
     static $PRODUCT_MAX_NUM = 10;
     static $ERROR_MSG_IMG_NUM = "最多只能上传10张图片";
 
+    //地址
+    static $ADDR_COMMON = 1;
 
     // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";

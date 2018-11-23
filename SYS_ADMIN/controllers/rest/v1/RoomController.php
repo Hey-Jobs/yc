@@ -28,7 +28,7 @@ class RoomController extends CommonController
         $videos = [];
         $video_start = [];
         $video_list = Video::find()
-            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['room_id' => $id])
             ->asArray()
             ->orderBy('sort_num asc, id desc')
@@ -142,12 +142,13 @@ class RoomController extends CommonController
         $id = \Yii::$app->request->get('id');
         $lens = [];
         $lens_list = Lens::find()
-            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['room_id' => $id])
+            ->andWhere(['sort_num' => 1]) // 排序值1
             ->asArray()
             ->orderBy('sort_num asc, id desc')
+            ->limit(3)
             ->all();
-
 
         if(count($lens_list)){
             $pic_id = array_column($lens_list, 'cover_img');
@@ -156,9 +157,9 @@ class RoomController extends CommonController
             foreach ($lens_list as $v){
                 $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $lens[] = [
-                    'name' => $v['video_name'],
-                    'vurl' => $v['video_url'],
-                    'vlength' => $v['video_length'],
+                    'aid' => $v['id'],
+                    'name' => $v['lens_name'],
+                    'vurl' => $v['online_url'],
                     'click' => number_format($v['click_num']),
                     'pic' => $pic_path,
                     'vnum' => md5($v['id']),
@@ -166,7 +167,10 @@ class RoomController extends CommonController
             }
         }
 
+        return $this->successInfo($lens);
+
     }
+
 
 
     /**
@@ -185,6 +189,16 @@ class RoomController extends CommonController
             ->one();
         if (empty($list)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS);
+        }
+
+        if(!empty($list['logo_img'])){ // logo
+            $logo_pic = Pictrue::getPictrueById($list['logo_img']);
+            $list['logo_pic'] = $logo_pic['pic_path'] ?? "";
+        }
+
+        if(!empty($list['cover_img'])){ // cover
+            $cover_pic = Pictrue::getPictrueById($list['cover_img']);
+            $list['cover_pic'] = $cover_pic['pic_path'] ?? "";
         }
 
         return $this->successInfo($list);
