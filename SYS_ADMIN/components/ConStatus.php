@@ -30,6 +30,17 @@ class ConStatus
     ];
 
     // ORDER 订单
+    static $PAY_ONLINE = 1; // 线上支付
+    static $PAY_LOCAL = 2; // 货到付款
+
+    static $PAY_WAY_WECHAT = 1; // 微信
+    static $PAY_WAY_ALI = 2; // 支付宝
+
+    static $PAY_WAY = [
+        1 => '支付宝支付',
+        2 => '微信支付',
+    ];
+
     static $ORDER_PENDING = 0;  // 待发货
     static $ORDER_SENDED = 1;   // 已发货
     static $ORDER_DELIVERY = 2; // 配送中

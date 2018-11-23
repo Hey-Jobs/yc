@@ -10,6 +10,9 @@ namespace SYS_ADMIN\controllers\rest\v1;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\ClientAddr;
+use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Order;
+use SYS_ADMIN\models\Product;
 
 /**
  * Class ClientController
@@ -142,6 +145,74 @@ class ClientController extends CommonController
         } else {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS);
         }
+    }
+
+
+    /**
+     * 订单列表
+     */
+    public function actionOrders()
+    {
+
+    }
+
+    /**
+     * 提交订单
+     */
+    public function actionOrderSub()
+    {
+        $user_id = 1;
+        $room_id = 0 ;
+
+        $products_id = [];
+        $products_list = [];
+        $check_product = [];
+
+        $products = \Yii::$app->request->post('room_id');
+        $products = \Yii::$app->request->post('products');
+        $product_money = \Yii::$app->request->post('product_money');
+        $deliver_money = \Yii::$app->request->post('deliver_money');
+
+
+        if(empty($products)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $products = json_decode($products, true);
+        if(empty($products)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        foreach ($products as $item){
+            $products_id[] =  $item['product_id'];
+        }
+
+        $products_list = Product::find()
+            ->where(['in', 'id', $products_id])
+            ->andWhere(['room_id' => $room_id])
+            ->andWhere(['>', 'stock', 0])
+            ->asArray()
+            ->all();
+
+        if()
+        $order_status = ConStatus::$ORDER_NO_PAY;
+        $order_id =  date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+        $total_money = 0; //总价格
+        $real_total_money = 0; // 实际付款
+
+
+
+        $model = new Order();
+        $model->order_id = $order_id;
+        $model->pay_type = ConStatus::$PAY_ONLINE; //线上支付
+
+
+        if($model->save()){
+
+        } else {
+
+        }
+
     }
 
 
