@@ -89,4 +89,6 @@ class ConStatus
     static $STATUS_ERROR_ID = 4004; // ID 不能为空
     static $STATUS_ERROR_NONE = 4005; // 信息不存在
     static $STATUS_ERROR_IMG_NUM = 4006; // 信息不存在
+    static $STATUS_ERROR_OPENID = 4007; // 信息不存在
+    static $STATUS_ERROR_USER_EXIT = 4008; // 信息不存在
 }

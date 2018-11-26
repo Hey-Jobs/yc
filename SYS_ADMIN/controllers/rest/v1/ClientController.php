@@ -194,7 +194,7 @@ class ClientController extends CommonController
             ->asArray()
             ->all();
 
-        if()
+
         $order_status = ConStatus::$ORDER_NO_PAY;
         $order_id =  date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
         $total_money = 0; //总价格

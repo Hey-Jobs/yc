@@ -53,5 +53,23 @@ class CommonHelper
         return $flag;
     }
 
+    /**
+     * 获取当前域名
+     */
+    public static function getDomain()
+    {
+        $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+        $url = $http_type . $_SERVER['HTTP_HOST'];
+        return $url;
+    }
+
+    /**
+     * 获取当前url
+     */
+    public static function getUrl()
+    {
+        return CommonHelper::getDomain().$_SERVER['REQUEST_URI'];
+    }
+
 
 }
