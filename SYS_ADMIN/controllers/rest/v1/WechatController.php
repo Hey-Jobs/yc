@@ -8,6 +8,7 @@
 namespace SYS_ADMIN\controllers\rest\v1;
 
 
+use Codeception\Module\Cli;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Wechat;
@@ -42,11 +43,21 @@ class WechatController extends Controller
                 $user_url = "https://api.weixin.qq.com/sns/userinfo?access_token={$auth_info['access_token']}&openid={$auth_info['openid']}&lang=zh_CN";
                 $user_info = file_get_contents($user_url);
                 $user_info = json_decode($user_info, true);
-                
+
+                $model = new Client();
+                $model->client_name = $user_info['nickname'];
+                $model->client_img = $user_info['headimgurl'];
+                $model->open_id = $user_info['openid'];
+                $model->client_name = $user_info['nickname'];
+                $model->sex = $user_info['sex'];
+                $model->city = $user_info['city'];
+                $model->save();
+
                 $user_detail = [
-                    'user_name' => $check_info->client_name,
-                    'user_img' => $check_info->client_img,
-                    'open_id' => $check_info->open_id,
+                    'user_name' => $user_info['nickname'],
+                    'user_img' => $user_info['headimgurl'],
+                    'open_id' => $user_info['openid'],
+                    'uid' => $model->id,
                 ];
 
             } else {
