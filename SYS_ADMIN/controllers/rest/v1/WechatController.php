@@ -33,7 +33,7 @@ class WechatController extends Controller
         $token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$appid}&secret={$appsecret}&code={$code}&grant_type=authorization_code";
         $auth_info = file_get_contents($token_url);
         $auth_info = json_decode($auth_info, true);
-
+        var_dump($auth_info);
         if(isset($auth_info['access_token'])){
             $user_detail = [];
             $check_info = Client::findOne(['open_id' => $auth_info['open_id']]);
@@ -64,7 +64,8 @@ class WechatController extends Controller
             var_dump($user_info);
 
         } else { // 授权失败
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $auth_info['errmsg']);
+            //return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $auth_info['errmsg']);
+            echo "授权失败:".$auth_info['errmsg'];
         }
 
     }
