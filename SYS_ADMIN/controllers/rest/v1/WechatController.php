@@ -33,6 +33,7 @@ class WechatController extends Controller
         $token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$appid}&secret={$appsecret}&code={$code}&grant_type=authorization_code";
         $auth_info = file_get_contents($token_url);
         $auth_info = json_decode($auth_info, true);
+        var_dump($appsecret);
         var_dump($auth_info);
         if(isset($auth_info['access_token'])){
             $user_detail = [];
