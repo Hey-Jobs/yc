@@ -33,17 +33,16 @@ class WechatController extends Controller
         $token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$appid}&secret={$appsecret}&code={$code}&grant_type=authorization_code";
         $auth_info = file_get_contents($token_url);
         $auth_info = json_decode($auth_info, true);
-        var_dump($appsecret);
-        var_dump($auth_info);
+
         if(isset($auth_info['access_token'])){
             $user_detail = [];
-            $check_info = Client::findOne(['open_id' => $auth_info['open_id']]);
+            $check_info = Client::findOne(['open_id' => $auth_info['openid']]);
             if(empty($check_info)){
                 //获取用户信息
                 $user_url = "https://api.weixin.qq.com/sns/userinfo?access_token={$auth_info['access_token']}&openid={$auth_info['openid']}&lang=zh_CN";
                 $user_info = file_get_contents($user_url);
                 $user_info = json_decode($user_info, true);
-
+                
                 $user_detail = [
                     'user_name' => $check_info->client_name,
                     'user_img' => $check_info->client_img,
@@ -55,12 +54,13 @@ class WechatController extends Controller
                     'user_name' => $check_info->client_name,
                     'user_img' => $check_info->client_img,
                     'open_id' => $check_info->open_id,
+                    'uid' => $check_info->id,
                 ];
             }
 
             $redis = \Yii::$app->redis;
-            $redis->set($auth_info['open_id'], json_encode($user_detail));
-            $redis->expire($auth_info['open_id'], 7200); // 缓存2小时
+            $redis->set($auth_info['openid'], json_encode($user_detail));
+            $redis->expire($auth_info['openid'], 7200); // 缓存2小时
 
             var_dump($user_info);
 
