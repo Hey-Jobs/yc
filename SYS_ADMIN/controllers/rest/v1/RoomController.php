@@ -8,12 +8,13 @@
 namespace SYS_ADMIN\controllers\rest\v1;
 
 
+use app\models\Comment;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Video;
-use SYS_ADMIN\models\VideoStart;
+use SYS_ADMIN\models\ClientStart;
 
 class RoomController extends CommonController
 {
@@ -25,6 +26,12 @@ class RoomController extends CommonController
     {
         $user_id = 10;
         $id = \Yii::$app->request->get('id');
+
+        $room_info = LiveRoom::findOne($id);
+        if(empty($id) || empty($room_info)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
         $videos = [];
         $video_start = [];
         $video_list = Video::find()
@@ -39,10 +46,10 @@ class RoomController extends CommonController
             $pic_list = Pictrue::getPictrueList($pic_id);
 
             if($user_id > 0){
-                $video_start = VideoStart::find()
-                    ->where(['user_id' => $user_id])
-                    ->select(['video_id', 'user_id'])
-                    ->indexBy('video_id')
+                $video_start = ClientStart::find()
+                    ->where(['client_id' => $user_id])
+                    ->select(['target_id', 'client_id'])
+                    ->indexBy('target_id')
                     ->asArray()
                     ->all();
             }
@@ -65,38 +72,6 @@ class RoomController extends CommonController
         return $this->successInfo(['videos' => $videos]);
     }
 
-
-    /**
-     * @throws \Exception
-     * @throws \yii\db\StaleObjectException
-     * 取消收藏 | 收藏
-     */
-    public function actionVideoStart()
-    {
-        $user_id = 10;
-        $vid = \Yii::$app->request->post('vid', 0);
-
-        $info = Video::findOne($vid);
-        if(empty($info)){
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
-        }
-
-        $model =VideoStart::find()
-            ->where(['video_id' => $vid, 'user_id' => $user_id])
-            ->one();
-
-        if(empty($model)){ // 收藏
-            $model = new VideoStart();
-            $model->video_id = $vid;
-            $model->user_id = $user_id;
-            $model->save();
-
-        } else { // 取消收藏
-            $model->delete();
-        }
-
-        $this->successInfo(true);
-    }
 
 
     /**
@@ -202,6 +177,44 @@ class RoomController extends CommonController
         }
 
         return $this->successInfo($list);
+    }
+
+    /**
+     * 获取直播间的评论
+     */
+    public function actionComments()
+    {
+        $user_id = $this->user_info['uid'];
+        $id = \Yii::$app->request->post('id');
+        $room_info = LiveRoom::findOne($id);
+        if(empty($id) || empty($room_info)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+        $lists =  Comment::find()
+            ->where(['from_id' => $id, 'type' => ConStatus::$COMMENT_TYPE_ROOM])
+            ->asArray()
+            ->all();
+
+        if(count($lists)){
+
+            if($user_id > 0){ // 用户收藏
+                $start_list = ClientStart::find()
+                    ->where(['client_id' => $user_id])
+                    ->select(['target_id', 'client_id'])
+                    ->indexBy('target_id')
+                    ->asArray()
+                    ->all();
+            }
+
+            $i = 1;
+            foreach ($lists as &$com){
+                $com['date'] = date('Y-m-d H:i', strtotime($com['created_at']));
+                $com['num'] = $i++;
+                $com['start'] = array_key_exists($com['id'], $start_list) ? 1 : 0;
+            }
+        }
+
+        $this->successInfo($lists);
     }
 
 }

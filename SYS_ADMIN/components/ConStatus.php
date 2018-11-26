@@ -70,6 +70,14 @@ class ConStatus
     static $COMMENT_TYPE_ROOM = 1;
     static $COMMENT_TYPE_PROD = 2;
 
+    // 点赞
+    static $CLIENT_START = [
+        1 => '视频点赞',
+        2 => '评论点赞',
+    ];
+
+    static $CLIENT_START_VIDEO = 1;
+    static $CLIENT_START_COMMENT = 2;
 
     //商品图片数量
     static $PRODUCT_MAX_NUM = 10;
@@ -81,6 +89,7 @@ class ConStatus
 
     // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";
+    static $ERROR_SYS_MSG = "网络错误";
 
     static $STATUS_SUCCESS = 200; // 获取成功
     static $STATUS_ERROR_SYS = 4000; // 服务器错误

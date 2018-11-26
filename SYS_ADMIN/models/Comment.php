@@ -43,7 +43,7 @@ class Comment extends \yii\db\ActiveRecord
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['nickname'], 'string', 'max' => 64],
-            [['thumb_img'], 'string', 'max' => 128],
+            [['thumb_img'], 'string', 'max' => 256],
         ];
     }
 

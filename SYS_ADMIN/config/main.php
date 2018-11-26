@@ -63,7 +63,7 @@ return [
             'dsn' => getenv('YII_DB_SYS_DSN'),
             'username' => getenv('YII_DB_SYS_USER'),
             'password' => getenv('YII_DB_SYS_PASS'),
-            'charset' => 'utf8',
+            'charset' => 'utf8mb4',
             'tablePrefix' => getenv('YII_DB_SYS_PRE')
         ],
         'authManager' => [

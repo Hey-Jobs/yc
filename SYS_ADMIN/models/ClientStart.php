@@ -11,7 +11,7 @@ namespace SYS_ADMIN\models;
 
 use yii\db\ActiveRecord;
 
-class VideoStart extends ActiveRecord
+class ClientStart extends ActiveRecord
 {
 
 }

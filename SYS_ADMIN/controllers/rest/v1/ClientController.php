@@ -218,16 +218,71 @@ class ClientController extends CommonController
 
 
     /**
+     * 点赞
+     */
+    public function actionUserStart()
+    {
+        $user_id = $this->user_info['uid'];
+        $id = \Yii::$app->request->post('id', 0);
+        $stype = \Yii::$app->request->post('stype', 0);
+
+        if(!array_key_exists($stype, ConStatus::$CLIENT_START)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        switch ($stype){
+            case ConStatus::$CLIENT_START_VIDEO : // 视频
+                $info = Video::findOne($id);
+                break;
+            case ConStatus::$CLIENT_START_COMMENT : // 评论
+                $info = Comment::findOne($id);
+                break;
+        }
+
+        if(empty($info)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $model =ClientStart::find()
+            ->where(['target_id' => $id, 'user_id' => $user_id, 'stype' => $stype])
+            ->one();
+
+        if(empty($model)){ // 收藏
+            $model = new ClientStart();
+            $model->target_id = $id;
+            $model->user_id = $user_id;
+            $model->stype = $stype;
+            $model->save();
+
+        } else { // 取消收藏
+            $model->delete();
+        }
+
+        $this->successInfo(true);
+    }
+    /**
      * 用户评论
+     * 商品
      */
     public function actionComment()
     {
         $room_id = \Yii::$app->request->post('id');
+        $content = \Yii::$app->request->post('content');
 
         $model = new Comment();
         $model->type = ConStatus::$COMMENT_TYPE_ROOM; // 评论直播间
         $model->from_id = $room_id;
         $model->client_id = $this->user_info['uid'];
+        $model->nickname = $this->user_info['user_name'];
+        $model->thumb_img = $this->user_info['user_img'];
+        $model->content = $content;
+
+        if($model->save()){
+            $data = $model->toArray();
+            return $this->successInfo($data);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_SYS_MSG);
+        }
     }
 
 
