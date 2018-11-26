@@ -7,6 +7,7 @@
  */
 
 namespace SYS_ADMIN\controllers\rest\v1;
+use app\models\Comment;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\ClientAddr;
@@ -213,6 +214,20 @@ class ClientController extends CommonController
 
         }
 
+    }
+
+
+    /**
+     * 用户评论
+     */
+    public function actionComment()
+    {
+        $room_id = \Yii::$app->request->post('id');
+
+        $model = new Comment();
+        $model->type = ConStatus::$COMMENT_TYPE_ROOM; // 评论直播间
+        $model->from_id = $room_id;
+        $model->client_id = $this->user_info['uid'];
     }
 
 

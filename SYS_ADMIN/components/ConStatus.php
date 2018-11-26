@@ -78,6 +78,7 @@ class ConStatus
     //地址
     static $ADDR_COMMON = 1;
 
+
     // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";
 
