@@ -166,13 +166,16 @@ class ClientController extends CommonController
         $room_id = 0 ;
 
         $products_id = [];
+        $product_num = [];
         $products_list = [];
         $check_product = [];
 
         $products = \Yii::$app->request->post('room_id');
         $products = \Yii::$app->request->post('products');
-        $product_money = \Yii::$app->request->post('product_money');
-        $deliver_money = \Yii::$app->request->post('deliver_money');
+        $user_name = \Yii::$app->request->post('user_name');
+        $user_sex = \Yii::$app->request->post('user_sex');
+        $user_address = \Yii::$app->request->post('address');
+        $user_phone = \Yii::$app->request->post('user_phone');
 
 
         if(empty($products)){
@@ -186,6 +189,7 @@ class ClientController extends CommonController
 
         foreach ($products as $item){
             $products_id[] =  $item['product_id'];
+            $product_num[$item['product_id']] = $item['num'];
         }
 
         $products_list = Product::find()
@@ -200,14 +204,30 @@ class ClientController extends CommonController
         $order_id =  date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
         $total_money = 0; //总价格
         $real_total_money = 0; // 实际付款
-
-
+        foreach ($products_list as &$pro){
+            $pro['num'] = $product_num[$pro['id']];
+            $total_money += round($pro['price'] * $product_num[$pro['id']], 2);
+        }
 
         $model = new Order();
         $model->order_id = $order_id;
+        $model->client_id = $this->user_info['uid'];
+        $model->order_status = ConStatus::$ORDER_NO_PAY;
+        $model->deliver_money = 20; //运费
+        $model->total_money = $total_money;
+        $model->real_total_money = $model->deliver_money + $total_money;
         $model->pay_type = ConStatus::$PAY_ONLINE; //线上支付
+        $model->pay_from = ConStatus::$PAY_WAY_WECHAT;
+        $model->is_pay = 2;
+
+        // 收件人
+        $model->user_name = $user_name;
+        $model->user_sex = $user_sex;
+        $model->user_address = $user_address;
+        $model->user_phone = $user_phone;
 
 
+        // 订单详情
         if($model->save()){
 
         } else {
