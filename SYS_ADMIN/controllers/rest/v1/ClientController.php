@@ -9,11 +9,15 @@
 namespace SYS_ADMIN\controllers\rest\v1;
 use app\models\Comment;
 use Codeception\Module\Cli;
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\ClientAddr;
+use SYS_ADMIN\models\ClientStart;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Order;
+use SYS_ADMIN\models\OrderDetail;
 use SYS_ADMIN\models\Product;
+use SYS_ADMIN\models\Video;
 
 /**
  * Class ClientController
@@ -170,7 +174,7 @@ class ClientController extends CommonController
         $products_list = [];
         $check_product = [];
 
-        $products = \Yii::$app->request->post('room_id');
+        $room_id = \Yii::$app->request->post('room_id');
         $products = \Yii::$app->request->post('products');
         $user_name = \Yii::$app->request->post('user_name');
         $user_sex = \Yii::$app->request->post('user_sex');
@@ -188,7 +192,7 @@ class ClientController extends CommonController
         }
 
         foreach ($products as $item){
-            $products_id[] =  $item['product_id'];
+            $products_id[] = $item['product_id'];
             $product_num[$item['product_id']] = $item['num'];
         }
 
@@ -209,6 +213,7 @@ class ClientController extends CommonController
             $total_money += round($pro['price'] * $product_num[$pro['id']], 2);
         }
 
+        $connection = \Yii::$app->db->beginTransaction();
         $model = new Order();
         $model->order_id = $order_id;
         $model->client_id = $this->user_info['uid'];
@@ -229,9 +234,38 @@ class ClientController extends CommonController
 
         // 订单详情
         if($model->save()){
+            $detail_data = [];
+            foreach ($products_list as $item){
+                $detail_data[] = [
+                    'client_id' => $this->user_info['uid'],
+                    'product_id' => $item['id'],
+                    'title' => $item['title'],
+                    'price' => $item['price'],
+                    'cover_img' => $item['cover_img'],
+                    'num' => $item['num'],
+                ];
+            }
 
+            $res = Yii::$app->db->createCommand()
+                ->batchInsert(
+                    OrderDetail::tableName(),
+                    ['client_id','product_id', 'title', 'price', 'cover_img', 'num'],
+                    $detail_data)
+                ->execute();
+            if($res){
+                $connection->commit();
+                return $this->successInfo(true);
+            } else {
+                $connection->rollBack();
+                CommonHelper::writeOrderLog($detail_data);
+                CommonHelper::writeOrderLog($res);
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_DETAIL, ConStatus::$ERROR_SYS_MSG);
+            }
         } else {
-
+            $connection->rollBack();
+            CommonHelper::writeOrderLog($model->toArray());
+            CommonHelper::writeOrderLog($model->getErrors());
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_CREATE, ConStatus::$ERROR_SYS_MSG);
         }
 
     }
@@ -263,14 +297,14 @@ class ClientController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $model =ClientStart::find()
-            ->where(['target_id' => $id, 'user_id' => $user_id, 'stype' => $stype])
+        $model = ClientStart::find()
+            ->where(['target_id' => $id, 'client_id' => $user_id, 'stype' => $stype])
             ->one();
 
         if(empty($model)){ // 收藏
             $model = new ClientStart();
             $model->target_id = $id;
-            $model->user_id = $user_id;
+            $model->client_id = $user_id;
             $model->stype = $stype;
             $model->save();
 

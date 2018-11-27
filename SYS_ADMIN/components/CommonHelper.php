@@ -71,5 +71,25 @@ class CommonHelper
         return CommonHelper::getDomain().$_SERVER['REQUEST_URI'];
     }
 
+    public static function writeLog($data, $filename = 'log.log'){
+        $dir = "log/".date('Ymd')."/";
+        if(!is_file($dir)){
+            mkdir($dir, "0777");
+        }
+        $file = "log/".date('Ymd')."/".$filename;
+        $content = "";
+        if(!is_string($data)){
+            $content = json_encode($data);
+        } else {
+            $content = $data;
+        }
+        file_put_contents($file, $content."\r\n", FILE_APPEND);
+        return true;
+    }
+
+    public static function writeOrderLog($data){
+        return self::writeLog($data, "order.log");
+    }
+
 
 }
