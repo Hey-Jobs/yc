@@ -382,9 +382,12 @@ class ClientController extends CommonController
         if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
             $prepayId = $jsApi['prepay_id'];
             $arr = $payment->configForPayment($prepayId);
+            var_dump($arr);
+        } else {
+            var_dump($jsApi);
         }
 
-        var_dump($arr);
+
     }
 
 
