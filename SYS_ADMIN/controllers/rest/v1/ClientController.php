@@ -364,11 +364,11 @@ class ClientController extends CommonController
 
     public function actionTest()
     {
-        $product_detail = "测试";
+        $product_detail = "test";
         $order_id = "123456";
         $attributes = [
             'body'=>$product_detail."#{$order_id}",
-            'detail'=>"商品购买#{$order_id}",
+            'detail'=>"test#{$order_id}",
             'out_trade_no'=>$order_id,
             'total_fee'=> 1,
             'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
@@ -387,7 +387,7 @@ class ClientController extends CommonController
             var_dump($jsApi);
         }
 
-
+        return false;
     }
 
 
