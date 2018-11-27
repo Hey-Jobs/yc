@@ -23,25 +23,27 @@ use yii\helpers\Html;
         href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div class="color-line"></div>
-<div class="back-link">
-    <a href="/login/login" class="btn btn-primary">Back to Dashboard</a>
-</div>
+<!--<div class="color-line"></div>-->
+<!--<div class="back-link">-->
+<!--    <a href="/login/login" class="btn btn-primary">Back to Dashboard</a>-->
+<!--</div>-->
 <div class="register-container">
     <div class="row">
         <div class="col-md-12">
             <div class="text-center m-b-md">
-                <h3>Registration</h3>
-                <small>Full suported AngularJS WebApp/Admin template with very clean and aesthetic style prepared for
-                    your next app.
+                <h3>商家注册</h3>
+                <small>商家用户注册，请谨慎操作！
                 </small>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
                         <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
                         <div class="row">
-                            <div class="form-group col-lg-12">
+                            <div class="form-group col-lg-6">
                                 <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <?= $form->field($model, 'name')->textInput() ?>
                             </div>
                         </div>
                         <div class="row">
@@ -73,11 +75,6 @@ use yii\helpers\Html;
                         <?php ActiveForm::end(); ?>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <strong>HOMER</strong> - AngularJS Responsive WebApp <br/> 2015 Copyright Company Name
         </div>
     </div>
 </div>

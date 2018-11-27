@@ -80,9 +80,9 @@ class LoginController extends CommonController
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->getSession()->setFlash('success', '注册成功.');
-            return $this->redirect(['/login/login']);
+            return $this->redirect(['/admin/user/index']);
         } else {
-            $this->layout = 'only_content';
+//            $this->layout = 'only_content';
             return $this->render('register', [
                 'model' => $model
             ]);

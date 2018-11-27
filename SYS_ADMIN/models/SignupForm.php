@@ -12,6 +12,7 @@ use yii\captcha\Captcha;
 class SignupForm extends Model
 {
     public $username;
+    public $name;
     public $password;
     public $passwordConfirm;
     public $phone;
@@ -24,14 +25,19 @@ class SignupForm extends Model
     {
         return [
             ['username', 'trim'],
-            ['username', 'required', 'message' => '身份证必填.'],
+            ['username', 'required', 'message' => '用户账号.'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'string', 'min' => 6, 'max' => 255],
 
             ['phone', 'trim'],
             ['phone', 'required', 'message' => '手机号必填.'],
             ['phone', 'string', 'max' => 20],
             ['phone', 'string', 'min' => 11],
+
+            ['name', 'trim'],
+            ['name', 'required', 'message' => '用户名称.'],
+            ['name', 'string', 'max' => 32],
+            ['name', 'string', 'min' => 2],
 
             ['password', 'required', 'message' => '密码必填.'],
             ['password', 'string', 'min' => 6, 'message' => '不能少于6位.'],
@@ -54,6 +60,7 @@ class SignupForm extends Model
 
         $user = new User();
         $user->username = $this->username;
+        $user->name = $this->name;
         $user->phone = $this->phone;
         $user->setPassword($this->password);
         $user->generateAuthKey();
@@ -68,8 +75,9 @@ class SignupForm extends Model
     public function attributeLabels()
     {
         return [
-            'username' => '身份证号码',
+            'username' => '用户账号',
             'password' => '用户密码',
+            'name' => '用户名称',
             'email' => '邮箱',
             'passwordConfirm' => '确认密码',
             'phone' => '手机号',

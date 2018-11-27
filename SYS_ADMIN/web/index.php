@@ -10,6 +10,7 @@ header("Access-Control-Allow-Credentials: true");
 require(YII_FRAMEWORK_PATH . '/vendor/autoload.php');
 require(YII_FRAMEWORK_PATH . '/vendor/yiisoft/yii2/Yii.php');
 require(YII_FRAMEWORK_PATH . '/common/config/bootstrap.php');
+require(YII_FRAMEWORK_PATH . '/common/dd.php');
 require(__DIR__ . '/../config/bootstrap.php');
 
 $config = yii\helpers\ArrayHelper::merge(
