@@ -7,6 +7,7 @@
  */
 
 namespace SYS_ADMIN\controllers\rest\v1;
+use abei2017\wx\Application;
 use app\models\Comment;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\CommonHelper;
@@ -234,8 +235,10 @@ class ClientController extends CommonController
 
         // 订单详情
         if($model->save()){
+            $product_detail = "";
             $detail_data = [];
             foreach ($products_list as $item){
+                $product_detail .= $item['title'].'×'.$item['num'].'#';
                 $detail_data[] = [
                     'client_id' => $this->user_info['uid'],
                     'product_id' => $item['id'],
@@ -246,7 +249,7 @@ class ClientController extends CommonController
                 ];
             }
 
-            $res = Yii::$app->db->createCommand()
+            $res = \Yii::$app->db->createCommand()
                 ->batchInsert(
                     OrderDetail::tableName(),
                     ['client_id','product_id', 'title', 'price', 'cover_img', 'num'],
@@ -254,6 +257,26 @@ class ClientController extends CommonController
                 ->execute();
             if($res){
                 $connection->commit();
+
+                $conf = \Yii::$app->params['wx']['mp'];
+                $wechat = new Application(['conf'=>$conf]);
+                $payment = $wechat->driver("mp.pay");
+
+                $attributes = [
+                    'body'=>$product_detail."#{$order_id}",
+                    'detail'=>"商品购买#{$order_id}",
+                    'out_trade_no'=>$order_id,
+                    'total_fee'=>$model->real_total_money * 100,
+                    'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+                    'openid'=> $this->user_info['open_id'],
+                ];
+
+                $jsApi = $payment->js($attributes);
+                if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+                    $prepayId = $jsApi['prepay_id'];
+                    $arr = $payment->configForPayment($prepayId);
+                }
+
                 return $this->successInfo(true);
             } else {
                 $connection->rollBack();
@@ -337,6 +360,31 @@ class ClientController extends CommonController
         } else {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_SYS_MSG);
         }
+    }
+
+    public function actionTest()
+    {
+        $product_detail = "测试";
+        $order_id = "123456";
+        $attributes = [
+            'body'=>$product_detail."#{$order_id}",
+            'detail'=>"商品购买#{$order_id}",
+            'out_trade_no'=>$order_id,
+            'total_fee'=> 1,
+            'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+            'openid'=> $this->user_info['open_id'],
+        ];
+
+        $conf = \Yii::$app->params['wx']['mp'];
+        $wechat = new Application(['conf'=>$conf]);
+        $payment = $wechat->driver("mp.pay");
+        $jsApi = $payment->js($attributes);
+        if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+            $prepayId = $jsApi['prepay_id'];
+            $arr = $payment->configForPayment($prepayId);
+        }
+
+        var_dump($arr);
     }
 
 

@@ -4,7 +4,7 @@
  * @package   yii2-krajee-base
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   2.0.0
+ * @version   2.0.2
  */
 
 namespace kartik\base;
@@ -36,6 +36,7 @@ trait BootstrapTrait
         self::BS_PANEL_TITLE => ['panel-title', 'card-title'],
         self::BS_PANEL_BODY => ['panel-body', 'card-body'],
         self::BS_PANEL_FOOTER => ['panel-footer', 'card-footer'],
+        self::BS_PANEL_DEFAULT => ['panel-default', ''],
         self::BS_PANEL_PRIMARY => ['panel-primary', ['bg-primary', 'text-white']],
         self::BS_PANEL_SUCCESS => ['panel-success', ['bg-success', 'text-white']],
         self::BS_PANEL_INFO => ['panel-info', ['bg-info', 'text-white']],
@@ -285,6 +286,7 @@ trait BootstrapTrait
      * Adds bootstrap CSS class to options by parsing the bootstrap version for the specified Bootstrap CSS type
      * @param array $options the HTML attributes for the container element that will be modified
      * @param string $type the bootstrap CSS class type
+     * @return \kartik\base\Widget|mixed current object instance that uses this trait
      * @throws InvalidConfigException
      */
     public function addCssClass(&$options, $type)
@@ -293,12 +295,14 @@ trait BootstrapTrait
         if (!empty($css)) {
             Html::addCssClass($options, $css);
         }
+        return $this;
     }
 
     /**
      * Removes bootstrap CSS class from options by parsing the bootstrap version for the specified Bootstrap CSS type
      * @param array $options the HTML attributes for the container element that will be modified
      * @param string $type the bootstrap CSS class type
+     * @return \kartik\base\Widget|mixed current object instance that uses this trait
      * @throws InvalidConfigException
      */
     public function removeCssClass(&$options, $type)
@@ -307,6 +311,7 @@ trait BootstrapTrait
         if (!empty($css)) {
             Html::removeCssClass($options, $css);
         }
+        return $this;
     }
 
     /**

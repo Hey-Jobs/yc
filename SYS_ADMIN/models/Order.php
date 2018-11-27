@@ -54,7 +54,7 @@ class Order extends CommonModel
     public function rules()
     {
         return [
-            [['id', 'client_id'], 'required'],
+            [['client_id'], 'required'],
             [['id', 'room_id', 'client_id', 'pay_type', 'pay_from', 'is_pay', 'is_invoice', 'order_source', 'is_appraise', 'is_finished', 'express_id', 'trade_no', 'order_status'], 'integer'],
             [['product_money', 'deliver_money', 'total_money', 'real_total_money'], 'number'],
             [['delivery_time', 'receive_time', 'create_time', 'updated_time'], 'safe'],

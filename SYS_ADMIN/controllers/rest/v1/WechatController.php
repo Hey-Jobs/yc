@@ -8,6 +8,7 @@
 namespace SYS_ADMIN\controllers\rest\v1;
 
 
+use abei2017\wx\Application;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -17,6 +18,7 @@ use yii\web\Controller;
 
 class WechatController extends Controller
 {
+    public $enableCsrfValidation = false;
 
     public function actionAuthLogin()
     {
@@ -82,5 +84,20 @@ class WechatController extends Controller
 
     }
 
+    public function actionNotify()
+    {
 
+        $conf = \Yii::$app->params['wx']['mp'];
+        $pay = (new Application(['conf'=>$conf]))->driver("mp.pay");
+
+        $response = $pay->handleNotify(function($notify,$isSuccess){
+            if($isSuccess){
+                CommonHelper::writeOrderLog($notify);
+                return true;
+            }
+        });
+
+        return $response;
+        return "SUCCESS";
+    }
 }
