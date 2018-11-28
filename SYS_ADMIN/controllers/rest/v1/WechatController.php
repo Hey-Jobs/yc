@@ -111,7 +111,7 @@ class WechatController extends Controller
             'out_trade_no'=>$order_id,
             'total_fee'=> 1,
             'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
-            'openid'=> $this->user_info['open_id'],
+            'openid'=> 'omIqUv9pP6EaM3tqd4UoAs4J4Ncw',
         ];
 
         $conf = \Yii::$app->params['wx']['mp'];
