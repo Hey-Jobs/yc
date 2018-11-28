@@ -96,7 +96,7 @@ class WechatController extends CommonController
                 $notify_data = json_encode($notify);
                 $order_id = $notify_data['out_trade_no'];
                 $order_info = Order::findOne(['order_id' => $order_id]);
-                $total_fee = $order_info * 100;
+                $total_fee = $order_info['real_total_money'] * 100;
                 if($total_fee !=  $notify_data['total_fee']){
                     CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $notify_data]);
                     return false;
