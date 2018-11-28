@@ -16,7 +16,7 @@ use SYS_ADMIN\components\Wechat;
 use SYS_ADMIN\models\Client;
 use yii\web\Controller;
 
-class WechatController extends Controller
+class WechatController extends CommonController
 {
     public $enableCsrfValidation = false;
 
@@ -129,14 +129,12 @@ class WechatController extends Controller
         return false;
     }
 
-    public function actionCheck()
+    public function actionJssdk()
     {
+        $url = \Yii::$app->request->post('url');
         $js = (new Application(['conf' => \Yii::$app->params['wx']['mp']]))->driver("mp.jssdk");
 
-
-        $url = \Yii::$app->urlManager->createUrl(['/rest/v1/wechat/check']);
-
-        $res = $js->signatureJs($url);
-        var_dump($res);
+        $sdk = $js->signatureJs($url);
+        return $this->successInfo($sdk);
     }
 }
