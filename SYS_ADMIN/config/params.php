@@ -16,7 +16,7 @@ return [
             //  微信支付
             'payment'=>[
                 'mch_id'        =>  '1313582001',// 商户ID
-                'key'           =>  'edaqNz6bCpDQSLtG2FgK4YWmxhwRUoEs',// 商户KEY
+                'key'           =>  'rvGKyQEogaCIjHsMFOWLzkXZ0lxhVNc1',// 商户KEY
                 'notify_url'    =>  '',// 支付通知地址
                 'cert_path'     => '/cert/apiclient_cert.pem',// 证书
                 'key_path'      => '/cert/apiclient_key.pem',// 证书
