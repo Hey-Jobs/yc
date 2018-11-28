@@ -83,7 +83,8 @@ class CommonHelper
         } else {
             $content = $data;
         }
-        file_put_contents($file, $content."\r\n", FILE_APPEND);
+
+        file_put_contents($file, date('Y-m-d H:i:s').$content."\r\n", FILE_APPEND);
         return true;
     }
 
