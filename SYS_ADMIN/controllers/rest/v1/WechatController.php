@@ -27,7 +27,7 @@ class WechatController extends CommonController
         $appid = Wechat::$APPID;
         $appsecret = Wechat::$APPSECRET;
         if(empty($code)){
-            $redirec_url = CommonHelper::getUrl();
+            $redirec_url = CommonHelper::getDomain()."/rest/v1/wechat/auth-login";
             $redirec_url = urldecode($redirec_url);
 
             $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$appid}&redirect_uri={$redirec_url}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";

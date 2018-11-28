@@ -25,7 +25,7 @@ class CommonController extends \yii\rest\Controller
         $action_name = str_replace("rest/v1/wechat/","", $base_url);
         $action_name = trim($action_name, '/');
         $no_auth = ['jssdk', 'auth-login', 'notify'];
-        
+
         /*$open_id = "omIqUv9pP6EaM3tqd4UoAs4J4Ncw";
         $check_info = Client::findOne(['open_id' => $open_id]);
         $user_detail = [
