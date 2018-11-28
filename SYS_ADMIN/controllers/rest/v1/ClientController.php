@@ -323,7 +323,7 @@ class ClientController extends CommonController
                     'body'=>$product_detail."#{$order_id}",
                     'detail'=>"商品购买#{$order_id}",
                     'out_trade_no'=>$order_id,
-                    'total_fee'=>$model->real_total_money * 100,
+                    'total_fee'=>1,
                     'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
                     'openid'=> $this->user_info['open_id'],
                 ];
@@ -334,7 +334,7 @@ class ClientController extends CommonController
                     $arr = $payment->configForPayment($prepayId);
                 }
 
-                return $this->successInfo(true);
+                return $this->successInfo($arr);
             } else {
                 $connection->rollBack();
                 CommonHelper::writeOrderLog($detail_data);
