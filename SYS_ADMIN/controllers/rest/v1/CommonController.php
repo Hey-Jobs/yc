@@ -34,7 +34,7 @@ class CommonController extends \yii\rest\Controller
         ];
         $this->user_info = $user_detail;*/
         $open_id = \Yii::$app->request->post('open_id');
-        if(empty($open_id)){
+        if(empty($open_id) && !in_array($action_name, $no_auth)){
             return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
