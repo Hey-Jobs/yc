@@ -73,8 +73,8 @@ class CommonHelper
 
     public static function writeLog($data, $filename = 'log.log'){
         $dir = "log/".date('Ymd')."/";
-        if(!is_file($dir)){
-            mkdir($dir, "0777");
+        if(!is_dir($dir)){
+            mkdir($dir, 0777, true);
         }
         $file = "log/".date('Ymd')."/".$filename;
         $content = "";
@@ -86,6 +86,7 @@ class CommonHelper
         file_put_contents($file, $content."\r\n", FILE_APPEND);
         return true;
     }
+
 
     public static function writeOrderLog($data){
         return self::writeLog($data, "order.log");

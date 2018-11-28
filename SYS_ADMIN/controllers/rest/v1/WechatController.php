@@ -8,6 +8,7 @@
 namespace SYS_ADMIN\controllers\rest\v1;
 
 
+use abei2017\wx\Application;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -17,6 +18,7 @@ use yii\web\Controller;
 
 class WechatController extends Controller
 {
+    public $enableCsrfValidation = false;
 
     public function actionAuthLogin()
     {
@@ -82,5 +84,48 @@ class WechatController extends Controller
 
     }
 
+    public function actionNotify()
+    {
 
+        $conf = \Yii::$app->params['wx']['mp'];
+        $pay = (new Application(['conf'=>$conf]))->driver("mp.pay");
+
+        $response = $pay->handleNotify(function($notify,$isSuccess){
+            if($isSuccess){
+                CommonHelper::writeOrderLog($notify);
+                return true;
+            }
+        });
+
+        return $response;
+        return "SUCCESS";
+    }
+
+    public  function actionTest()
+    {
+        $product_detail = "test";
+        $order_id = "123456";
+        $attributes = [
+            'body'=>$product_detail."#{$order_id}",
+            'detail'=>"test#{$order_id}",
+            'out_trade_no'=>$order_id,
+            'total_fee'=> 1,
+            'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+            'openid'=> 'omIqUv9pP6EaM3tqd4UoAs4J4Ncw',
+        ];
+
+        $conf = \Yii::$app->params['wx']['mp'];
+        $wechat = new Application(['conf'=>$conf]);
+        $payment = $wechat->driver("mp.pay");
+        $jsApi = $payment->js($attributes);
+        if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+            $prepayId = $jsApi['prepay_id'];
+            $arr = $payment->configForPayment($prepayId);
+            var_dump($arr);
+        } else {
+            var_dump($jsApi);
+        }
+
+        return false;
+    }
 }
