@@ -132,9 +132,11 @@ class WechatController extends CommonController
     public function actionJssdk()
     {
         $url = \Yii::$app->request->post('url');
+        $apis = \Yii::$app->request->post('apis');
         $js = (new Application(['conf' => \Yii::$app->params['wx']['mp']]))->driver("mp.jssdk");
 
-        $sdk = $js->signatureJs($url);
+        $apis = explode(',', $apis);
+        $sdk = $js->buildConfigJs($apis, false, $url);
         return $this->successInfo($sdk);
     }
 }
