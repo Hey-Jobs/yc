@@ -14,6 +14,7 @@ use SYS_ADMIN\components\ArrayHelper;
 use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\components\Express;
 use SYS_ADMIN\models\ClientAddr;
 use SYS_ADMIN\models\ClientStart;
 use SYS_ADMIN\models\LiveRoom;
@@ -161,9 +162,11 @@ class ClientController extends CommonController
      */
     public function actionOrders()
     {
+        $last = \Yii::$app->request->get('last');
+
         $clientId = 2;
 
-        $orderList = Order::find()
+        $query = Order::find()
             ->select([
                 'id',
                 'order_id',
@@ -171,13 +174,22 @@ class ClientController extends CommonController
                 'client_id',
                 'order_status',
                 'real_total_money',
+                'total_money',
+                'user_name',
+                'user_address',
+                'user_phone',
+                'express_id',
+                'deliver_money',
                 'create_time'
             ])
             ->where(['in', 'order_status', [ConStatus::$ORDER_PENDING, ConStatus::$ORDER_SENDED, ConStatus::$ORDER_DELIVERY, ConStatus::$ORDER_USER_WAIT_DELIVERY, ConStatus::$ORDER_USER_DELIVERIED, ConStatus::$ORDER_USER_REJECT]])
             ->andWhere(['client_id' => $clientId])
-            ->orderBy('create_time desc')
-            ->asArray()
-            ->all();
+            ->orderBy('create_time desc');
+
+        if ($last) {
+            $query->limit(1);
+        }
+        $orderList = $query->asArray()->all();
 
         $orderDetails = OrderDetail::find()
             ->select(['order_id', 'title', 'price', 'num', 'cover_img'])
@@ -193,7 +205,14 @@ class ClientController extends CommonController
             $data[$key]['order_id'] = $row['order_id'] ?? '';
             $data[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
             $data[$key]['order_status'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
-            $data[$key]['total_money'] = ConStatus::$ORDER_LIST[$row['real_total_money']] ?? '';
+            $data[$key]['total_money'] = $row['real_total_money'] ?? '';
+            $data[$key]['deliver_money'] = $row['deliver_money'] ?? '';
+            $data[$key]['discount_money'] = round(($row['deliver_money'] + $row['total_money']) - $row['real_total_money'], 2);
+            $data[$key]['user_name'] = $row['user_name'] ?? '';
+            $data[$key]['user_address'] = $row['user_address'] ?? '';
+            $data[$key]['user_phone'] = $row['user_phone'] ?? '';
+            $data[$key]['create_time'] = $row['create_time'] ?? '';
+            $data[$key]['express_name'] = Express::$EXPRESS[$row['express_id']] ?? '';
             $data[$key]['list'] = $orderDetails[$row['id']] ?? '';
         }
 
