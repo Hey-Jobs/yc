@@ -95,10 +95,11 @@ class WechatController extends CommonController
             if($isSuccess){
                 CommonHelper::writeOrderLog($notify);
                 $notify_data = json_decode($notify, true);
+                
                 $order_id = $notify_data['out_trade_no'];
                 $order_info = Order::find()
-                        ->where(['order_id' => $order_id])
-                        ->one();
+                    ->where(['order_id' => $order_id])
+                    ->one();
 
                 $total_fee = $order_info->real_total_money * 100;
                 if($total_fee !=  $notify_data['total_fee']){
@@ -130,6 +131,8 @@ class WechatController extends CommonController
 
     public  function actionTest()
     {
+        $notify = '{"appid":"wx2e4c11f43a7669eb","bank_type":"CFT","cash_fee":"1","fee_type":"CNY","is_subscribe":"Y","mch_id":"1313582001","nonce_str":"BN404ck_pWaHatr-nknOMa0ALRZ5m7Qw","openid":"omIqUv9pP6EaM3tqd4UoAs4J4Ncw","out_trade_no":"2018112892002","result_code":"SUCCESS","return_code":"SUCCESS","sign":"9F5707EA90BA5CE2AB0EB83B7B99473E","time_end":"20181128203928","total_fee":"1","trade_type":"JSAPI","transaction_id":"4200000220201811287915942939"}';
+
 
     }
 
