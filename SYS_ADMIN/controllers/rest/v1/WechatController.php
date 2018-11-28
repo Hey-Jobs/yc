@@ -93,6 +93,7 @@ class WechatController extends CommonController
 
         $response = $pay->handleNotify(function($notify,$isSuccess){
             if($isSuccess){
+                CommonHelper::writeOrderLog($notify);
                 $notify_data = json_decode($notify, true);
                 $order_id = $notify_data['out_trade_no'];
                 $order_info = Order::findOne(['order_id' => $order_id]);
