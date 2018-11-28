@@ -181,7 +181,7 @@ class RoomController extends CommonController
             ->where(['room_id' => $id])
             ->asArray()
             ->one();
-        
+
         return $this->successInfo($list);
     }
 
