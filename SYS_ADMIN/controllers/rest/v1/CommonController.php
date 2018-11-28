@@ -24,7 +24,7 @@ class CommonController extends \yii\rest\Controller
         $base_url = \Yii::$app->request->getPathInfo();
         $action_name = str_replace("rest/v1/room/","", $base_url);
         $no_auth = ['jssdk', 'auto-login', 'notify'];
-        $open_id = "omIqUv9pP6EaM3tqd4UoAs4J4Ncw";
+        /*$open_id = "omIqUv9pP6EaM3tqd4UoAs4J4Ncw";
         $check_info = Client::findOne(['open_id' => $open_id]);
         $user_detail = [
             'user_name' => $check_info->client_name,
@@ -32,8 +32,8 @@ class CommonController extends \yii\rest\Controller
             'open_id' => $check_info->open_id,
             'uid' => $check_info->id,
         ];
-        $this->user_info = $user_detail;
-        /*$open_id = \Yii::$app->request->post('open_id');
+        $this->user_info = $user_detail;*/
+        $open_id = \Yii::$app->request->post('open_id');
         if(empty($open_id)){
             return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
         }
@@ -44,7 +44,7 @@ class CommonController extends \yii\rest\Controller
             return $this->errorInfo(ConStatus::$STATUS_ERROR_USER_EXIT, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $this->user_info = $user_info;*/
+        $this->user_info = $user_info;
     }
 
     /**
