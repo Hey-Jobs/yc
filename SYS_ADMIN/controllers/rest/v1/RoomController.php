@@ -13,6 +13,7 @@ use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
+use SYS_ADMIN\models\ShoppingMall;
 use SYS_ADMIN\models\Video;
 use SYS_ADMIN\models\ClientStart;
 
@@ -176,6 +177,11 @@ class RoomController extends CommonController
             $list['cover_pic'] = $cover_pic['pic_path'] ?? "";
         }
 
+        $mall = ShoppingMall::find()
+            ->where(['room_id' => $id])
+            ->asArray()
+            ->one();
+        
         return $this->successInfo($list);
     }
 

@@ -46,7 +46,7 @@ class CommonController extends \yii\rest\Controller
             return $this->errorInfo(ConStatus::$STATUS_ERROR_USER_EXIT, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $this->user_info = $user_info;
+        $this->user_info = json_decode($user_info, true);
     }
 
     /**
