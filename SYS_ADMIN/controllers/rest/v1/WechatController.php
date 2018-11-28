@@ -14,6 +14,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Wechat;
 use SYS_ADMIN\models\Client;
+use SYS_ADMIN\models\Order;
 use yii\web\Controller;
 
 class WechatController extends CommonController
@@ -92,8 +93,31 @@ class WechatController extends CommonController
 
         $response = $pay->handleNotify(function($notify,$isSuccess){
             if($isSuccess){
-                CommonHelper::writeOrderLog($notify);
+                $notify_data = json_encode($notify);
+                $order_id = $notify_data['out_trade_no'];
+                $order_info = Order::findOne(['order_id' => $order_id]);
+                $total_fee = $order_info * 100;
+                if($total_fee !=  $notify_data['total_fee']){
+                    CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $notify_data]);
+                    return false;
+                }
+
+                if($order_info->is_pay != ConStatus::$ORDER_PAY){ // 更新订单状态
+                    $order_info->is_pay = ConStatus::$ORDER_PAY;
+                    $order_info->order_status = ConStatus::$ORDER_PAY_FINISH;
+                    $order_info->pay_from = ConStatus::$PAY_WAY_WECHAT;
+                    $order_info->trade_no = $notify_data['transaction_id'];
+                    if($order_info->save()){
+                        return true;
+                    } else {
+                        CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $order_info->getFirstErrors()]);
+                        return false;
+                    }
+
+                }
+
                 return true;
+
             }
         });
 

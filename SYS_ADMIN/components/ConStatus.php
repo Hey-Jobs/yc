@@ -30,6 +30,9 @@ class ConStatus
     ];
 
     // ORDER 订单
+    static $ORDER_PAY = 1; // 已支付
+    static $ORDER_PAY_NONE = 2; // 未支付
+
     static $PAY_ONLINE = 1; // 线上支付
     static $PAY_LOCAL = 2; // 货到付款
 
@@ -49,6 +52,7 @@ class ConStatus
     static $ORDER_USER_REJECT = 5;   // 用户拒收
     static $ORDER_NO_PAY = 6;   // 未付款的订单
     static $ORDER_CANCEL = 7;   // 用户取消
+    static $ORDER_PAY_FINISH = 8;   // 用户付款
 
     static $ORDER_LIST = [
         0 => '待发货',
@@ -59,6 +63,7 @@ class ConStatus
         5 => '用户拒收',
         6 => '未付款的订单',
         7 => '用户取消',
+        8 => '已付款',
     ];
 
     static $SEX = [
