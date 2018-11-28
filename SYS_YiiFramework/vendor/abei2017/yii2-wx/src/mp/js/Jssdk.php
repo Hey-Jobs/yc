@@ -7,6 +7,7 @@
 
 namespace abei2017\wx\mp\js;
 use Yii;
+use yii\helpers\Json;
 
 
 class Jssdk extends Js
