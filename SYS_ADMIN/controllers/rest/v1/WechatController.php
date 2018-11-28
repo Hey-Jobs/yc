@@ -98,7 +98,6 @@ class WechatController extends CommonController
         });
 
         return $response;
-        return "SUCCESS";
     }
 
     public  function actionTest()

@@ -42,8 +42,8 @@ class ClientController extends CommonController
             ->asArray()
             ->all();
 
-        if(count($addr)){
-            foreach ($addr as $v){
+        if (count($addr)) {
+            foreach ($addr as $v) {
                 $addr_list[] = [
                     'aid' => $v['id'],
                     'sex' => $v['client_sex'],
@@ -71,7 +71,7 @@ class ClientController extends CommonController
             ->where(['id' => $aid, 'user_id' => $user_id])
             ->one();
 
-        if(empty($model)){
+        if (empty($model)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -95,19 +95,19 @@ class ClientController extends CommonController
             ->asArray()
             ->one();
 
-        if($add_info){
-            $common_addr =  ClientAddr::find()
+        if ($add_info) {
+            $common_addr = ClientAddr::find()
                 ->where(['user_id' => $user_id])
                 ->where(['common' => 1])
                 ->asArray()
                 ->one();
 
-            if($common_addr){
+            if ($common_addr) {
                 $add_info = $common_addr;
             }
         }
 
-        if($add_info){
+        if ($add_info) {
             $add_info['sex'] = ConStatus::$SEX[$add_info['client_sex']];
         }
         return $this->successInfo($add_info);
@@ -129,14 +129,14 @@ class ClientController extends CommonController
 
         $model = new ClientAddr();
         $model->attributes = \Yii::$app->request->post();
-        if(!$model->validate()){
+        if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
-        if(!empty($aid)){
+        if (!empty($aid)) {
             $model = ClientAddr::findOne($aid);
-            if($model->user_id != $uid || empty($model)){
+            if ($model->user_id != $uid || empty($model)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
             }
         }
@@ -149,13 +149,12 @@ class ClientController extends CommonController
         $model->detail = $detail;
         $model->common = $common;
 
-        if($model->save()){
+        if ($model->save()) {
             return $this->successInfo(true);
         } else {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS);
         }
     }
-
 
     /**
      * 订单列表
@@ -163,8 +162,8 @@ class ClientController extends CommonController
     public function actionOrders()
     {
         $last = \Yii::$app->request->get('last');
-
-        $clientId = 2;
+        $order_id = \Yii::$app->request->post('order_id');
+        $clientId = $this->user_info['uid'];
 
         $query = Order::find()
             ->select([
@@ -189,6 +188,11 @@ class ClientController extends CommonController
         if ($last) {
             $query->limit(1);
         }
+
+        if($order_id){ // 查看订单详情
+            $query->andWhere(['order_id' => $order_id]);
+        }
+
         $orderList = $query->asArray()->all();
 
         $orderDetails = OrderDetail::find()
@@ -334,7 +338,7 @@ class ClientController extends CommonController
                     $arr = $payment->configForPayment($prepayId);
                 }
 
-                return $this->successInfo($arr);
+                return $this->successInfo(['pay' => $arr, 'order_no'=> $order_id]);
             } else {
                 $connection->rollBack();
                 CommonHelper::writeOrderLog($detail_data);
