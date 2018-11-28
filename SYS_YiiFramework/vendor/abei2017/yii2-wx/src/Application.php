@@ -61,6 +61,7 @@ class Application extends Component {
             'tag'=>'abei2017\wx\mp\user\Tag',    //  会员标签
             'menu'=>'abei2017\wx\mp\menu\Menu',  // 菜单
             'js'=>'abei2017\wx\mp\js\Js',    //  JS
+            'jssdk'=>'abei2017\wx\mp\js\Jssdk', // JSSDK
             'template'=>'abei2017\wx\mp\template\Template', //   消息模板
             'pay'=>'abei2017\wx\mp\payment\Pay',//  支付接口
             'mch'=>'abei2017\wx\mp\payment\Mch',//  企业付款
