@@ -94,16 +94,16 @@ class WechatController extends CommonController
         $response = $pay->handleNotify(function($notify,$isSuccess){
             if($isSuccess){
                 CommonHelper::writeOrderLog($notify);
-                $notify_data = json_decode($notify, true);
-                
-                $order_id = $notify_data['out_trade_no'];
+                //$notify_data = json_decode($notify, true);
+
+                $order_id = $notify['out_trade_no'];
                 $order_info = Order::find()
                     ->where(['order_id' => $order_id])
                     ->one();
 
                 $total_fee = $order_info->real_total_money * 100;
-                if($total_fee !=  $notify_data['total_fee']){
-                    CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $notify_data]);
+                if($total_fee !=  $notify['total_fee']){
+                    CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $notify]);
                     return false;
                 }
 
@@ -111,7 +111,7 @@ class WechatController extends CommonController
                     $order_info->is_pay = ConStatus::$ORDER_PAY;
                     $order_info->order_status = ConStatus::$ORDER_PAY_FINISH;
                     $order_info->pay_from = ConStatus::$PAY_WAY_WECHAT;
-                    $order_info->trade_no = $notify_data['transaction_id'];
+                    $order_info->trade_no = $notify['transaction_id'];
                     if($order_info->save()){
                         return true;
                     } else {
