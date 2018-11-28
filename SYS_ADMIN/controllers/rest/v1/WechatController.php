@@ -100,4 +100,32 @@ class WechatController extends Controller
         return $response;
         return "SUCCESS";
     }
+
+    public  function actionTest()
+    {
+        $product_detail = "test";
+        $order_id = "123456";
+        $attributes = [
+            'body'=>$product_detail."#{$order_id}",
+            'detail'=>"test#{$order_id}",
+            'out_trade_no'=>$order_id,
+            'total_fee'=> 1,
+            'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+            'openid'=> $this->user_info['open_id'],
+        ];
+
+        $conf = \Yii::$app->params['wx']['mp'];
+        $wechat = new Application(['conf'=>$conf]);
+        $payment = $wechat->driver("mp.pay");
+        $jsApi = $payment->js($attributes);
+        if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+            $prepayId = $jsApi['prepay_id'];
+            $arr = $payment->configForPayment($prepayId);
+            var_dump($arr);
+        } else {
+            var_dump($jsApi);
+        }
+
+        return false;
+    }
 }
