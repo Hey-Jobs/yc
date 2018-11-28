@@ -280,7 +280,7 @@ class ClientController extends CommonController
         $model->order_id = $order_id;
         $model->client_id = $this->user_info['uid'];
         $model->order_status = ConStatus::$ORDER_NO_PAY;
-        $model->deliver_money = 20; //运费
+        $model->deliver_money = 0; //运费
         $model->total_money = $total_money;
         $model->real_total_money = $model->deliver_money + $total_money;
         $model->pay_type = ConStatus::$PAY_ONLINE; //线上支付

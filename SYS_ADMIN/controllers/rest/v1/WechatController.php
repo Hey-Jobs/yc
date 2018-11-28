@@ -96,7 +96,10 @@ class WechatController extends CommonController
                 CommonHelper::writeOrderLog($notify);
                 $notify_data = json_decode($notify, true);
                 $order_id = $notify_data['out_trade_no'];
-                $order_info = Order::findOne(['order_id' => $order_id]);
+                $order_info = Order::find()
+                        ->where(['order_id' => $order_id])
+                        ->one();
+
                 $total_fee = $order_info->real_total_money * 100;
                 if($total_fee !=  $notify_data['total_fee']){
                     CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $notify_data]);
@@ -127,30 +130,7 @@ class WechatController extends CommonController
 
     public  function actionTest()
     {
-        $product_detail = "test";
-        $order_id = "123456";
-        $attributes = [
-            'body'=>$product_detail."#{$order_id}",
-            'detail'=>"test#{$order_id}",
-            'out_trade_no'=>$order_id,
-            'total_fee'=> 1,
-            'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
-            'openid'=> 'omIqUv9pP6EaM3tqd4UoAs4J4Ncw',
-        ];
 
-        $conf = \Yii::$app->params['wx']['mp'];
-        $wechat = new Application(['conf'=>$conf]);
-        $payment = $wechat->driver("mp.pay");
-        $jsApi = $payment->js($attributes);
-        if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
-            $prepayId = $jsApi['prepay_id'];
-            $arr = $payment->configForPayment($prepayId);
-            var_dump($arr);
-        } else {
-            var_dump($jsApi);
-        }
-
-        return false;
     }
 
     public function actionJssdk()
