@@ -9,7 +9,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 
 use app\models\Comment;
-use app\models\Log;
+use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
