@@ -9,6 +9,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 
 use app\models\Comment;
+use app\models\Log;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
@@ -177,10 +178,10 @@ class RoomController extends CommonController
             $list['cover_pic'] = $cover_pic['pic_path'] ?? "";
         }
 
-        $mall = ShoppingMall::find()
-            ->where(['room_id' => $id])
-            ->asArray()
-            ->one();
+//        $mall = ShoppingMall::find()
+//            ->where(['room_id' => $id])
+//            ->asArray()
+//            ->one();
 
         return $this->successInfo($list);
     }
@@ -193,12 +194,22 @@ class RoomController extends CommonController
         $user_id = $this->user_info['uid'];
         $id = \Yii::$app->request->post('id');
         $room_info = LiveRoom::findOne($id);
+
+        $log['user_id'] = $user_id;
+        $log['from_id'] = $id;
+        $logM = new Log();
+        $logM->content = json_encode($log);
+        $logM->url = $this->action->controller->module->requestedRoute ?? '';
+        $logM->save();
+
         if(empty($id) || empty($room_info)){
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
+
         $lists =  Comment::find()
             ->where(['from_id' => $id, 'type' => ConStatus::$COMMENT_TYPE_ROOM])
             ->asArray()
+            ->orderBy('id desc')
             ->all();
 
         if(count($lists)){
