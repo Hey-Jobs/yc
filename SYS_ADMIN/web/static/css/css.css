@@ -12,8 +12,8 @@ body{ max-width: 720px; margin: 0 auto; }
 
 /* css common */
 body{ background: #fff }
-.logo{ position: absolute; top: 20px; right: 5px; width: 100px; z-index: 10 } 
-.line{ border-top: 1px solid #ededed; border-bottom: 1px solid #ededed; background: #faf9f9; height: 12px; } 
+.logo{ position: absolute; top: 20px; right: 5px; width: 100px; z-index: 10 }
+.line{ border-top: 1px solid #ededed; border-bottom: 1px solid #ededed; background: #faf9f9; height: 12px; }
 .videoIcon{ background: url('../images/videoIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
 .shopCarIcon{ background: url('../images/shopCar.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
 .messIcon{ background: url('../images/messIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
@@ -52,13 +52,13 @@ h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px;
 
 /* 直播首页 */
 .video{ width: 100%; display: inline-block; overflow: hidden; background: #ddd; position: relative; z-index: 1; }
-.videoCover{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 10 }
+.videoCover{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: -1 }
 .title{ display: block; }
 .title dl{ padding: 10px 14px 14px; overflow: hidden;  }
 .title dt{ float: left; width: calc(100% - 80px); }
 .title dt h1{ font-size: 16px; font-weight: normal; padding-bottom: 3px;  }
 .title dt h1 span:first-child{ width: calc(100% - 60px); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; float: left; }
-.title dt h1 span:last-child{ background: url('../images/goodIcon.png') no-repeat left center; background-size: 15px; 
+.title dt h1 span:last-child{ background: url('../images/goodIcon.png') no-repeat left center; background-size: 15px;
  display: inline-block; line-height: 20px; height: 20px; vertical-align: top; margin-left: 5px; padding: 0 0 0 18px; font-size: 14px; color: #a5a6a6; }
 .title dt p{ font-size: 12px; color: #999; background: url('../images/addressIcon.png') no-repeat left center; background-size: 15px; padding: 0 0 0 18px; }
 .title dt p a{ color: #999; }
@@ -100,8 +100,8 @@ h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px;
 .shopList dl dd span.num{ float: right; font-size: 14px; }
 .shopList dl dd span.num a{ width: 18px; height: 18px;  color: #fff; display: inline-block; background: #57c220; border-radius: 18px; text-align: center; line-height: 18px; text-decoration: none }
 .shopList dl dd span.num i{  color: #999; padding: 0 5px; font-style: normal; }
- 
- 
+
+
 .shoppingCarBox{ height: 40px; background: #666; position: fixed; left: 0; bottom: 0; right: 0; width: 100%; z-index: 100  }
 .shoppingCarBox:before{ position: absolute; top: -20px; left: 10px; content: ''; width: 60px; height: 60px;
  background: url('../images/shopCarIcon.png') no-repeat left top; background-size: 100%; }
@@ -112,13 +112,13 @@ h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px;
 .shoppingCarBox dd a{ background: #57c220; display: inline-block; color: #fff; height: 40px; line-height: 40px; padding: 0 20px; font-size: 14px; text-decoration: none }
 /* 广告页 */
 .liveHome{ position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; background: #fff; overflow: hidden; z-index: 100 }
- 
+
 /* 互动评论 */
 .messList{ padding: 0 0 70px;}
 .messList dl{ overflow: hidden; border-bottom: 1px solid #f0f0ef; padding: 15px 5px; margin: 0 15px; font-size: 14px; color: #333; }
 .messList dl:last-child{ border-bottom: none }
 .messList dl dt{ height: 45px; }
-.messList dl dt span{ display: inline-block; vertical-align: middle; margin-right: 5px; width: 45px; height: 45px; background: url('../images/logoIcon.png') no-repeat center center; 
+.messList dl dt span{ display: inline-block; vertical-align: middle; margin-right: 5px; width: 45px; height: 45px; background: url('../images/logoIcon.png') no-repeat center center;
 border: 1px solid #d6d6d5; border-radius: 45px; background-size: 30px; }
 .messList dl dd{ margin-left: 50px; }
 .messList dl dd p:first-child{ line-height: 22px; padding-bottom: 5px }
@@ -131,7 +131,7 @@ border: 1px solid #d6d6d5; border-radius: 45px; background-size: 30px; }
  border-top: 1px solid #dcdcdc; padding: 10px 15px 8px 70px;  z-index: 100 }
 .sendMessBox{ border-radius: 20px; border: 1px solid #dcdcdc;  width: 100%; overflow: hidden; display: inline-block; }
 .sendMessBox input{ height: 36px; line-height: 36px; padding: 0 0 0 20px; border-right: 1px solid #dcdcdc; width: calc(100% - 72px); float: left; }
-.sendMessBox button{ background: url('../images/sendBtnIcon.png') no-repeat center center; background-size: 20px; 
+.sendMessBox button{ background: url('../images/sendBtnIcon.png') no-repeat center center; background-size: 20px;
 width: 50px; height: 36px; float: right; border: none;}
 
 
@@ -139,7 +139,7 @@ width: 50px; height: 36px; float: right; border: none;}
 /* 精彩视频 */
 .filmList{ }
 .filmList dl{ margin: 0 15px; padding: 15px 0; border-bottom: 1px solid #dcdcdc;}
-.filmList dl dt{ width: 100%; background: #ddd } 
+.filmList dl dt{ width: 100%; background: #ddd }
 .filmList dl dd{ padding: 10px 10px 0; }
 .filmList dl dd h3{  font-size: 18px; color: #333; padding-bottom: 5px; font-weight: normal; }
 .filmList dl dd p{ font-size: 12px; color: #999;}
@@ -188,10 +188,10 @@ content: ''; }
 .addNewAddress{ text-align: center; padding: 45px 0; overflow: hidden; background: url('../images/changeAddress.png') no-repeat right center;
 background-size: 8px;    margin: 0 15px; }
 .addNewAddress a{ border-radius: 15px; border: 1px solid #57c220; color: #57c220; padding: 10px 15px;}
-.orderTime{ margin: 0 15px; padding: 12px 0; color: #333; font-size: 14px; border-top: 1px solid #dcdcdc; 
+.orderTime{ margin: 0 15px; padding: 12px 0; color: #333; font-size: 14px; border-top: 1px solid #dcdcdc;
  background: url('../images/orderTime.png') no-repeat 12px center; background-size: 15px; padding-left: 40px;}
 .orderTime span{ color: #3e7cf3; margin-left: 10px; }
- 
+
 .orderList .tit{background: url('../images/brandLogo.png') no-repeat left center; margin: 0 10px; font-size: 16px; padding: 15px 0 15px 30px; background-size: 20px;  }
 
 .orderList{ margin: 15px 15px 80px; background: #fff;  }
@@ -245,4 +245,4 @@ background-size: 8px;    margin: 0 15px; }
 
 
 /* 重置插件css */
-..swiper-slide{ height: auto; }
+.swiper-slide{ height: auto; }
