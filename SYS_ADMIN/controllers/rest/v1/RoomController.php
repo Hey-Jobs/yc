@@ -193,6 +193,8 @@ class RoomController extends CommonController
     {
         $user_id = $this->user_info['uid'];
         $id = \Yii::$app->request->post('id');
+//        $id = 9;
+//        $user_id = 8;
         $room_info = LiveRoom::findOne($id);
 
         $log['user_id'] = $user_id;
