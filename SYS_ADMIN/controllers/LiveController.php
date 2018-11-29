@@ -118,6 +118,7 @@ class LiveController extends CommonController
         $logo_img = \Yii::$app->request->post('logo_img');
         $addr_url = \Yii::$app->request->post('addr_url', "");
         $addr = \Yii::$app->request->post('addr', "");
+        $online_url = \Yii::$app->request->post('online_url', "");
         $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
         $sort_num = \Yii::$app->request->post('sort_num');
 
@@ -145,6 +146,7 @@ class LiveController extends CommonController
 
 
         $model->addr = $addr;
+        $model->online_url = $online_url;
         $model->addr_url = $addr_url;
         $model->logo_img = $logo_img;
         $model->room_name = $room_name;

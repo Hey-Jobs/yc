@@ -15,6 +15,7 @@ use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\ShoppingMall;
+use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
 use SYS_ADMIN\models\ClientStart;
 
@@ -178,11 +179,24 @@ class RoomController extends CommonController
             $list['cover_pic'] = $cover_pic['pic_path'] ?? "";
         }
 
-//        $mall = ShoppingMall::find()
-//            ->where(['room_id' => $id])
-//            ->asArray()
-//            ->one();
+        // 联系电话
+        $user_info = User::findOne($list['user_id']);
+        $list['mobile'] = $user_info['phone'];
 
+        // 商城信息
+        $list['title'] = '';
+        $list['sub_title'] = '';
+        $list['intro'] = '';
+        $mall = ShoppingMall::find()
+            ->where(['room_id' => $id])
+            ->asArray()
+            ->one();
+
+        if($mall){
+            $list['title'] = $mall['title'];
+            $list['sub_title'] = $mall['sub_title'];
+            $list['intro'] = $mall['introduction'];
+        }
         return $this->successInfo($list);
     }
 

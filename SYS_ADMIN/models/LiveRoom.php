@@ -38,6 +38,7 @@ class LiveRoom extends ActiveRecord
             'coordinate' => '坐标地址',
             'sort_num' => '排序值',
             'status' => '状态',
+            'online_url' => '直播地址',
         ];
     }
 

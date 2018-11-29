@@ -88,7 +88,21 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间地址</label>
+                        <label class="col-sm-2 control-label">直播url</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="online_url" id="online_url" value="<?= $info['online_url'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">直播封面地址</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="online_cover" id="online_cover" value="<?= $info['online_cover'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">地址</label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="addr" id="addr" value="<?= $info['addr'] ?? "" ?>"></div>
                     </div>
