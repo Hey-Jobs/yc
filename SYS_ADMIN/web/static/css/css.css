@@ -246,3 +246,5 @@ background-size: 8px;    margin: 0 15px; }
 
 /* 重置插件css */
 .swiper-slide{ height: auto; }
+
+.room_content img{max-width: 100% }

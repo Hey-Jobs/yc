@@ -39,6 +39,7 @@ class LiveRoom extends ActiveRecord
             'sort_num' => '排序值',
             'status' => '状态',
             'online_url' => '直播地址',
+            'online_cover' => '直播封面图',
         ];
     }
 
