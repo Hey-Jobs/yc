@@ -171,12 +171,12 @@ class RoomController extends CommonController
 
         if(!empty($list['logo_img'])){ // logo
             $logo_pic = Pictrue::getPictrueById($list['logo_img']);
-            $list['logo_pic'] = $logo_pic['pic_path'] ?? "";
+            $list['logo_img'] = $logo_pic['pic_path'] ?? "";
         }
 
         if(!empty($list['cover_img'])){ // cover
             $cover_pic = Pictrue::getPictrueById($list['cover_img']);
-            $list['cover_pic'] = $cover_pic['pic_path'] ?? "";
+            $list['cover_img'] = $cover_pic['pic_path'] ?? "";
         }
 
         // 联系电话
