@@ -26,7 +26,7 @@ class RoomController extends CommonController
 
     public function actionVideos()
     {
-        $user_id = 10;
+        $user_id = $this->user_info['uid'];
         $id = \Yii::$app->request->get('id');
 
         $room_info = LiveRoom::findOne($id);

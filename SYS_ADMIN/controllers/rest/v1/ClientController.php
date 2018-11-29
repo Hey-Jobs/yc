@@ -36,7 +36,7 @@ class ClientController extends CommonController
      */
     public function actionAddrList()
     {
-        $uid = 1;
+        $uid = $this->user_info['uid'];
         $addr_list = [];
         $addr = ClientAddr::find()
             ->where(['user_id' => $uid])
@@ -65,7 +65,7 @@ class ClientController extends CommonController
      */
     public function actionAddrDefault()
     {
-        $user_id = 1;
+        $user_id = $this->user_info['uid'];
         $aid = \Yii::$app->request->post('aid');
 
         $model = ClientAddr::find()
@@ -88,7 +88,7 @@ class ClientController extends CommonController
      */
     public function actionAddr()
     {
-        $user_id = 1;
+        $user_id = $this->user_info['uid'];
         $add_info = [];
         $add_info = ClientAddr::find()
             ->where(['user_id' => $user_id])
@@ -119,7 +119,7 @@ class ClientController extends CommonController
      */
     public function actionAddrSave()
     {
-        $uid = 1;
+        $uid = $this->user_info['uid'];
         $aid = \Yii::$app->request->post('aid');
         $name = \Yii::$app->request->post('client_name');
         $mobile = \Yii::$app->request->post('mobile');
@@ -229,7 +229,7 @@ class ClientController extends CommonController
      */
     public function actionOrderSub()
     {
-        $user_id = 1;
+        $user_id = $this->user_info['uid'];
         $room_id = 0 ;
 
         $products_id = [];
@@ -328,7 +328,7 @@ class ClientController extends CommonController
                     'body'=>$product_detail."#{$order_id}",
                     'detail'=>"商品购买#{$order_id}",
                     'out_trade_no'=>$order_id,
-                    'total_fee'=>1,
+                    'total_fee'=> $model->real_total_money * 100,
                     'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
                     'openid'=> $this->user_info['open_id'],
                 ];
