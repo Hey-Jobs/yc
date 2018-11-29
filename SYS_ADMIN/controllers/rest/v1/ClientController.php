@@ -18,6 +18,7 @@ use SYS_ADMIN\components\Express;
 use SYS_ADMIN\models\ClientAddr;
 use SYS_ADMIN\models\ClientStart;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Log;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
 use SYS_ADMIN\models\Product;
@@ -406,6 +407,12 @@ class ClientController extends CommonController
     {
         $room_id = \Yii::$app->request->post('id');
         $content = \Yii::$app->request->post('content');
+
+        $log['from_id'] = $room_id;
+        $logM = new Log();
+        $logM->content = json_encode($log);
+        $logM->url = $this->action->controller->module->requestedRoute ?? '';
+        $logM->save();
 
         $model = new Comment();
         $model->type = ConStatus::$COMMENT_TYPE_ROOM; // 评论直播间
