@@ -99,7 +99,7 @@ class ClientController extends CommonController
         if ($add_info) {
             $common_addr = ClientAddr::find()
                 ->where(['user_id' => $user_id])
-                ->where(['common' => 1])
+                ->andWhere(['common' => 1])
                 ->asArray()
                 ->one();
 

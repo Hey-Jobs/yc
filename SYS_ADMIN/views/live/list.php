@@ -84,7 +84,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {"data": "uname"},
                 {"data": "room_name"},
                 {"data": "pic_path"},
-                {"data": "start_num"},
+                {"data": "click_num"},
                 {"data": "status"},
             ],
             order: [[ 0, "desc" ]],

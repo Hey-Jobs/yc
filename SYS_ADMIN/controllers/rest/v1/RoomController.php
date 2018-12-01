@@ -122,10 +122,8 @@ class RoomController extends CommonController
         $lens_list = Lens::find()
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['room_id' => $id])
-            ->andWhere(['sort_num' => 1]) // 排序值1
             ->asArray()
             ->orderBy('sort_num asc, id desc')
-            ->limit(3)
             ->all();
 
         if(count($lens_list)){
@@ -141,6 +139,33 @@ class RoomController extends CommonController
                     'click' => number_format($v['click_num']),
                     'pic' => $pic_path,
                     'vnum' => md5($v['id']),
+                    'vtype' => 'lens',
+                ];
+            }
+        }
+
+        //最多显示三个精彩视频
+        $video_list = Video::find()
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['room_id' => $id])
+            ->andWhere(['sort_num' => 1])
+            ->asArray()
+            ->orderBy('sort_num asc, id desc')
+            ->all();
+
+        if(count($video_list)){
+            $pic_id = array_column($video_list, 'cover_img');
+            $pic_list = Pictrue::getPictrueList($pic_id);
+            foreach ($video_list as $v){
+                $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
+                $lens[] = [
+                    'aid' => $v['id'],
+                    'name' => $v['video_name'],
+                    'vurl' => $v['video_url'],
+                    'click' => number_format($v['click_num']),
+                    'pic' => $pic_path,
+                    'vnum' => md5($v['id']),
+                    'vtype' => 'video',
                 ];
             }
         }
@@ -179,6 +204,10 @@ class RoomController extends CommonController
             $list['cover_img'] = $cover_pic['pic_path'] ?? "";
         }
 
+        // 增加点击量
+        $model = LiveRoom::findOne($id);
+        $model->updateCounters(['click_num' => 1]);
+        $list['click_num']++;
         // 联系电话
         $user_info = User::findOne($list['user_id']);
         $list['mobile'] = $user_info['phone'];
@@ -191,6 +220,8 @@ class RoomController extends CommonController
             ->where(['room_id' => $id])
             ->asArray()
             ->one();
+
+        // 更新访问量
 
         if($mall){
             $list['title'] = $mall['title'];
