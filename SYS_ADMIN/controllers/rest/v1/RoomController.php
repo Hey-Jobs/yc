@@ -285,4 +285,18 @@ class RoomController extends CommonController
         $this->successInfo($lists);
     }
 
+    /**
+     * 直播间列表
+     */
+    public function actionList()
+    {
+        $roomList = LiveRoom::find()
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['<>', 'online_cover', ''])
+            ->asArray()
+            ->all();
+
+        return $this->successInfo($roomList);
+    }
+
 }
