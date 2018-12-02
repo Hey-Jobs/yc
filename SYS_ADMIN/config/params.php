@@ -7,16 +7,16 @@ return [
         //  公众号信息
         'mp'=>[
             //  账号基本信息
-            'app_id'  => 'wx2e4c11f43a7669eb', // 公众号的appid
-            'secret'  => '4df9871fe2ab5c6b1e61350d5b05bb76', // 公众号的秘钥
+            'app_id'  => 'wx6813aaf9a23e0aaa', // 公众号的appid
+            'secret'  => 'd8a6f5c0b285e1819bd45f6c72494ee8', // 公众号的秘钥
             'token'   => '', // 接口的token
             'encodingAESKey'=>'',
             'safeMode'=>0,
 
             //  微信支付
             'payment'=>[
-                'mch_id'        =>  '1313582001',// 商户ID
-                'key'           =>  'rvGKyQEogaCIjHsMFOWLzkXZ0lxhVNc1',// 商户KEY
+                'mch_id'        =>  '1519888171',// 商户ID
+                'key'           =>  '9p8JjbfSnQZIDVrdU1iO2tcGRasuymHv',// 商户KEY
                 'notify_url'    =>  '',// 支付通知地址
                 'cert_path'     => '/cert/apiclient_cert.pem',// 证书
                 'key_path'      => '/cert/apiclient_key.pem',// 证书
