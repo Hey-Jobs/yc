@@ -21,7 +21,9 @@ use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Log;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
+use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Product;
+use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
 
 /**
@@ -182,7 +184,15 @@ class ClientController extends CommonController
                 'deliver_money',
                 'create_time'
             ])
-            ->where(['in', 'order_status', [ConStatus::$ORDER_PENDING, ConStatus::$ORDER_SENDED, ConStatus::$ORDER_DELIVERY, ConStatus::$ORDER_USER_WAIT_DELIVERY, ConStatus::$ORDER_USER_DELIVERIED, ConStatus::$ORDER_USER_REJECT]])
+            ->where(['in', 'order_status', [
+                ConStatus::$ORDER_PENDING,
+                ConStatus::$ORDER_SENDED,
+                ConStatus::$ORDER_DELIVERY,
+                ConStatus::$ORDER_USER_WAIT_DELIVERY,
+                ConStatus::$ORDER_USER_DELIVERIED,
+                ConStatus::$ORDER_USER_REJECT,
+                ConStatus::$ORDER_PAY_FINISH,
+                ]])
             ->andWhere(['client_id' => $clientId])
             ->orderBy('create_time desc');
 
@@ -195,20 +205,50 @@ class ClientController extends CommonController
         }
 
         $orderList = $query->asArray()->all();
+        if(empty($orderList)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
 
         $orderDetails = OrderDetail::find()
             ->select(['order_id', 'title', 'price', 'num', 'cover_img'])
             ->where(['order_id' => array_column($orderList, 'id')])
             ->asArray()
             ->all();
+
+        $pic_list = Pictrue::getPictrueList(array_column($orderDetails, 'cover_img'));
+        if(count($pic_list)){
+            foreach ($orderDetails as &$od){
+                $pic_path = isset($pic_list[$od['cover_img']]) ? $pic_list[$od['cover_img']]['pic_path'] : "";
+                $od['cover_img'] = $pic_path;
+            }
+        }
         $orderDetails = CommonHelper::array_group_by($orderDetails, 'order_id');
 
         $roomPairs = BaseDataBuilder::instance('LiveRoom');
 
         $data = [];
-        foreach ($orderList as $key => $row) {
+        $room_list = LiveRoom::find()
+            ->where(['in', 'id', array_column($orderList, 'room_id')])
+            ->select(['id', 'room_name', 'logo_img', 'user_id'])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+        //$room_list = CommonHelper::array_group_by($room_info, 'id');
+        $logo_pic = Pictrue::getPictrueList(array_column($room_list, 'logo_img'));
+        $user_info = User::find()
+            ->where(['in', 'id', array_column($room_list, 'user_id')])
+            ->select(['id', 'phone'])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+       foreach ($orderList as $key => $row) {
+            $logo_pic = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : "";
             $data[$key]['order_id'] = $row['order_id'] ?? '';
-            $data[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
+            $data[$key]['room_name'] = isset($room_list[$row['room_id']]) ?  $room_list[$row['room_id']]['room_name']: "";
+            $data[$key]['logo_img'] = $logo_pic;
+            $data[$key]['mobile'] = isset($room_list[$row['room_id']]) ? $user_info[$room_list[$row['room_id']]['user_id']]['phone'] : '';
             $data[$key]['order_status'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
             $data[$key]['total_money'] = $row['real_total_money'] ?? '';
             $data[$key]['deliver_money'] = $row['deliver_money'] ?? '';
@@ -302,6 +342,7 @@ class ClientController extends CommonController
             foreach ($products_list as $item){
                 $product_detail .= $item['title'].'×'.$item['num'].'#';
                 $detail_data[] = [
+                    'order_id' => $model->id,
                     'client_id' => $this->user_info['uid'],
                     'product_id' => $item['id'],
                     'title' => $item['title'],
@@ -314,7 +355,7 @@ class ClientController extends CommonController
             $res = \Yii::$app->db->createCommand()
                 ->batchInsert(
                     OrderDetail::tableName(),
-                    ['client_id','product_id', 'title', 'price', 'cover_img', 'num'],
+                    ['order_id', 'client_id','product_id', 'title', 'price', 'cover_img', 'num'],
                     $detail_data)
                 ->execute();
             if($res){
