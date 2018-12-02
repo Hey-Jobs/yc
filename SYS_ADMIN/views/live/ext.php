@@ -227,9 +227,9 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                 {caption: "<?= $pic_info['pic_name'] ?? '' ?>", size: "<?= $pic_info['pic_size'] ?? '' ?>", width: "120px", url: "{$url}", key: 1, showRemove: false,},
             ]
             <?php endif;?>
-        }).on("filebatchselected", function(event, files) {
-            $(this).fileinput("upload");
-        })
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            })
             .on("fileuploaded", function(event, data) {
                 if(data.response)
                 {
@@ -267,6 +267,10 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                 });
             }
 
+        });
+
+        $(".fileinput-remove").click(function () {
+            $("#cover_img").val("");
         });
 
     });
