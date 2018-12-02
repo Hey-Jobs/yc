@@ -240,10 +240,10 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 
         $("#sub-form").click(function () {
             if($("#lives_ext_form").valid()){
-                if($("#cover_img").val() == '' && $("#pcover_img").val() == ''){
+                /*if($("#cover_img").val() == '' && $("#pcover_img").val() == ''){
                     affirmSwals('失败', "请上传封面图片", 'error', placeholder);
                     return false;
-                }
+                }*/
 
                 $("#content").val($('.summernote').summernote('code'));
                 var form_data = new FormData($( "#lives_ext_form" )[0]);

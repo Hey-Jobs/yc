@@ -9,6 +9,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 
 use app\models\Comment;
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
@@ -203,7 +204,7 @@ class RoomController extends CommonController
             $cover_pic = Pictrue::getPictrueById($list['cover_img']);
             $list['cover_img'] = $cover_pic['pic_path'] ?? "";
         }
-
+        $list['content'] = str_replace("/uploads/images/", CommonHelper::getDomain()."/uploads/images/", $list['content']);
         // 增加点击量
         $model = LiveRoom::findOne($id);
         $model->updateCounters(['click_num' => 1]);
@@ -228,6 +229,7 @@ class RoomController extends CommonController
             $list['sub_title'] = $mall['sub_title'];
             $list['intro'] = $mall['introduction'];
         }
+
         return $this->successInfo($list);
     }
 

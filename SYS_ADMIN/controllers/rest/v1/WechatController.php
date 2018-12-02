@@ -77,7 +77,7 @@ class WechatController extends CommonController
             $redis->expire($auth_info['openid'], 7200); // 缓存2小时
             setcookie('auth', $auth_info['openid'], time()+7200, '/');
 
-            return $this->redirect(CommonHelper::getDomain().'/#/');
+            return $this->redirect(CommonHelper::getDomain().'index.html#/');
 
         } else { // 授权失败
             //return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $auth_info['errmsg']);
