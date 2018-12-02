@@ -114,6 +114,17 @@ class WechatController extends CommonController
                     $order_info->pay_from = ConStatus::$PAY_WAY_WECHAT;
                     $order_info->trade_no = $notify['transaction_id'];
                     if($order_info->save()){
+                        // 消息通知
+                        $client_info = Client::findOne($order_info->client_id);
+                        $template = (new Application(['conf'=>$conf]))->driver("mp.template");
+                        $notify_url = CommonHelper::getDomain()."/front/#//order/mylist";
+                        $templateId = "";
+                        if($client_info->open_id){
+                            $result = $template->send($client_info->open_id, $templateId, $notify_url,[
+                                'first'=>'hello',
+                            ]);
+                        }
+
                         return true;
                     } else {
                         CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $order_info->getFirstErrors()]);
