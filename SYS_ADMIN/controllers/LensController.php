@@ -103,6 +103,7 @@ class LensController extends  CommonController
         $marvellous_url =\Yii::$app->request->post('marvellous_url');
         $status =\Yii::$app->request->post('status');
         $sort_num =\Yii::$app->request->post('sort_num');
+        $online_cover_url =\Yii::$app->request->post('online_cover_url');
 
         $model = new Lens();
         $model->attributes = \Yii::$app->request->post();
@@ -142,6 +143,7 @@ class LensController extends  CommonController
         $model->updated_at = time();
         $model->cover_img = $cover_img;
         $model->room_id = $room_id;
+        $model->online_cover_url = $online_cover_url;
 
         if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){
             $picModel = new Pictrue();
