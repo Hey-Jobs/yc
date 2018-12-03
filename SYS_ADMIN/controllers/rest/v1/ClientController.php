@@ -378,9 +378,12 @@ class ClientController extends CommonController
                 if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
                     $prepayId = $jsApi['prepay_id'];
                     $arr = $payment->configForPayment($prepayId);
+                    return $this->successInfo(['pay' => $arr, 'order_no'=> $order_id]);
+                }else {
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, $jsApi['return_msg']);
                 }
 
-                return $this->successInfo(['pay' => $arr, 'order_no'=> $order_id]);
+
             } else {
                 $connection->rollBack();
                 CommonHelper::writeOrderLog($detail_data);
