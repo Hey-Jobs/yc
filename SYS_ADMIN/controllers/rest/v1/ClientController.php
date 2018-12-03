@@ -367,7 +367,7 @@ class ClientController extends CommonController
                 $payment = $wechat->driver("mp.pay");
 
                 $attributes = [
-                    'body'=>$product_detail."#{$order_id}",
+                    'body'=>"商品购买#{$order_id}",
                     'detail'=>"商品购买#{$order_id}",
                     'out_trade_no'=>$order_id,
                     'total_fee'=> $model->real_total_money * 100,
