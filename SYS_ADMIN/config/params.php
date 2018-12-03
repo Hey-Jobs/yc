@@ -28,5 +28,10 @@ return [
                 'callback' => '',// 授权回调
             ],
         ],
+        'template' => [
+            'order_success' => 'soksY_RsROaESZZJ8WNsHrR-PxkdpXQq-0rwEFKbFLU',
+            'order_fail' => 'E-SF2wvFFtGnENRuMzJcxrATNSmSXyaQ3lfwVSuAfDo',
+            'delivery' => 'SJ01IR3dMwI33qsR3toij4e0O5wtsVz0RTE9LlgLlVE',
+        ]
     ]
 ];
