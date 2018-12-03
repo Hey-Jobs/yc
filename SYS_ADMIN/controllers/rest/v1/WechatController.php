@@ -91,7 +91,6 @@ class WechatController extends CommonController
     {
 
         $conf = \Yii::$app->params['wx']['mp'];
-        $template_id = \Yii::$app->params['wx']['template'];
         $pay = (new Application(['conf'=>$conf]))->driver("mp.pay");
 
         $response = $pay->handleNotify(function($notify,$isSuccess){
@@ -116,6 +115,7 @@ class WechatController extends CommonController
                     $order_info->pay_from = ConStatus::$PAY_WAY_WECHAT;
                     $order_info->trade_no = $notify['transaction_id'];
                     if($order_info->save()){
+                        CommonHelper::writeOrderLog(['type' => 'client start send msg', 'data' => $order_info->client_id]);
                         // 获取订单详情
                         $product_title = "";
                         $order_detail = OrderDetail::find()
@@ -124,13 +124,15 @@ class WechatController extends CommonController
                             ->all();
 
                         foreach ($order_detail as $od){
-                            $product_title .= $od['title'];
+                            $product_title .= $od['title'].'×'.$od['num'].'、';
                         }
 
                         // 消息通知
+                        $template_id = \Yii::$app->params['wx']['template'];
                         $client_info = Client::findOne($order_info->client_id);
-                        $template = (new Application(['conf'=>$conf]))->driver("mp.template");
+                        $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
                         $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+                        CommonHelper::writeOrderLog(['type' => 'template msg', 'data' => $client_info->open_id]);
                         if($client_info->open_id){
                             $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,[
                                 'first'=>'商品购买成功，请您注意物流信息，及时收取货物',
@@ -141,6 +143,8 @@ class WechatController extends CommonController
                                 'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,
                             ]);
                             CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+                        } else {
+                            CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
                         }
 
                         return true;
