@@ -136,6 +136,7 @@ class RoomController extends CommonController
                 $lens[] = [
                     'aid' => $v['id'],
                     'name' => $v['lens_name'],
+                    'cover_img' => $v['online_cover_url'],
                     'vurl' => $v['online_url'],
                     'vurl_reback' => $v['playback_url'],
                     'click' => number_format($v['click_num']),
@@ -166,6 +167,7 @@ class RoomController extends CommonController
                     'vurl' => $v['video_url'],
                     'vurl_reback' => $v['video_url'],
                     'click' => number_format($v['click_num']),
+                    'cover_img' => '',
                     'pic' => $pic_path,
                     'vnum' => md5($v['id']),
                     'vtype' => 'video',
