@@ -89,7 +89,7 @@ class WechatController extends CommonController
 
     public function actionNotify()
     {
-
+        date_default_timezone_set("Asia/Shanghai");
         $conf = \Yii::$app->params['wx']['mp'];
         $pay = (new Application(['conf'=>$conf]))->driver("mp.pay");
 
@@ -131,21 +131,23 @@ class WechatController extends CommonController
                         $client_info = Client::findOne($order_info->client_id);
                         $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
                         $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
-                        
+
+                        $msg_data = ['first'=>'商品购买成功，请您注意物流信息，及时收取货物',
+                            'keyword1' => $product_title,
+                            'keyword2' => $order_id,
+                            'keyword3' => $order_info->real_total_money."元",
+                            'keyword4' => date('Y-m-d H:i:s'),
+                            'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,];
                         if($client_info->open_id){
-                            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,[
-                                'first'=>'商品购买成功，请您注意物流信息，及时收取货物',
-                                'keyword1' => $product_title,
-                                'keyword2' => $order_id,
-                                'keyword3' => $order_info->real_total_money,
-                                'keyword4' => date('Y-m-d H:i:s'),
-                                'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,
-                            ]);
+                            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
                             CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
                         } else {
                             CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
                         }
 
+                        // 通知管理员
+                        $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['order_success'], $notify_url,$msg_data);
+                        CommonHelper::writeOrderLog(['type' => 'send admin msg', 'data' => $result]);
                         return true;
                     } else {
                         CommonHelper::writeOrderLog(['order_id' => $order_id, 'msg' => 'fee error', 'data' => $order_info->getFirstErrors()]);
@@ -183,18 +185,18 @@ class WechatController extends CommonController
         $client_info = Client::findOne($order_info->client_id);
         $template = (new Application(['conf'=>$conf]))->driver("mp.template");
         $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+        $msg_data = [
+            'first'=>'商品购买成功，请您注意物流信息，及时收取货物',
+            'keyword1' => $product_title,
+            'keyword2' => $order_id,
+            'keyword3' => $order_info->real_total_money."元",
+            'keyword4' => date('Y-m-d H:i:s'),
+            'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,
+        ];
         if($client_info->open_id){
-            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,[
-                'first'=>'商品购买成功，请您注意物流信息，及时收取货物',
-                'keyword1' => $product_title,
-                'keyword2' => $order_id,
-                'keyword3' => $order_info->real_total_money,
-                'keyword4' => date('Y-m-d H:i:s'),
-                'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,
-            ]);
+            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
             CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
         }
-
         return true;
 
     }

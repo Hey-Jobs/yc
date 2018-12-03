@@ -167,7 +167,7 @@ class RoomController extends CommonController
                     'vurl' => $v['video_url'],
                     'vurl_reback' => $v['video_url'],
                     'click' => number_format($v['click_num']),
-                    'cover_img' => '',
+                    'cover_img' => $pic_path,
                     'pic' => $pic_path,
                     'vnum' => md5($v['id']),
                     'vtype' => 'video',
