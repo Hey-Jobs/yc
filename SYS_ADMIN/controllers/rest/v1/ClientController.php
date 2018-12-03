@@ -224,7 +224,7 @@ class ClientController extends CommonController
         }
         $orderDetails = CommonHelper::array_group_by($orderDetails, 'order_id');
 
-        $roomPairs = BaseDataBuilder::instance('LiveRoom');
+//        $roomPairs = BaseDataBuilder::instance('LiveRoom');
 
         $data = [];
         $room_list = LiveRoom::find()
@@ -244,10 +244,10 @@ class ClientController extends CommonController
             ->all();
 
        foreach ($orderList as $key => $row) {
-            $logo_pic = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : "";
+            $logo_pic_tmp = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : "";
             $data[$key]['order_id'] = $row['order_id'] ?? '';
             $data[$key]['room_name'] = isset($room_list[$row['room_id']]) ?  $room_list[$row['room_id']]['room_name']: "";
-            $data[$key]['logo_img'] = $logo_pic;
+            $data[$key]['logo_img'] = $logo_pic_tmp;
             $data[$key]['mobile'] = isset($room_list[$row['room_id']]) ? $user_info[$room_list[$row['room_id']]['user_id']]['phone'] : '';
             $data[$key]['order_status'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
             $data[$key]['total_money'] = $row['real_total_money'] ?? '';
