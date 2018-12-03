@@ -319,6 +319,7 @@ class ClientController extends CommonController
         $connection = \Yii::$app->db->beginTransaction();
         $model = new Order();
         $model->order_id = $order_id;
+        $model->room_id = $room_id;
         $model->client_id = $this->user_info['uid'];
         $model->order_status = ConStatus::$ORDER_NO_PAY;
         $model->deliver_money = 0; //运费
