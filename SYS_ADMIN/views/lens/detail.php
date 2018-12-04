@@ -120,7 +120,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">精彩回放地址</label>
+                        <label class="col-sm-2 control-label">回放封面图</label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="marvellous_url"
                                                       value="<?= $info['marvellous_url'] ?? "" ?>"></div>
