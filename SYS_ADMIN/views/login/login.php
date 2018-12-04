@@ -68,7 +68,7 @@ if( Yii::$app->getSession()->hasFlash('success') ) {
     <div class="row">
         <div class="col-md-12 text-center">
 <!--            <strong></strong> - AngularJS Responsive WebApp <br/> 2018 Copyright 云窗直播-->
-            <strong></strong><br/> 2018 Copyright 云窗直播
+            <strong></strong><br/> Copyright  2018 YCLIVE YUNCHUANGLIVE.COM
         </div>
     </div>
 </div>

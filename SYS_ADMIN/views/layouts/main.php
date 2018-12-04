@@ -42,7 +42,7 @@ $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/romankarkach
         ['content' => $content, 'directoryAsset' => $directoryAsset]
     ) ?>
     <footer class="footer">
-        Copyright © 2017 Wondershare. All Rights Reserved. </a>
+        Copyright  2018 YCLIVE YUNCHUANGLIVE.COM. </a>
     </footer>
 </div>
 

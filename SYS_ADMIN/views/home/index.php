@@ -6,7 +6,7 @@
             </h2>
 
             <p>
-                Welcome <strong>YunChuan</strong>
+                Welcome <strong>YunChuang</strong>
             </p>
         </div>
     </div>

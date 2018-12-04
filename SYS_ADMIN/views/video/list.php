@@ -267,7 +267,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         $("[name='video_url']").val(data.video_url);
                         $("[name='sort_num']").val(data.sort_num);
                         $("[name='video_length']").val(data.video_length);
-                        $("#w0").select2('val',data.room_id);
+                        // $("#w0").select2('val',data.room_id);
+                        $("[name='room_id']").val(data.room_id).trigger('change');
                         if(data.status == 1){
                             $("#status1").attr("checked","checked");
                             $("#status2").removeAttr("checked");
