@@ -56,6 +56,11 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
+            $userInfo = User::find()
+                ->select(['username', 'name', 'phone', 'email'])
+                ->asArray()
+                ->one();
+            Yii::$app->session->set('userInfo', $userInfo);
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
             return false;
