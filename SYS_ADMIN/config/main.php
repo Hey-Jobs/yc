@@ -8,6 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
+    'timeZone' => 'Asia/Shanghai',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'SYS_ADMIN\controllers',
     'bootstrap' => ['log'],
