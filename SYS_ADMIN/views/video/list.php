@@ -86,8 +86,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">视频封面：</label>
                                             <div class="col-sm-9">
-                                                <input type="file" class="form-control" name="img" id="img" data-show-preview="true" placeholder="视频封面" ">
-                                                <input type="hidden" class="form-control" name="cover_img" id="cover_img">
+<!--                                                <input type="file" class="form-control" name="img" id="img" data-show-preview="true" placeholder="视频封面" ">-->
+                                                <input type="text" class="form-control" name="cover_img" id="cover_img" placeholder="视频封面">
                                             </div>
                                         </div>
 
@@ -153,9 +153,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 <script type="application/javascript">
     $(function () {
 
-        var initialPreview = [];
-        var initialPreviewConfig = [];
-        editImage(initialPreview, initialPreviewConfig);
+//        var initialPreview = [];
+//        var initialPreviewConfig = [];
+//        editImage(initialPreview, initialPreviewConfig);
 
         $("#video-form").validate({
             rules:{
@@ -281,11 +281,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
 
                         $("[name='cover_img']").val(data.cover_img);
-                        var initialPreview = [data.pic_path];
-                        var initialPreviewConfig = [{showRemove: false}];
-                        $("#img").fileinput('destroy');
-                        editImage(initialPreview, initialPreviewConfig);
-
+//                        var initialPreview = [data.pic_path];
+//                        var initialPreviewConfig = [{showRemove: false}];
+//                        $("#img").fileinput('destroy');
+//                        editImage(initialPreview, initialPreviewConfig);
                     }
                 }
             });
@@ -339,14 +338,12 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             $(this).fileinput("upload");
         });
 
-        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
-            console.log(data.response);
-            if (data.response.status == 200) {
-                $("#cover_img").val(data.response.data.images)
-            }
-            // var img = JSON.parse(data.response);//接收后台传过来的json数据
-            // alert(img.imgUrl);
-        });
+//        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
+//            console.log(data.response);
+//            if (data.response.status == 200) {
+//                $("#cover_img").val(data.response.data.images)
+//            }
+//        });
 
         $("#img").on('fileerror', function (event, data, msg) {//异步上传失败结果处理
             alert("uploadError");

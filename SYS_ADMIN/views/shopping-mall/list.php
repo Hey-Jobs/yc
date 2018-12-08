@@ -80,7 +80,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城简介：</label>
+                                            <label class="col-sm-3 control-label position">商城特色：</label>
                                             <div class="col-sm-9">
                                                 <textarea class="form-control" id="introduction" name="introduction" rows="6" placeholder="商城简介" style="min-width: 90%"></textarea>
                                             </div>
@@ -112,7 +112,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             <th>归属直播间</th>
                             <th>商城名称</th>
                             <th>商城子标题</th>
-                            <th>商城介绍</th>
+                            <th>商城特色</th>
                             <th>添加时间</th>
                             <th>状态</th>
                             <th>操作</th>

@@ -91,8 +91,7 @@ return [
             'login/login',
             'login/logout',
             'login/captcha',
-            'demo/*',
-            'text/*',
+            'api/*',
         ]
     ],
 

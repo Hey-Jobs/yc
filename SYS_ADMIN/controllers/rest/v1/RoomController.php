@@ -261,6 +261,7 @@ class RoomController extends CommonController
 
         $lists =  Comment::find()
             ->where(['from_id' => $id, 'type' => ConStatus::$COMMENT_TYPE_ROOM])
+            ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
             ->asArray()
             ->orderBy('id desc')
             ->all();

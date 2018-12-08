@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace SYS_ADMIN\models;
 
 use Yii;
 
@@ -9,19 +9,24 @@ use Yii;
  *
  * @property integer $id
  * @property string $content
+ * @property string $app
+ * @property string $uri
+ * @property string $duration
+ * @property string $stop_time
  * @property string $stream
  * @property string $start_time
+ * @property string $domain
  * @property string $created_at
  * @property string $updated_at
  */
-class Test extends \yii\db\ActiveRecord
+class EquipmentBack extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'sys_test';
+        return 'sys_equipment_back';
     }
 
     /**

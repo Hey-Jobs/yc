@@ -81,6 +81,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">设备stream name</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="stream_name"
+                                                      value="<?= $info['stream_name'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">镜头缩略图</label>
 
                         <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img"

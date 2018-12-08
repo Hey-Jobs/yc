@@ -55,11 +55,11 @@ class VideoController extends CommonController
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
             }
 
-            $info['pic_path'] = "";
-            if(!empty($info['cover_img'])){
-                $pic_info = Pictrue::getPictrueById($info['cover_img']);
-                $info['pic_path'] = $pic_info['pic_path'] ?? "";
-            }
+//            $info['pic_path'] = "";
+//            if(!empty($info['cover_img'])){
+//                $pic_info = Pictrue::getPictrueById($info['cover_img']);
+//                $info['pic_path'] = $pic_info['pic_path'] ?? "";
+//            }
 
             return $this->successInfo($info);
 
