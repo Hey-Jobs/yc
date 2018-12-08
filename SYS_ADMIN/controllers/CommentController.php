@@ -9,6 +9,7 @@
 namespace SYS_ADMIN\controllers;
 
 use app\models\Comment;
+use SYS_ADMIN\models\Product;
 use Yii;
 use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\CommonHelper;
@@ -22,12 +23,17 @@ class CommentController extends CommonController
     public function actionIndex()
     {
         if (Yii::$app->request->get('api')) {
-            $list = Comment::find()
+
+            $query = Comment::find()
                 ->select(['*'])
-                ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
-                ->filterWhere(['user_id' => isset($this->isAdmin) ? null : \Yii::$app->user->id])
-                ->asArray()
-                ->all();
+                ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+
+            if (!$this->isAdmin) {
+                $room_id = array_keys($this->user_room);
+                $query->andWhere(['in', 'room_id', $room_id]);
+            }
+
+            $list = $query->asArray()->all();
 
             $roomPairs = BaseDataBuilder::instance('LiveRoom');
             $productPairs = BaseDataBuilder::instance('Product');
@@ -65,9 +71,11 @@ class CommentController extends CommonController
         }
 
         $commentM = Comment::findOne($id);
-//        if (!CommonHelper::checkRoomId($shoreMapM->room_id)) {
-//            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
-//        }
+        if ($commentM->type == ConStatus::$COMMENT_TYPE_ROOM) {
+            if (!CommonHelper::checkRoomId($commentM->from_id)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
 
         $commentM->status = ConStatus::$STATUS_DELETED;
         if (!$commentM->save()) {

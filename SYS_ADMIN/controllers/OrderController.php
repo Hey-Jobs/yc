@@ -13,6 +13,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Express;
 use SYS_ADMIN\models\Order;
+use SYS_ADMIN\models\Product;
 use Yii;
 
 class OrderController extends CommonController
@@ -23,12 +24,16 @@ class OrderController extends CommonController
     public function actionIndex()
     {
         if (Yii::$app->request->get('api')) {
-            $liveUserPairs = BaseDataBuilder::instance('LiveRoomUser');
-            $list = Order::find()
-                ->select(['*'])
-                ->filterWhere(['user_id' => isset($this->isAdmin) ? null : $liveUserPairs(\Yii::$app->user->id)])
-                ->asArray()
-                ->all();
+
+            $room_id = array_keys($this->user_room);
+            $query = Order::find()
+                ->select(['*']);
+
+            if (!$this->isAdmin) {
+                $query->andWhere(['in', 'room_id', $room_id]);
+            }
+
+            $list = $query->asArray()->all();
 
             $roomPairs = BaseDataBuilder::instance('LiveRoom');
             foreach ($list as $key => $row) {
@@ -54,6 +59,10 @@ class OrderController extends CommonController
         }
 
         $list = Order::findOne($id)->toArray();
+        if (!CommonHelper::checkRoomId($list['room_id'])) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
         return $this->successInfo($list);
     }
 

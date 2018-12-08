@@ -24,13 +24,18 @@ class ShoppingMallController extends CommonController
     {
         if (Yii::$app->request->get('api')) {
             $roomPairs = BaseDataBuilder::instance('LiveRoom');
-            $list = ShoppingMall::find()
+            $query = ShoppingMall::find()
                 ->select(['*'])
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
-                ->filterWhere(['user_id' => isset($this->isAdmin) ? null : \Yii::$app->user->id])
-                ->asArray()
-                ->all();
+                ->filterWhere(['user_id' => isset($this->isAdmin) ? null : \Yii::$app->user->id]);
 
+            if (!$this->isAdmin) {
+                $room_id = array_keys($this->user_room);
+                $query->andWhere(['in', 'room_id', $room_id]);
+            }
+
+            $list = $query->asArray()->all();
+            
             foreach ($list as $key => $row) {
                 $list[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
                 $list[$key]['status_name'] = ConStatus::$STATUS_LIST[$row['status']] ?? '';

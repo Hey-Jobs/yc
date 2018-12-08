@@ -58,6 +58,7 @@ class LoginForm extends Model
         if ($this->validate()) {
             $userInfo = User::find()
                 ->select(['username', 'name', 'phone', 'email'])
+                ->where(['username' => $this->username])
                 ->asArray()
                 ->one();
             Yii::$app->session->set('userInfo', $userInfo);
