@@ -35,7 +35,7 @@ class ShoppingMallController extends CommonController
             }
 
             $list = $query->asArray()->all();
-            
+
             foreach ($list as $key => $row) {
                 $list[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
                 $list[$key]['status_name'] = ConStatus::$STATUS_LIST[$row['status']] ?? '';

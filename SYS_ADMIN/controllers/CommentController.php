@@ -30,9 +30,15 @@ class CommentController extends CommonController
 
             if (!$this->isAdmin) {
                 $room_id = array_keys($this->user_room);
-                $query->andWhere(['in', 'room_id', $room_id]);
+                $productIds = Product::find()->select(['id'])->where(['room_id' => $room_id])->asArray()->column();
+                $query->andWhere(
+                    ['or',
+                        ['type' => ConStatus::$COMMENT_TYPE_ROOM, 'from_id' => $room_id],
+                        ['type' => ConStatus::$COMMENT_TYPE_PROD, 'from_id' => $productIds]
+                    ]);
             }
 
+//            $sql = $query->createCommand()->getRawSql();
             $list = $query->asArray()->all();
 
             $roomPairs = BaseDataBuilder::instance('LiveRoom');
@@ -40,10 +46,10 @@ class CommentController extends CommonController
             foreach ($list as $key => $row) {
                 if ($row['type'] == ConStatus::$COMMENT_TYPE_ROOM) {
                     $list[$key]['source_name'] = '直播间';
-                    $list[$key]['from_name'] = $roomPairs[$row['type']] ?? '';
+                    $list[$key]['from_name'] = $roomPairs[$row['from_id']] ?? '';
                 } else if ($row['type'] == ConStatus::$COMMENT_TYPE_PROD) {
                     $list[$key]['source_name'] = '商品';
-                    $list[$key]['from_name'] = $productPairs[$row['type']] ?? '';
+                    $list[$key]['from_name'] = $productPairs[$row['from_id']] ?? '';
                 } else {
                     $list[$key]['source_name'] = '';
                     $list[$key]['from_name'] = '';
