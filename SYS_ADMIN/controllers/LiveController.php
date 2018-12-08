@@ -49,8 +49,8 @@ class LiveController extends CommonController
                 $pic_list = Pictrue::getPictrueList($picid_list);
                 foreach ($live_list as &$live){
                     $live['pic_path'] = isset($pic_list[$live['logo_img']]) ?  $pic_list[$live['logo_img']]['pic_path'] : "";
-                    $live['uname'] = $user_list[$live['user_id']]['name'];
-                    $live['status'] = ConStatus::$STATUS_LIST[$live['status']];
+                    $live['uname'] = $user_list[$live['user_id']]['name'] ?? '';
+                    $live['status'] = ConStatus::$STATUS_LIST[$live['status']] ?? '';
                 }
 
             }
