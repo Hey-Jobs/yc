@@ -126,6 +126,7 @@ class WechatController extends CommonController
                     'user_img' => $user_info['headimgurl'],
                     'open_id' => $user_info['openid'],
                     'uid' => $model->id,
+                    'subscribe' => $user_info['subscribe'],
                 ];
 
             } else {
@@ -136,6 +137,7 @@ class WechatController extends CommonController
                     'user_img' => $check_info->client_img,
                     'open_id' => $check_info->open_id,
                     'uid' => $check_info->id,
+                    'subscribe' => $user_info['subscribe'],
                 ];
             }
 
@@ -216,8 +218,12 @@ class WechatController extends CommonController
                         // 通知管理员
                         $room_info = LiveRoom::findOne($order_info->room_id);
                         $msg_data['first'] = "您有新订单，请尽快安排服务。";
+                        $msg_data['keyword2'] = date('Y年m月d日');
+                        $msg_data['keyword3'] = $order_info->user_address;
+                        $msg_data['keyword4'] = $order_info->user_phone;
+                        $msg_data['keyword5'] = '已付款';
                         $msg_data['remark'] = "订单来自：".$room_info->room_name; // 直播间
-                        $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['order_success'], $notify_url,$msg_data);
+                        $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['admin_notice'], $notify_url,$msg_data);
                         CommonHelper::writeOrderLog(['type' => 'send admin msg', 'data' => $result]);
                         return true;
                     } else {

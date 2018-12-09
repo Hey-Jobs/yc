@@ -8,6 +8,7 @@
 
 namespace SYS_ADMIN\controllers;
 
+use abei2017\wx\Application;
 use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -90,6 +91,21 @@ class OrderController extends CommonController
         if (!$orderM->save()) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, 'error');
         }
+
+        // 发送微信通知
+        $template_id = \Yii::$app->params['wx']['template'];
+        $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
+        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+        $msg_data = ['first'=>'您购买的订单已经发货啦，正快马加鞭向您飞奔而去。',
+            'keyword1' => $orderM->order_id,
+            'keyword2' => date('Y-m-d H:i'),
+            'keyword3' => Express::$EXPRESS[$expressId],
+            'keyword4' => $expressNo,
+            'keyword5' => $orderM->user_name ." ".$orderM->user_phone." ".$orderM->user_address,];
+
+        $client_info = Client::findOne($orderM->client_id);
+        $result = $template->send($client_info->open_id, $template_id['delivery'], $notify_url,$msg_data);
+        CommonHelper::writeOrderLog(['type' => 'delivery template msg', 'data' => $result]);
 
         return $this->successInfo(ConStatus::$STATUS_SUCCESS);
     }

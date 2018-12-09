@@ -249,10 +249,12 @@ background-size: 8px;    margin: 0 15px; }
 .myOrder .orderBox p{ text-align: right; color: #999; font-size: 12px; padding: 10px;}
 .myOrder .orderBox p span{ margin-left: 10px;  color: #ea2e2e; }
 
-
+.my-order{background: #EEF9E8; height: 40px; line-height: 40px; text-align: right; color: #999; padding-right: 10px;}
+.my-order a{color: #999 !important;}
 /* 重置插件css */
 .swiper-slide{ height: auto; }
 .room_content{margin: 10px auto; display: block; min-height: 10px; padding: 10px}
 .room_content img{max-width: 100% }
 
 .video_info{width: 100%;}
+.prism-player .prism-big-play-btn{margin-top: -32px !important; margin-left: -32px !important;}

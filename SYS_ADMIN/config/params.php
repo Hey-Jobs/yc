@@ -30,8 +30,9 @@ return [
         ],
         'template' => [
             'order_success' => 'soksY_RsROaESZZJ8WNsHrR-PxkdpXQq-0rwEFKbFLU',
+            'admin_notice' => 'vGxHFy55QyukuHqVz-NAmcWgyv3FsA7mr83uLnEK4KA ',
             'order_fail' => 'E-SF2wvFFtGnENRuMzJcxrATNSmSXyaQ3lfwVSuAfDo',
-            'delivery' => 'SJ01IR3dMwI33qsR3toij4e0O5wtsVz0RTE9LlgLlVE',
+            'delivery' => 'JM9XHZnQb3NMwBp-_W0vj90GPAuhacAxMrk_yKYFwQ8',
         ],
         'notify' => "o5NW-51dtx7F1e-lU2uu9acOOPh4",
     ]
