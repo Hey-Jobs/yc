@@ -23,7 +23,7 @@ class WechatController extends CommonController
 {
     public $enableCsrfValidation = false;
 
-    public function actionAuthLogin()
+    public function actionAuthLoginBack()
     {
         $refer = \Yii::$app->request->get('refer', '');
         $conf = \Yii::$app->params['wx']['mp'];
@@ -82,7 +82,7 @@ class WechatController extends CommonController
     }
 
 
-    public function actionAuthLoginBack()
+    public function actionAuthLogin()
     {
         $code = \Yii::$app->request->get('code');
         $refer = \Yii::$app->request->get('refer', '');
@@ -108,6 +108,7 @@ class WechatController extends CommonController
             $user_url = "https://api.weixin.qq.com/sns/userinfo?access_token={$auth_info['access_token']}&openid={$auth_info['openid']}&lang=zh_CN";
             $user_info = file_get_contents($user_url);
             $user_info = json_decode($user_info, true);
+            $user_info['subscribe'] = $user_info['subscribe'] ?? 0;
             if(empty($check_info)){
 
                 $model = new Client();
