@@ -46,8 +46,8 @@ class RoomController extends CommonController
             ->all();
 
         if(count($video_list)){
-            $pic_id = array_column($video_list, 'cover_img');
-            $pic_list = Pictrue::getPictrueList($pic_id);
+            //$pic_id = array_column($video_list, 'cover_img');
+            //$pic_list = Pictrue::getPictrueList($pic_id);
 
             if($user_id > 0){
                 $video_start = ClientStart::find()
@@ -59,7 +59,7 @@ class RoomController extends CommonController
             }
 
             foreach ($video_list as $v){
-                $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
+                //$pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $videos[] = [
                     'id' => $v['id'],
                     'start' => array_key_exists($v['id'], $video_start) ? 1 : 0,
@@ -67,7 +67,7 @@ class RoomController extends CommonController
                     'vurl' => $v['video_url'],
                     'vlength' => $v['video_length'],
                     'click' => number_format($v['click_num']),
-                    'pic' => $pic_path,
+                    'pic' => $v['cover_img'],
                     'vnum' => md5($v['id']),
                 ];
             }
@@ -128,19 +128,20 @@ class RoomController extends CommonController
             ->all();
 
         if(count($lens_list)){
-            $pic_id = array_column($lens_list, 'cover_img');
-            $pic_list = Pictrue::getPictrueList($pic_id);
+            //$pic_id = array_column($lens_list, 'cover_img');
+            //$pic_list = Pictrue::getPictrueList($pic_id);
 
             foreach ($lens_list as $v){
-                $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
+                //$pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $lens[] = [
                     'aid' => $v['id'],
                     'name' => $v['lens_name'],
                     'cover_img' => $v['online_cover_url'],
                     'vurl' => $v['online_url'],
                     'vurl_reback' => $v['playback_url'],
+                    'reback_img' => $v['marvellous_url'],
                     'click' => number_format($v['click_num']),
-                    'pic' => $pic_path,
+                    'pic' => $v['online_cover_url'],
                     'vnum' => md5($v['id']),
                     'vtype' => 'lens',
                 ];
@@ -157,23 +158,24 @@ class RoomController extends CommonController
             ->all();
 
         if(count($video_list)){
-            $pic_id = array_column($video_list, 'cover_img');
-            $pic_list = Pictrue::getPictrueList($pic_id);
+            //$pic_id = array_column($video_list, 'cover_img');
+            //$pic_list = Pictrue::getPictrueList($pic_id);
             foreach ($video_list as $v){
-                $pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $lens[] = [
                     'aid' => $v['id'],
                     'name' => $v['video_name'],
                     'vurl' => $v['video_url'],
                     'vurl_reback' => $v['video_url'],
                     'click' => number_format($v['click_num']),
-                    'cover_img' => $pic_path,
-                    'pic' => $pic_path,
+                    'cover_img' => $v['cover_img'],
+                    'pic' => $v['cover_img'],
+                    'reback_img' => $v['cover_img'],
                     'vnum' => md5($v['id']),
                     'vtype' => 'video',
                 ];
             }
         }
+
 
         return $this->successInfo($lens);
 

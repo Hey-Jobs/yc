@@ -14,6 +14,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Wechat;
 use SYS_ADMIN\models\Client;
+use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
 use yii\web\Controller;
@@ -23,6 +24,65 @@ class WechatController extends CommonController
     public $enableCsrfValidation = false;
 
     public function actionAuthLogin()
+    {
+        $refer = \Yii::$app->request->get('refer', '');
+        $conf = \Yii::$app->params['wx']['mp'];
+
+        $url = \Yii::$app->request->getUrl();
+        $callback = \Yii::$app->urlManager->createAbsoluteUrl(['/Wechat/oauth-login','url'=>urlencode($url)]);
+        $conf['wx']['oauth']['callback'] = $callback;
+        $oauth = (new Application(['conf'=>$conf]))->driver('mp.oauth');
+        $wxLoginUser = \Yii::$app->session->get('wx_login_user');
+        if($wxLoginUser == null){
+            $oauth->send();
+            die();
+        }
+
+        $user_info = $oauth->user();
+        $check_info = Client::findOne(['open_id' => $user_info['openid']]);
+
+        if(empty($check_info)){
+            $model = new Client();
+            $model->client_name = $user_info['nickname'];
+            $model->client_img = $user_info['headimgurl'];
+            $model->open_id = $user_info['openid'];
+            $model->client_name = $user_info['nickname'];
+            $model->sex = $user_info['sex'];
+            $model->city = $user_info['city'];
+            $model->subscribe = $user_info['subscribe'];
+            $model->save();
+
+            $user_detail = [
+                'user_name' => $user_info['nickname'],
+                'user_img' => $user_info['headimgurl'],
+                'open_id' => $user_info['openid'],
+                'uid' => $model->id,
+                'subscribe' => $user_info['subscribe'],
+            ];
+
+        } else {
+            $check_info->subscribe = $user_info['subscribe'];
+            $check_info->save();  // 更新是否关注
+            $user_detail = [
+                'user_name' => $check_info->client_name,
+                'user_img' => $check_info->client_img,
+                'open_id' => $check_info->open_id,
+                'uid' => $check_info->id,
+                'subscribe' => $user_info->subscribe,
+            ];
+        }
+
+        $redis = \Yii::$app->redis;
+        $redis->set($user_info['openid'], json_encode($user_detail));
+        $redis->expire($user_info['openid'], 7200); // 缓存2小时
+        setcookie('auth', $user_info['openid'], time()+7200, '/');
+        \Yii::$app->session->set('wx_login_user', json_encode($user_detail));
+        $redirect =  $refer ? $refer : CommonHelper::getDomain().'/front/#/';
+        return $this->redirect($redirect);
+    }
+
+
+    public function actionAuthLoginBack()
     {
         $code = \Yii::$app->request->get('code');
         $refer = \Yii::$app->request->get('refer', '');
@@ -44,11 +104,11 @@ class WechatController extends CommonController
         if(isset($auth_info['access_token'])){
             $user_detail = [];
             $check_info = Client::findOne(['open_id' => $auth_info['openid']]);
+            //获取用户信息
+            $user_url = "https://api.weixin.qq.com/sns/userinfo?access_token={$auth_info['access_token']}&openid={$auth_info['openid']}&lang=zh_CN";
+            $user_info = file_get_contents($user_url);
+            $user_info = json_decode($user_info, true);
             if(empty($check_info)){
-                //获取用户信息
-                $user_url = "https://api.weixin.qq.com/sns/userinfo?access_token={$auth_info['access_token']}&openid={$auth_info['openid']}&lang=zh_CN";
-                $user_info = file_get_contents($user_url);
-                $user_info = json_decode($user_info, true);
 
                 $model = new Client();
                 $model->client_name = $user_info['nickname'];
@@ -57,6 +117,7 @@ class WechatController extends CommonController
                 $model->client_name = $user_info['nickname'];
                 $model->sex = $user_info['sex'];
                 $model->city = $user_info['city'];
+                $model->subscribe = $user_info['subscribe'];
                 $model->save();
 
                 $user_detail = [
@@ -67,6 +128,8 @@ class WechatController extends CommonController
                 ];
 
             } else {
+                $check_info->subscribe = $user_info['subscribe'];
+                $check_info->save();  // 更新是否关注
                 $user_detail = [
                     'user_name' => $check_info->client_name,
                     'user_img' => $check_info->client_img,
@@ -150,7 +213,9 @@ class WechatController extends CommonController
 
 
                         // 通知管理员
-                        $msg_data['first'] = "客户下单成功，请尽快安排配送服务";
+                        $room_info = LiveRoom::findOne($order_info->room_id);
+                        $msg_data['first'] = "您有新订单，请尽快安排服务。";
+                        $msg_data['remark'] = "订单来自：".$room_info->room_name; // 直播间
                         $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['order_success'], $notify_url,$msg_data);
                         CommonHelper::writeOrderLog(['type' => 'send admin msg', 'data' => $result]);
                         return true;

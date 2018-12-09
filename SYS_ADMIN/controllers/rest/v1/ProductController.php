@@ -32,8 +32,7 @@ class ProductController extends CommonController
         }
 
         $products = Product::find()
-            ->where(['room_id' => $id])
-            ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->where(['room_id' => $id, 'status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['>', 'stock', 0])
             ->select(['id', 'title', 'desc', 'price', 'stock', 'cover_img'])
             ->orderBy('sort_num asc, id desc')
