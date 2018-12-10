@@ -25,7 +25,7 @@ class CommonController extends \yii\rest\Controller
         $base_url = \Yii::$app->request->getPathInfo();
         $action_name = str_replace("rest/v1/wechat/","", $base_url);
         $action_name = trim($action_name, '/');
-        $no_auth = ['jssdk', 'auth-login', 'notify'];
+        $no_auth = ['jssdk', 'auth-login', 'notify', 'auth-login-back'];
 
         if($debug == 1){ //调式模式
             $open_id = "o5NW-52_GfBdOhc4nm2-Ggtardkg";
