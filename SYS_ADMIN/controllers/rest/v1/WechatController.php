@@ -9,7 +9,6 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 
 use abei2017\wx\Application;
-use abei2017\wx\core\Exception;
 use Codeception\Module\Cli;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -19,6 +18,7 @@ use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
 use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\web\Controller;
 
 class WechatController extends CommonController
@@ -276,9 +276,13 @@ class WechatController extends CommonController
             try {
                 $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
                 CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
-            } catch (ErrorException $e) {
-                CommonHelper::writeOrderLog(['type' => 'send template error', 'data' => $e->getMessage()]);
+            } catch (Exception $exception) {
+                CommonHelper::writeOrderLog(['type' => 'send template error', 'data' => [
+                    'code' =>  $exception->getCode(),
+                    'msg' => $exception->getMessage()
+                ]]);
             }
+
         } else {
             CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
         }
