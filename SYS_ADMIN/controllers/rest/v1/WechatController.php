@@ -80,7 +80,8 @@ class WechatController extends CommonController
         setcookie('auth', $user_info['openid'], time()+7200, '/');
         \Yii::$app->session->set('wx_login_user', json_encode($user_detail));
         $redirect =  $refer ? $refer : CommonHelper::getDomain().'/front/#/';
-        return $this->redirect($redirect);
+        //return $this->redirect($redirect);
+        var_dump($refer);
     }
 
 
@@ -210,8 +211,15 @@ class WechatController extends CommonController
                             'keyword4' => date('Y-m-d H:i:s'),
                             'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,];
                         if($client_info->open_id){
-                            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
-                            CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+                            try {
+                                $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
+                                CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+                            } catch (Exception $exception) {
+                                CommonHelper::writeOrderLog(['type' => 'send template error', 'data' => [
+                                    'code' =>  $exception->getCode(),
+                                    'msg' => $exception->getMessage()
+                                ]]);
+                            }
                         } else {
                             CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
                         }
