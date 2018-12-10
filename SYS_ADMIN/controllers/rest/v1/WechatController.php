@@ -33,7 +33,7 @@ class WechatController extends CommonController
         $url = \Yii::$app->request->getUrl();
         $callback = \Yii::$app->urlManager->createAbsoluteUrl(['/Wechat/oauth-login','url'=>urlencode($url)]);
         $conf['wx']['oauth']['callback'] = $callback;
-        $oauth = (new Application(['conf'=>$conf]))->driver('mp.oauth');
+        $oauth = (new Application(['conf'=>$conf['wx']['oauth']]))->driver('mp.oauth');
         $wxLoginUser = \Yii::$app->session->get('wx_login_user');
         if($wxLoginUser == null){
             $oauth->send();
