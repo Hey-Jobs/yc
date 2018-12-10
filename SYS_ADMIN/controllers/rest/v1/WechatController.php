@@ -28,7 +28,7 @@ class WechatController extends CommonController
     public function actionAuthLoginBack()
     {
         $refer = \Yii::$app->request->get('refer', '');
-        $conf = \Yii::$app->params['wx'];
+        $conf = \Yii::$app->params['wx']['mp'];
 
         $url = \Yii::$app->request->getUrl();
         $callback = \Yii::$app->urlManager->createAbsoluteUrl(['/Wechat/oauth-login','url'=>urlencode($url)]);
