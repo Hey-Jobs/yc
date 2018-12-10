@@ -15,6 +15,7 @@ use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Express;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\Client;
+use SYS_ADMIN\models\OrderDetail;
 use SYS_ADMIN\models\Product;
 use Yii;
 
@@ -111,5 +112,31 @@ class OrderController extends CommonController
         CommonHelper::writeOrderLog(['type' => 'delivery template msg', 'data' => $result]);
 
         return $this->successInfo(ConStatus::$STATUS_SUCCESS);
+    }
+
+    public function actionDetail()
+    {
+        $id = Yii::$app->request->post('id');
+        if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $info = Order::findOne($id)->toArray();
+        if (!CommonHelper::checkRoomId($info['room_id'])) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+
+        $detail = OrderDetail::find()
+            ->where(['order_id' => $info['id']])
+            ->select(['title', 'product_id', 'num', 'price'])
+            ->asArray()
+            ->all();
+
+        foreach ($detail as &$od){
+            $od['total'] = round($od['num'] * $od['price'], 2);
+        }
+        $info['detail'] = $detail;
+        return $this->successInfo($info);
     }
 }
