@@ -102,7 +102,9 @@ class OrderController extends CommonController
             'keyword2' => date('Y-m-d H:i'),
             'keyword3' => Express::$EXPRESS[$expressId],
             'keyword4' => $expressNo,
-            'keyword5' => $orderM->user_name ." ".$orderM->user_phone." ".$orderM->user_address,];
+            'keyword5' => $orderM->user_name ." ".$orderM->user_phone." ".$orderM->user_address,
+            'remark' => '请保持收件手机通畅！',
+            ];
 
         $client_info = Client::findOne($orderM->client_id);
         $result = $template->send($client_info->open_id, $template_id['delivery'], $notify_url,$msg_data);
