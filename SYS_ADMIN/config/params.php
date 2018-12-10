@@ -30,10 +30,11 @@ return [
         ],
         'template' => [
             'order_success' => 'soksY_RsROaESZZJ8WNsHrR-PxkdpXQq-0rwEFKbFLU',
-            'admin_notice' => 'vGxHFy55QyukuHqVz-NAmcWgyv3FsA7mr83uLnEK4KA ',
+            'admin_notice' => 'vGxHFy55QyukuHqVz-NAmcWgyv3FsA7mr83uLnEK4KA',
             'order_fail' => 'E-SF2wvFFtGnENRuMzJcxrATNSmSXyaQ3lfwVSuAfDo',
             'delivery' => 'JM9XHZnQb3NMwBp-_W0vj90GPAuhacAxMrk_yKYFwQ8',
         ],
-        'notify' => "o5NW-51dtx7F1e-lU2uu9acOOPh4",
+        'notify' => "o5NW-51dtx7F1e-lU2uu9acOOPh4", // 囧良
+        //'notify' => "o5NW-52_GfBdOhc4nm2-Ggtardkg", //伟坚
     ]
 ];

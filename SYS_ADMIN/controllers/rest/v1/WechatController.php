@@ -245,6 +245,7 @@ class WechatController extends CommonController
     {
         //$notify = '{"appid":"wx2e4c11f43a7669eb","bank_type":"CFT","cash_fee":"1","fee_type":"CNY","is_subscribe":"Y","mch_id":"1313582001","nonce_str":"BN404ck_pWaHatr-nknOMa0ALRZ5m7Qw","openid":"omIqUv9pP6EaM3tqd4UoAs4J4Ncw","out_trade_no":"2018112892002","result_code":"SUCCESS","return_code":"SUCCESS","sign":"9F5707EA90BA5CE2AB0EB83B7B99473E","time_end":"20181128203928","total_fee":"1","trade_type":"JSAPI","transaction_id":"4200000220201811287915942939"}';
         $order_info = Order::findOne(18);
+        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
         $conf = \Yii::$app->params['wx']['mp'];
         $template_id = \Yii::$app->params['wx']['template'];
         $order_id = $order_info->order_id;
@@ -259,23 +260,17 @@ class WechatController extends CommonController
         }
 
         // 消息通知
-        $client_info = Client::findOne($order_info->client_id);
-        $template = (new Application(['conf'=>$conf]))->driver("mp.template");
-        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
-        $msg_data = [
-            'first'=>'商品购买成功，请您注意物流信息，及时收取货物',
-            'keyword1' => $product_title,
-            'keyword2' => $order_id,
-            'keyword3' => $order_info->real_total_money."元",
-            'keyword4' => date('Y-m-d H:i:s'),
-            'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,
-        ];
-        if($client_info->open_id){
-
-            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
-            CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
-        }
-        return true;
+        $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
+        // 通知管理员
+        $room_info = LiveRoom::findOne($order_info->room_id);
+        $msg_data['first'] = "您有新订单，请尽快安排服务。";
+        $msg_data['keyword2'] = date('Y年m月d日');
+        $msg_data['keyword3'] = $order_info->user_address;
+        $msg_data['keyword4'] = $order_info->user_phone;
+        $msg_data['keyword5'] = '已付款';
+        $msg_data['remark'] = "订单来自：".$room_info->room_name; // 直播间
+        $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['admin_notice'], $notify_url,$msg_data);
+        CommonHelper::writeOrderLog(['type' => 'send admin msg', 'data' => $result]);
 
     }
 
