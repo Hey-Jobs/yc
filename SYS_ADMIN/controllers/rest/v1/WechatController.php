@@ -259,8 +259,25 @@ class WechatController extends CommonController
             $product_title .= $od['title'];
         }
 
-        // 消息通知
+        $template_id = \Yii::$app->params['wx']['template'];
+        $client_info = Client::findOne($order_info->client_id);
         $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
+        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+
+        $msg_data = ['first'=>'商品购买成功，请您注意物流信息，及时收取货物',
+            'keyword1' => $product_title,
+            'keyword2' => $order_id,
+            'keyword3' => $order_info->real_total_money."元",
+            'keyword4' => date('Y-m-d H:i:s'),
+            'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,];
+        if($client_info->open_id){
+            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
+            CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+        } else {
+            CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
+        }
+
+
         // 通知管理员
         $room_info = LiveRoom::findOne($order_info->room_id);
         $msg_data['first'] = "您有新订单，请尽快安排服务。";
