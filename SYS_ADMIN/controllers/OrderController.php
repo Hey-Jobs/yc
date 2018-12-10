@@ -14,6 +14,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Express;
 use SYS_ADMIN\models\Order;
+use SYS_ADMIN\models\Client;
 use SYS_ADMIN\models\Product;
 use Yii;
 
