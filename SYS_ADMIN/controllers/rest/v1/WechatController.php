@@ -17,6 +17,8 @@ use SYS_ADMIN\models\Client;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
+use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\web\Controller;
 
 class WechatController extends CommonController
@@ -29,8 +31,8 @@ class WechatController extends CommonController
         $conf = \Yii::$app->params['wx']['mp'];
 
         $url = \Yii::$app->request->getUrl();
-        $callback = \Yii::$app->urlManager->createAbsoluteUrl(['/Wechat/oauth-login','url'=>urlencode($url)]);
-        $conf['wx']['oauth']['callback'] = $callback;
+        $callback = \Yii::$app->urlManager->createAbsoluteUrl(['/wechat/oauth-login-back','url'=>urlencode($url)]);
+        $conf['oauth']['callback'] = $callback;
         $oauth = (new Application(['conf'=>$conf]))->driver('mp.oauth');
         $wxLoginUser = \Yii::$app->session->get('wx_login_user');
         if($wxLoginUser == null){
@@ -78,7 +80,8 @@ class WechatController extends CommonController
         setcookie('auth', $user_info['openid'], time()+7200, '/');
         \Yii::$app->session->set('wx_login_user', json_encode($user_detail));
         $redirect =  $refer ? $refer : CommonHelper::getDomain().'/front/#/';
-        return $this->redirect($redirect);
+        //return $this->redirect($redirect);
+        var_dump($refer);
     }
 
 
@@ -164,7 +167,7 @@ class WechatController extends CommonController
 
         $response = $pay->handleNotify(function($notify,$isSuccess){
             if($isSuccess){
-                CommonHelper::writeOrderLog($notify);
+                //CommonHelper::writeOrderLog($notify);
                 //$notify_data = json_decode($notify, true);
 
                 $order_id = $notify['out_trade_no'];
@@ -208,8 +211,15 @@ class WechatController extends CommonController
                             'keyword4' => date('Y-m-d H:i:s'),
                             'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,];
                         if($client_info->open_id){
-                            $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
-                            CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+                            try {
+                                $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
+                                CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+                            } catch (Exception $exception) {
+                                CommonHelper::writeOrderLog(['type' => 'send template error', 'data' => [
+                                    'code' =>  $exception->getCode(),
+                                    'msg' => $exception->getMessage()
+                                ]]);
+                            }
                         } else {
                             CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
                         }
@@ -259,8 +269,33 @@ class WechatController extends CommonController
             $product_title .= $od['title'];
         }
 
-        // 消息通知
+        $template_id = \Yii::$app->params['wx']['template'];
+        $client_info = Client::findOne($order_info->client_id);
         $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
+        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+
+        $msg_data = ['first'=>'商品购买成功，请您注意物流信息，及时收取货物',
+            'keyword1' => $product_title,
+            'keyword2' => $order_id,
+            'keyword3' => $order_info->real_total_money."元",
+            'keyword4' => date('Y-m-d H:i:s'),
+            'keyword5' => $order_info->user_name ." ".$order_info->user_phone." ".$order_info->user_address,];
+        if($client_info->open_id){
+            try {
+                $result = $template->send($client_info->open_id, $template_id['order_success'], $notify_url,$msg_data);
+                CommonHelper::writeOrderLog(['type' => 'send template msg', 'data' => $result]);
+            } catch (Exception $exception) {
+                CommonHelper::writeOrderLog(['type' => 'send template error', 'data' => [
+                    'code' =>  $exception->getCode(),
+                    'msg' => $exception->getMessage()
+                ]]);
+            }
+
+        } else {
+            CommonHelper::writeOrderLog(['type' => 'client no openid', 'data' => $order_id]);
+        }
+
+
         // 通知管理员
         $room_info = LiveRoom::findOne($order_info->room_id);
         $msg_data['first'] = "您有新订单，请尽快安排服务。";

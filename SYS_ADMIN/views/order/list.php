@@ -73,6 +73,46 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                         </div>
                     </div>
 
+                    <div class="modal fade" id="myDetail" tabindex="-1" role="dialog" aria-hidden="true"
+                         data-keyboard="false" data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form id="data-form" method="post">
+                                    <div class="color-line"></div>
+                                    <div class="modal-header text-center">
+                                        <h4 class="modal-title"><span id="btnText">订单详情</span></h4>
+                                    </div>
+                                    <div class="modal-body" style="300px;">
+                                        <div class="form-group row text-left" style="display: none;">
+                                            <div class="col-sm-9"><input style="display: none" type="hidden" name="id"
+                                                                         class="form-control params"></div>
+                                        </div>
+
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">订单总额</label>
+
+                                            <div class="col-sm-9">
+                                                <span ></span>
+                                                <label id="order_total" class="col-sm-3 control-label position" ></label>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row text-left">
+                                            <table  class="table table-striped table-bordered table-hover" width="100%" id="detail_table">
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                     <table id="data_table" class="table table-striped table-bordered table-hover" width="100%">
                         <thead>
                         <tr>
@@ -124,6 +164,7 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                     "render": function (data, type, row) {
                         var html = '';
                         html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateInfo('" + row.id + "')\"> 发货 </a>";
+                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"orderDetail('"+ row.id +"')\"> 详情 </a>";
                         return html;
                     }
                 }
@@ -150,6 +191,40 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                 }
             });
             $('#myModal').modal('show');
+        }
+    }
+    
+    function orderDetail(autoId = '') {
+        var html = '<tr> <th>编号</th><th>商品</th><th>价格</th><th>数量</th><th>小计</th></tr>';
+        if (autoId.length > 0) {
+            var data;
+            $.ajax({
+                url: '<?php echo \yii\helpers\Url::to('/order/detail')?>',
+                dataType: 'json',
+                type: "post",
+                async: false,
+                data: {'id': autoId},
+                success: function (result) {
+                    if (result.status == 200) {
+                        data = result.data;
+                        $("#order_total").html(data.real_total_money+" 元");
+
+                        for(var i = 0; i < data.detail.length; i++){
+                            html += '<tr>' +
+                                '<td>'+(i+1)+'</td>' +
+                                '<td>'+data.detail[i].title+'</td>' +
+                                '<td>'+data.detail[i].price+'</td>' +
+                                '<td>'+data.detail[i].num+'</td>' +
+                                '<td>'+data.detail[i].total+'</td>' +
+                                '</tr>';
+                        }
+
+                        $("#detail_table").html(html);
+
+                    }
+                }
+            });
+            $('#myDetail').modal('show');
         }
     }
 
