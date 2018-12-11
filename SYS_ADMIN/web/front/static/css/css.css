@@ -1,0 +1,260 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* css reset */
+body,h1,h2,h3,h4,p,ul,li,ol,dl,dt,dd,input,select,textarea{ margin: 0; padding: 0}
+ul,li,ol{ list-style-type: none;}
+a{ text-decoration: none }
+body,input,select,textarea{ font-family: 'Arial','微软雅黑','宋体';}
+img,a img{ vertical-align: top; border: none; width: 100% }
+input,select,textarea{ border: none;}
+body{ max-width: 720px; margin: 0 auto; }
+
+/* css common */
+body{ background: #fff }
+.logo{ position: absolute; top: 20px; right: 5px; width: 100px; z-index: 10 }
+.line{ border-top: 1px solid #ededed; border-bottom: 1px solid #ededed; background: #faf9f9; height: 12px; }
+.videoIcon{ background: url('../images/videoIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.shopCarIcon{ background: url('../images/shopCar.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.messIcon{ background: url('../images/messIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.allMessIcon{ background: url('../images/allMessIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.zanIcon{ background: url('../images/zanIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.zanIcon2{ background: url('../images/zanIcon2.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.replyIcon{ background: url('../images/replyIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.wrongIcon{ background: url('../images/wrongIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.rightIcon{ background: url('../images/rightIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
+.g-mr-5{ margin-right: 5px }
+h2.tit{ font-size: 14px; color: #57c220; font-weight: normal; padding-top: 10px; padding-bottom: 10px; margin: 0 15px; }
+h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px; padding-bottom: 10px; margin: 0 25px; }
+.g-borderTop-10{ border-top: 10px solid #f5f5f4; }
+
+
+.tabMenu{ display: flex; border-bottom: 1px solid #ededed;  box-shadow: 0 0px 5px #ddd;}
+.tabMenu .swiper-slide{ flex: 1; text-align: center; padding: 9px 0; color: #999; text-decoration: none; font-size: 14px; }
+.tabMenu .swiper-slide.swiper-slide-thumb-active{ color: #666; position: relative; z-index: 1 }
+.tabMenu .swiper-slide.swiper-slide-thumb-active:after{ content: '';  position: absolute; left: calc(50% - 18px); bottom: 0; height: 3px; background: #57c220; width: 36px;  }
+.tabCon .con{ padding: 10px 0; }
+
+/* 封面页 */
+.home_bg{ background: url('../images/home_bg.png') no-repeat top center; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; background-size: 100%; }
+.homeBox{ overflow: hidden; position: absolute; z-index: 2; top: 47%; width: 100%;  text-align: center;}
+.homeBox p{ text-align: center; display: block; margin: 0 auto 3.5%; line-height: 20px;}
+.homeBox p:nth-child(1){ width: 80px; margin-top: 20px;}
+.homeBox p:nth-child(2){  color: #67aa2b; font-size: 20px; line-height: 28px;}
+.homeBox p:nth-child(3){ font-size: 12px; color: #666;}
+.homeBox p:nth-child(4){ font-size: 12px; color: #999; margin-bottom: 0}
+.homeBox button{ width: 50%; height: 40px; line-height: 40px; font-size: 14px; border: none; cursor: pointer; border-radius: 5px;  background: linear-gradient(#57c220, #57c220); color: #fff; margin: 0 auto 3.5%;}
+.nextPage{ text-align: center; font-size: 12px; color: #999; line-height: 22px; }
+.nextPage img{ width: 10%; margin-top: 6px;}
+.homeBottom{}
+.homeBottom a{ line-height: 30px; font-size: 14px; text-align: center; color: #666; margin: 8px 0 35px; display: block; }
+.homeBottom a img{ display: inline-block; width: 15px;vertical-align: middle; margin-top: -3px; margin-right: 5px; }
+
+/* 直播首页 */
+.video{ width: 100%; display: inline-block; overflow: hidden; background: #ddd; position: relative; z-index: 1; }
+.videoCover{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 10 }
+.title{ display: block; }
+.title dl{ padding: 10px 14px 14px; overflow: hidden;  }
+.title dt{ float: left; width: calc(100% - 80px); }
+.title dt h1{ font-size: 16px; font-weight: normal; padding-bottom: 3px;  }
+.title dt h1 span:first-child{ width: calc(100% - 60px); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; float: left; }
+.title dt h1 span:last-child{ background: url('../images/goodIcon.png') no-repeat left center; background-size: 15px;
+ display: inline-block; line-height: 20px; height: 20px; vertical-align: top; margin-left: 5px; padding: 0 0 0 18px; font-size: 14px; color: #a5a6a6; }
+.title dt p{ font-size: 12px; color: #999; background: url('../images/addressIcon.png') no-repeat left center; background-size: 15px; padding: 0 0 0 18px; }
+.title dt p a{ color: #999; }
+.title dd{ float: right; overflow: hidden; height: 40px; }
+.title dd span.live{ background: #57c220; padding: 0 8px; line-height: 32px; height: 32px; margin: 5px 0; color: #fff; font-size: 12px; border-radius: 5px; overflow: hidden; display: inline-block}
+.title dd span.live i{ display: inline-block; width: 8px; height: 8px; border-radius: 10px; background: #fff100; margin-right: 4px;}
+.title dd span.playback{ background: #884006; padding: 0 8px; line-height: 32px; height: 32px; margin: 5px 0; color: #fff; font-size: 12px; border-radius: 5px; overflow: hidden; display: inline-block}
+.title dd span.playback i{ display: inline-block; width: 8px; height: 8px; border-radius: 10px; background: #fff100; margin-right: 4px;}
+.title dd span.notPlay{ background: #666; padding: 0 10px; line-height: 40px; height: 40px; color: #e9e9e9; font-size: 12px; border-radius: 5px; overflow: hidden; display: inline-block}
+.title dd span.notPlay i{ display: inline-block; width: 8px; height: 8px; border-radius: 10px; background: #e9e9e9; margin-right: 6px;}
+
+.videoList{ padding: 0 10px 15px; overflow-y: auto; display: block;   white-space: nowrap; }
+.videoList dl{  padding: 5px; display: inline-block; width: 30%; }
+.videoList dl dt{ padding-bottom: 10px; }
+.videoList dl dd{ font-size: 14px; text-align: center; color: #57c220;}
+
+.company{ padding: 5px 15px 10px; }
+.company dl{ overflow: hidden; }
+.company dt{ float: left; width: 70px; margin-right: 15px; }
+.company dd{  }
+.company dd h3{ font-size: 16px; font-weight: normal; color: #57c220; padding-top: 10px; padding-bottom: 8px; }
+.company dd h3 strong{ color: #333;font-weight: normal; margin-right: 10px  }
+.company dd p{ font-size: 12px; }
+.company dd p span{ padding: 0 10px; display: inline-block; border-radius: 10px; background: #57c220; color: #fff;}
+.company .remarks{ color: #999; font-size: 14px; padding: 10px 0; line-height: 20px; }
+.company .remarks span{ float: left; }
+.company .remarks p{ overflow: hidden; display: block; padding: 0 15px 0 0; background: url('../images/more.png') no-repeat right bottom;}
+.company .remarks p.hide{ height: 20px; overflow: hidden; }
+
+.myOrderList{ background: #eef9e8; padding: 5px 10px; text-align: right; font-size: 14px; }
+.myOrderList a{ color: #999; }
+.shopList{ padding: 10px 15px 50px; }
+.shopList dl{ overflow: hidden; border-bottom: 1px solid #f0f0ef; padding: 15px 0; }
+.shopList dl:last-child{ border-bottom: none }
+.shopList dl dt{ float: left; width: 110px; margin-right: 20px; }
+.shopList dl dd h3{ color: #333; font-size: 16px; }
+.shopList dl dd p{ font-size: 14px; color: #999; line-height: 22px; padding-bottom: 5px }
+.shopList dl dd span.money{ color: #ff3c36;  font-size: 14px;}
+.shopList dl dd span.num{ float: right; font-size: 14px; }
+.shopList dl dd span.num a{ width: 18px; height: 18px;  color: #fff; display: inline-block; background: #57c220; border-radius: 18px; text-align: center; line-height: 18px; text-decoration: none }
+.shopList dl dd span.num i{  color: #999; padding: 0 5px; font-style: normal; }
+
+
+.shoppingCarBox{ height: 40px; background: #666; position: fixed; left: 0; bottom: 0; right: 0; width: 100%; z-index: 100  }
+.shoppingCarBox:before{ position: absolute; top: -20px; left: 10px; content: ''; width: 60px; height: 60px;
+ background: url('../images/shopCarIcon.png') no-repeat left top; background-size: 100%; }
+.shoppingCarBox dt{ float: left;margin-left: 90px; }
+.shoppingCarBox dt h4{  color: #fff; font-weight: normal; font-size: 20px; line-height: 25px; height: 25px;}
+.shoppingCarBox p{ color: #fff; font-size: 12px; line-height: 15px; height: 15px;}
+.shoppingCarBox dd{ float: right; }
+.shoppingCarBox dd a{ background: #57c220; display: inline-block; color: #fff; height: 40px; line-height: 40px; padding: 0 20px; font-size: 14px; text-decoration: none }
+/* 广告页 */
+.liveHome{ position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; background: #fff; overflow: hidden; z-index: 100 }
+
+/* 互动评论 */
+.messList{ padding: 0 0 70px;}
+.messList dl{ overflow: hidden; border-bottom: 1px solid #f0f0ef; padding: 15px 5px; margin: 0 15px; font-size: 14px; color: #333; }
+.messList dl:last-child{ border-bottom: none }
+.messList dl dt{ height: 45px; }
+.messList dl dt span{ display: inline-block; vertical-align: middle; margin-right: 5px; width: 45px; height: 45px; background: url('../images/logoIcon.png') no-repeat center center;
+border: 1px solid #d6d6d5; border-radius: 45px; background-size: 30px; }
+.messList dl dd{ margin-left: 50px; }
+.messList dl dd p:first-child{ line-height: 22px; padding-bottom: 5px }
+.messList dl dd p:last-child,
+.messList dl dd p:last-child a{ color: #999; text-decoration: none; }
+.messList dl dd p:last-child a{ margin-left: 10px }
+.messList dl dd p:last-child span:last-child{ float: right; }
+
+.sendMessMenu{ position: fixed; left: 0; right: 0; bottom: 0; background: #fff url('../images/logoIcon2.png') no-repeat 20px center; background-size: 36px;
+ border-top: 1px solid #dcdcdc; padding: 10px 15px 8px 70px;  z-index: 100 }
+.sendMessBox{ border-radius: 20px; border: 1px solid #dcdcdc;  width: 100%; overflow: hidden; display: inline-block; }
+.sendMessBox input{ height: 2.25rem; line-height: 2.25rem; padding: 0 0 0 0.75rem; border-right: 1px solid #dcdcdc; width: calc(100% - 72px); float: left; }
+.sendMessBox button{ background: url('../images/sendBtnIcon.png') no-repeat center center; background-size: 20px;
+width: 50px; height: 36px; float: right; border: none;}
+
+
+
+/* 精彩视频 */
+.filmList{ }
+.filmList dl{ margin: 0 15px; padding: 15px 0; border-bottom: 1px solid #dcdcdc;}
+.filmList dl dt{ width: 100%; background: #ddd }
+.filmList dl dd{ padding: 10px 10px 0; }
+.filmList dl dd h3{  font-size: 18px; color: #333; padding-bottom: 5px; font-weight: normal; }
+.filmList dl dd p{ font-size: 12px; color: #999;}
+.filmList dl dd p a{ color: #999; text-decoration: none; }
+.filmList dl dd p a{ margin-left: 10px }
+.filmList dl dd p span:last-child{ float: right; }
+
+.footerLogo{ padding: 30px 0 20px; text-align: center; }
+.footerLogo img{ width: 30%; }
+
+/* 直播间列表 */
+.roomTitle{text-align: center}
+.roomFooter {text-align: center;}
+.roomFooter img{width: 95%;}
+
+/* 选择地址 */
+.addressList{  }
+.addressList dl{ padding: 10px 0; margin: 0 15px; border-bottom: 1px solid #dcdcdc; overflow: hidden; }
+.addressList dl dt{ width: 50px; height: 50px; float: left;  }
+.addressList dl.cur dt{ background: url('../images/rightIcon.png') no-repeat center center;
+ background-size: 20px; }
+.addressList dl dd{  }
+.addressList dl dd h3{ font-size: 16px; font-weight: normal; padding-bottom: 5px; line-height: 25px;}
+.addressList dl dd p{ font-size: 14px; line-height: 20px; color: #929292; }
+.newAddress{ border-top: 1px solid #dcdcdc; background: #fff; position: fixed; left: 0; bottom: 0; right: 0; height: 50px; line-height: 50px;}
+.newAddress a{ color: #57c220; display: block; text-align: center; text-decoration: none;  font-size: 16px;  }
+
+/* 地址编辑 */
+.editAddress{ padding: 0 15px; overflow: hidden; }
+.editAddress dl{ overflow: hidden; border-bottom: 1px solid #dcdcdc; font-size: 14px; }
+.editAddress dl dt{ float: left; width: 80px; height: 58px; color: #1c1c1c; line-height: 58px;}
+.editAddress dl dd{ color: #9b9b9b; }
+.editAddress dl dd a{   text-decoration: none; color: #1e1e1e; margin-right: 20px;line-height: 58px; }
+.editAddress dl dd a.cur{ background: url('../images/rightIcon.png') no-repeat left center; background-size: 15px;  }
+.editAddress dl dd input{outline: none; padding-left: 0.5rem; box-sizing: border-box; line-height: 58px; width: calc(100% - 80px);  }
+.editAddress dl dd input::-webkit-input-placeholder{color: #666}
+.editAddress button{ background: #57c220; border: none; width: 100%; height: 40px; line-height: 40px; cursor: pointer; margin-top: 20px; font-size: 16px; color: #fff; text-align: center; }
+
+/* 订单页面 */
+.orderHead{  overflow: hidden;  }
+.orderTabMenu{ margin: 25px 25px 0 15px; height: 35px; display: flex; position: relative; z-index: 1; font-size: 16px; }
+.orderTabMenu a:first-child{ background: #fff; height: 45px; margin-top: -10px; line-height: 45px; z-index: 3 }
+.orderTabMenu a{ color: #333; flex: 1; text-align: center; text-decoration: none;  position: relative;; }
+.orderTabMenu a:nth-child(2){ background: linear-gradient(#f9f9f9, #f0f0f0);  box-shadow: 0px 0px 5px #ddd;  line-height: 35px; z-index: 1 }
+.orderTabMenu:after{ background: #fff; transform: skew(20deg); height: 45px; width: 50%; top: -10px; left: 10px; position: absolute; z-index: 2; content: '' }
+.orderAddress{ background: #fff; margin: 0 15px;  position: relative; z-index: 2; }
+.orderAddress dl{ padding: 10px 0; background: url('../images/changeAddress.png') no-repeat right center; background-size: 8px; margin: 0 15px; position: relative; z-index: 1}
+.orderAddress dl:before{ background: url('../images/orderAddress.png') no-repeat center center;  background-size: 15px; width: 40px; height: 50px; position: absolute; left: 0; top: 7px;
+content: ''; }
+.orderAddress dl dt{  font-size: 16px; font-weight: normal; padding: 0 0 5px 40px; }
+.orderAddress dl dd{ font-size: 14px; line-height: 20px; color: #929292;  padding: 0 0 0 40px;}
+.addNewAddress{ text-align: center; padding: 45px 0; overflow: hidden; background: url('../images/changeAddress.png') no-repeat right center;
+background-size: 8px;    margin: 0 15px; }
+.addNewAddress a{ border-radius: 15px; border: 1px solid #57c220; color: #57c220; padding: 10px 15px;}
+.orderTime{ margin: 0 15px; padding: 12px 0; color: #333; font-size: 14px; border-top: 1px solid #dcdcdc;
+ background: url('../images/orderTime.png') no-repeat 12px center; background-size: 15px; padding-left: 40px;}
+.orderTime span{ color: #3e7cf3; margin-left: 10px; }
+
+.orderList .tit{background: url('../images/brandLogo.png') no-repeat left center; margin: 0 10px; font-size: 16px; padding: 15px 0 15px 30px; background-size: 20px;  }
+
+.orderList{ margin: 15px 15px 80px; background: #fff;  }
+.orderList dl{ overflow: hidden; border-bottom: 1px solid #f0f0ef; padding: 15px; margin: 6px 0 0; background: #f9f9f8}
+.orderList dl:last-child{ border-bottom: none }
+.orderList dl dt{ float: left; width: 110px; margin-right: 15px; }
+.orderList dl dd h3{ color: #333; font-size: 14px; padding-bottom: 5px; font-weight: normal; }
+.orderList dl dd h3 span{ float: right; }
+.orderList dl dd p{ font-size: 14px; color: #999; line-height: 22px; padding-bottom: 5px }
+.orderList dl dd span.num{ float: right; font-size: 14px; }
+.orderList dl dd span.num a{ width: 18px; height: 18px;  color: #fff; display: inline-block; background: #57c220; border-radius: 18px; text-align: center; line-height: 18px; text-decoration: none }
+.orderList dl dd span.num i{  color: #999; padding: 0 5px; font-style: normal; }
+
+.total{ background: #fff; padding: 50px 20px 0; position: relative; z-index: 1 }
+.total:before{ position: absolute; left: -10px; top: 83px; z-index: 2; width: 20px; height: 20px; border-radius: 20px; background: #f5f5f4; content: '';  }
+.total:after{ position: absolute; right: -10px; top: 83px; z-index: 2; width: 20px; height: 20px; border-radius: 20px; background: #f5f5f4; content: '';  }
+.total p{ font-size: 14px;  }
+.total p:first-child{ padding-bottom: 25px; border-bottom: 1px dashed #dcdcdc; }
+.total p:first-child span{ float: right; }
+.total p:last-child{ padding: 15px 0; text-align: right; color: #999; }
+.total p:last-child span:first-child{ color: #333; margin: 0 5px; }
+.total p:last-child span:last-child{ color: #ea2e2e; }
+.orderInfo{ padding: 10px 20px; overflow: hidden; border-top: 10px solid #f5f5f4; }
+.orderInfo p:first-child{ padding-bottom: 10px; }
+.orderInfo ul{}
+.orderInfo ul li{ font-size: 12px; padding-top: 10px; color: #666; line-height: 22px;}
+.orderInfo ul li span{ float: right; text-align: right;}
+.payBtn{  line-height: 50px; height: 50px; position: fixed; left: 0; right: 0; bottom: 0; width: 100%; z-index: 10 }
+.payBtn a{ background: #57c220; display: block; color: #fff; text-align: center; font-size: 16px;  }
+.payBtn span{ font-size: 14px; margin-left: 5px; }
+
+/* 支付成功 */
+.paySuccess{ margin: 0 15px; position: relative; z-index: 1; text-align: center; background: #fff; padding: 40px 0; overflow: hidden; }
+.paySuccess h1{   color: #57c220; font-size: 22px; font-weight: normal;  }
+.paySuccess p{ font-size: 14px; padding: 20px 0 ; }
+.paySuccess a{ display: inline-block; border: 1px solid #666; font-size: 16px; padding: 8px 18px; margin: 0 5px; color: #666; }
+.paySuccess a:last-child{ background: #57c220; color: #fff; border: 1px solid #57c220; }
+
+/* 我的订单 */
+.myOrder{ background: #fff; margin: 0 15px; }
+.myOrder .orderBox{ border-bottom: 1px dashed #ddd; position: relative; z-index: 1; }
+.myOrder .orderBox:nth-child(even){ background: #fbfbfb; }
+.myOrder .orderBox .tit{background: url('../images/brandLogo.png') no-repeat left center; font-weight: normal; color: #57c220;
+ margin: 0 10px; font-size: 16px; padding: 15px 0 10px 30px; background-size: 20px;  line-height: 20px;}
+ .myOrder .orderBox .tit span{    float: right; color: #666; font-size: 12px; line-height: 20px;}
+.myOrder .orderBox dl{ margin: 0 0 0 40px; padding: 2px 0; }
+.myOrder .orderBox dl dt{ color: #333; font-size: 12px; line-height: 22px; }
+.myOrder .orderBox dl dd{ color: #999; font-size: 12px; line-height: 22px;}
+.myOrder .orderBox p{ text-align: right; color: #999; font-size: 12px; padding: 10px;}
+.myOrder .orderBox p span{ margin-left: 10px;  color: #ea2e2e; }
+
+.my-order{background: #EEF9E8; height: 40px; line-height: 40px; text-align: right; color: #999; padding-right: 10px;}
+.my-order a{color: #999 !important;}
+/* 重置插件css */
+.swiper-slide{ height: auto; }
+.room_content{margin: 10px auto; display: block; min-height: 10px; padding: 10px}
+.room_content img{max-width: 100% }
+
+.video_info{width: 100%;}
+.prism-player .prism-big-play-btn{margin-top: -32px !important; margin-left: -32px !important;}
