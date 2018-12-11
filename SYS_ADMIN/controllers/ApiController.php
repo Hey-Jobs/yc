@@ -26,7 +26,7 @@ class ApiController extends CommonApiController
         $equipM->domain = $info['domain'];
         $equipM->app = $info['app'];
         $equipM->stream = $info['stream'];
-        $equipM->uri = $info['uri'];
+        $equipM->uri = "https://ycycc.yunchuanglive.com/" . $info['uri'];
         $equipM->duration = $info['duration'];
         $equipM->stop_time = date('Y-m-d H:i:s', $info['stop_time']);
         $equipM->start_time = date('Y-m-d H:i:s', $info['start_time']);
