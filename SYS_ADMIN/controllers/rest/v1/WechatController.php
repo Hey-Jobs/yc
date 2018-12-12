@@ -230,7 +230,7 @@ class WechatController extends CommonController
                         $msg_data['first'] = "您有新订单，请尽快安排服务。";
                         $msg_data['keyword2'] = date('Y年m月d日');
                         $msg_data['keyword3'] = $order_info->user_address;
-                        $msg_data['keyword4'] = $order_info->user_phone;
+                        $msg_data['keyword4'] = $order_info->user_name .' '.$order_info->user_phone;
                         $msg_data['keyword5'] = '已付款';
                         $msg_data['remark'] = "订单来自：".$room_info->room_name; // 直播间
                         $result = $template->send(\Yii::$app->params['wx']['notify'], $template_id['admin_notice'], $notify_url,$msg_data);
