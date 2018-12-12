@@ -130,7 +130,7 @@ border: 1px solid #d6d6d5; border-radius: 45px; background-size: 30px; }
 .sendMessMenu{ position: fixed; left: 0; right: 0; bottom: 0; background: #fff url('../images/logoIcon2.png') no-repeat 20px center; background-size: 36px;
  border-top: 1px solid #dcdcdc; padding: 10px 15px 8px 70px;  z-index: 100 }
 .sendMessBox{ border-radius: 20px; border: 1px solid #dcdcdc;  width: 100%; overflow: hidden; display: inline-block; }
-.sendMessBox input{ /*height: 2.25rem;*/  line-height: 2.25rem; padding: 0.25rem 0 0.25rem 0.75rem; border-right: 1px solid #dcdcdc; width: calc(100% - 72px); float: left; }
+.sendMessBox input{ /*height: 2.25rem; line-height: 2.25rem; */  padding: 0.6rem 0 0.6rem 0.75rem; border-right: 1px solid #dcdcdc; width: calc(100% - 72px); float: left; }
 .sendMessBox button{ background: url('../images/sendBtnIcon.png') no-repeat center center; background-size: 20px;
 width: 50px; height: 36px; float: right; border: none;}
 
@@ -174,7 +174,7 @@ width: 50px; height: 36px; float: right; border: none;}
 .editAddress dl dd{ color: #9b9b9b; }
 .editAddress dl dd a{   text-decoration: none; color: #1e1e1e; margin-right: 20px;line-height: 58px; }
 .editAddress dl dd a.cur{ background: url('../images/rightIcon.png') no-repeat left center; background-size: 15px;  }
-.editAddress dl dd input{outline: none; padding-left: 0.5rem; box-sizing: border-box; line-height: 58px; width: calc(100% - 80px);  }
+.editAddress dl dd input{outline: none; padding: 1.2rem 0 1.2rem 0.5rem; box-sizing: border-box; /*line-height: 58px;*/ width: calc(100% - 80px);  }
 .editAddress dl dd input::-webkit-input-placeholder{color: #666}
 .editAddress button{ background: #57c220; border: none; width: 100%; height: 40px; line-height: 40px; cursor: pointer; margin-top: 20px; font-size: 16px; color: #fff; text-align: center; }
 
