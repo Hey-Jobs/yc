@@ -35,11 +35,7 @@ class ApiController extends CommonApiController
             return $this->errorInfo(400);
         }
 
-        $lenM = Lens::findOne(['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
-        if ($lenM) {
-            $lenM->playback_url = "https://" . $info['domain'] . '/' . $info['uri'];
-            $lenM->save();
-        }
+        Lens::updateAll(['playback_url' => "https://ycycc.yunchuanglive.com/" . $info['uri']], ['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
 
         return $this->successInfo(true);
     }
