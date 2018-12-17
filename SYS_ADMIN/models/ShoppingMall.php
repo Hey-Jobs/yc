@@ -17,6 +17,7 @@ use Yii;
  * @property string $created_at
  * @property string $updated_at
  * @property integer $status
+ * @property integer $deliver
  */
 class ShoppingMall extends CommonModel
 {
@@ -58,6 +59,7 @@ class ShoppingMall extends CommonModel
             'image_src' => 'Image Src',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'deliver' => 'deliver',
         ];
     }
 

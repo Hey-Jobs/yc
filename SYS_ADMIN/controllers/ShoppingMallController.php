@@ -125,6 +125,7 @@ class ShoppingMallController extends CommonController
         $subTitle = Yii::$app->request->post('sub_title');
         $introduction = Yii::$app->request->post('introduction');
         $imageSrc = Yii::$app->request->post('image_src');
+        $deliver = Yii::$app->request->post('deliver');
 
         $model = new ShoppingMall();
         $model->attributes = (\Yii::$app->request->post());
@@ -157,6 +158,7 @@ class ShoppingMallController extends CommonController
             $shoreMapM->status = ConStatus::$STATUS_ENABLE;
         }
 
+        $shoreMapM->deliver = $deliver;
         if (!$shoreMapM->save()) {
             return $this->errorInfo('400', 'error');
         }

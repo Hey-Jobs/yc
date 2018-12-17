@@ -210,6 +210,7 @@ class RoomController extends CommonController
             $cover_pic = Pictrue::getPictrueById($list['cover_img']);
             $list['cover_img'] = $cover_pic['pic_path'] ?? "";
         }
+
         $list['content'] = str_replace("/uploads/images/", CommonHelper::getDomain()."/uploads/images/", $list['content']);
         // 增加点击量
         $model = LiveRoom::findOne($id);
@@ -223,6 +224,7 @@ class RoomController extends CommonController
         $list['title'] = '';
         $list['sub_title'] = '';
         $list['intro'] = '';
+        $list['deliver'] = 0; // 起送条件
         $mall = ShoppingMall::find()
             ->where(['room_id' => $id])
             ->asArray()
@@ -234,6 +236,7 @@ class RoomController extends CommonController
             $list['title'] = $mall['title'];
             $list['sub_title'] = $mall['sub_title'];
             $list['intro'] = $mall['introduction'];
+            $list['deliver'] = $mall['deliver'];
         }
 
         return $this->successInfo($list);

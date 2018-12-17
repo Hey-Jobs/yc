@@ -82,7 +82,13 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                         <div class="form-group row text-left">
                                             <label class="col-sm-3 control-label position">商城特色：</label>
                                             <div class="col-sm-9">
-                                                <textarea class="form-control" id="introduction" name="introduction" rows="6" placeholder="商城简介" style="min-width: 90%"></textarea>
+                                                <input type="text" class="form-control" id="introduction" name="introduction"   placeholder="商城特色" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">起送条件：</label>
+                                            <div class="col-sm-9">
+                                                <input type="number" class="form-control" id="deliver_money" name="deliver"   placeholder="起送条件" />
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
@@ -222,6 +228,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         $("[name='sub_title']").val(data.sub_title);
                         $("[name='introduction']").val(data.introduction);
                         $("[name='image_src']").val(data.image_src);
+                        $("[name='deliver']").val(data.deliver);
                         var initialPreview = [data.image_src];
                         var initialPreviewConfig = [{showRemove: false}];
                         $("#img").fileinput('destroy');
