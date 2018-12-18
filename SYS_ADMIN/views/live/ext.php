@@ -123,9 +123,10 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
+                            <textarea style="display: none" id="initContent"><?= $info['content'] ?? "" ?></textarea>
                             <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
                             <input type="hidden" name="id" value="<?= $room_id ?>"/>
-                            <input type="hidden" name="content" id="content"/>
+                            <input type="hidden" name="content" id="content" />
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
                             <a href="<?php echo yii\helpers\Url::to('/live/index')?>" class="btn btn-default">返回列表</a>
                         </div>
@@ -140,7 +141,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 <script type="application/javascript">
 
     $(function () {
-        var content = '<?= $info['content'] ?? "" ?>';
+        //var content = '<?= $info['content'] ?? "" ?>';
                 $('.summernote').summernote({
                     height:300,
                     lang: 'zh-CN',
@@ -180,7 +181,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                     }
                 });
 
-                $('.summernote').summernote('code', content);
+                $('.summernote').summernote('code', $("#initContent").val());
                 function sendFile(file) {
                     var formdata = new FormData();
                     formdata.append("img", file);
