@@ -24,7 +24,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         padding-top: 7px;
         margin-bottom: 0;
     }
-    .show-img{width: 200px; height:  100px;}
+    .show-img{width: 100px; height:  100px;}
 </style>
 
 <div class="content animate-panel">

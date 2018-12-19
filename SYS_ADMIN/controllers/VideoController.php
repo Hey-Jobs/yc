@@ -51,8 +51,14 @@ class VideoController extends CommonController
 
         $info = $model->asArray()->one();
         if(!empty($info)){
-            if(!$this->isAdmin && !array_keys($info['room_id'], $this->user_room)){
+            /*if(!$this->isAdmin && !array_keys($info['room_id'], $this->user_room)){
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
+            }*/
+            if(!CommonHelper::checkRoomId($info['room_id'])){
+                return $this->render('/site/error', [
+                    "message" => ConStatus::$ERROR_PARAMS_MSG,
+                    "name" => "编辑直播间",
+                ]);
             }
 
 //            $info['pic_path'] = "";
