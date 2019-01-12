@@ -45,27 +45,32 @@ class ApiController extends CommonApiController
      */
     public function actionCutoutBack()
     {
-        $info = file_get_contents("php://input");
-        if (empty($info)) {
-            return false;
+        $action = \Yii::$app->request->get('action');
+        $app = \Yii::$app->request->get('app');
+        $appname = \Yii::$app->request->get('appname');
+        $stream = \Yii::$app->request->get('id');
+        $ip = \Yii::$app->request->get(' ip');
+        $node = \Yii::$app->request->get('node');
+        $content = json_encode(\Yii::$app->request->get());
+        if(empty($appname) || empty($stream)){
+            return $this->errorInfo(400);
         }
 
-        $data = json_decode($info, true);
         $equitCutM = new EquipmentCutout();
-        $equitCutM->action = $data['action'] ?? '';
-        $equitCutM->app = $data['app'] ?? '';
-        $equitCutM->appname = $data['appname'] ?? '';
-        $equitCutM->stream = $data['id'] ?? '';
-        $equitCutM->ip = $data['ip'] ?? '';
-        $equitCutM->node = $data['node'] ?? '';
-        $equitCutM->content = $info;
+        $equitCutM->action = $action;
+        $equitCutM->app = $app;
+        $equitCutM->appname = $appname;
+        $equitCutM->stream = $stream;
+        $equitCutM->ip = $ip;
+        $equitCutM->node = $node;
+        $equitCutM->content = $content;
         if (!$equitCutM->save()) {
             return $this->errorInfo(400);
         }
 
         // 记录设备状态
-        if(isset($data['id']) && !empty($data['id']) && array_key_exists($data['action'], ConStatus::$STREAM_STATUS)){
-            Lens::updateAll(['stream_status' => ConStatus::$STREAM_STATUS[$data['action']]], ['stream_name' => $data['id'], 'status' => ConStatus::$STATUS_ENABLE]);
+        if(isset($stream) && !empty($stream) && array_key_exists($action, ConStatus::$STREAM_STATUS)){
+            Lens::updateAll(['stream_status' => ConStatus::$STREAM_STATUS[$action]], ['stream_name' => $stream, 'status' => ConStatus::$STATUS_ENABLE]);
         }
         return $this->successInfo(true);
     }
