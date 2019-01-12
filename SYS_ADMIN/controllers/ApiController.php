@@ -45,19 +45,28 @@ class ApiController extends CommonApiController
      */
     public function actionCutoutBack()
     {
-        $action = \Yii::$app->request->get('action');
-        $app = \Yii::$app->request->get('app');
-        $appname = \Yii::$app->request->get('appname');
-        $stream = \Yii::$app->request->get('id');
-        $ip = \Yii::$app->request->get(' ip');
-        $node = \Yii::$app->request->get('node');
-        $content = json_encode(\Yii::$app->request->get());
-
-        $equitCutM = new EquipmentCutout();
-//        $equitCutM->action = $action
-        $equitCutM->content = $content;
-        if (!$equitCutM->save()) {
-            var_dump($equitCutM->getErrors());
+        $info = file_get_contents("php://input");
+        if (empty($info)) {
+            return false;
         }
+
+        $data = json_decode($info, true);
+        $equitCutM = new EquipmentCutout();
+        $equitCutM->action = $data['action'] ?? '';
+        $equitCutM->app = $data['app'] ?? '';
+        $equitCutM->appname = $data['appname'] ?? '';
+        $equitCutM->stream = $data['id'] ?? '';
+        $equitCutM->ip = $data['ip'] ?? '';
+        $equitCutM->node = $data['node'] ?? '';
+        $equitCutM->content = $info;
+        if (!$equitCutM->save()) {
+            return $this->errorInfo(400);
+        }
+
+        // 记录设备状态
+        if(isset($data['id']) && !empty($data['id']) && array_key_exists($data['action'], ConStatus::$STREAM_STATUS)){
+            Lens::updateAll(['stream_status' => ConStatus::$STREAM_STATUS[$data['action']]], ['stream_name' => $data['id'], 'status' => ConStatus::$STATUS_ENABLE]);
+        }
+        return $this->successInfo(true);
     }
 }

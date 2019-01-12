@@ -91,6 +91,11 @@ class ConStatus
     //地址
     static $ADDR_COMMON = 1;
 
+    // 流状态
+    static $STREAM_STATUS = [
+        'publish' => 1, // 推流
+        'publish_done' => 2, // 断流
+    ];
 
     // 状态码
     static $ERROR_PARAMS_MSG = "参数错误";

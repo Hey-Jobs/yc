@@ -109,7 +109,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <label class="col-sm-2 control-label">价格</label>
 
                         <div class="col-sm-2">
-                            <input type="number" min="0.01"  max="1000" step="0.01" class="form-control" name="price" value="<?= $info['price'] ?? 10?>">
+                            <input type="number" min="0.01"  step="0.01" class="form-control" name="price" value="<?= $info['price'] ?? 10?>">
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>

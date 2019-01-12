@@ -37,6 +37,7 @@ class Lens extends ActiveRecord
             'marvellous_url' => '精彩回放地址',
             'sort_num' => '排序值',
             'status' => '状态',
+            'stream_status' => '流状态',
         ];
     }
 
