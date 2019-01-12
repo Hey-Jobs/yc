@@ -128,22 +128,27 @@ class RoomController extends CommonController
             ->all();
 
         if(count($lens_list)){
-            //$pic_id = array_column($lens_list, 'cover_img');
-            //$pic_list = Pictrue::getPictrueList($pic_id);
-
             foreach ($lens_list as $v){
-                //$pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
+                $lens_type = 'lens';
+                $vurl = $v['online_url'];
+                $cover_img = $v['online_cover_url'];
+                if($v['stream_status'] == ConStatus::$STATUS_DISABLE){
+                    $lens_type = 'video';
+                    $vurl = $v['playback_url'];
+                    $cover_img = $v['marvellous_url'];
+                }
+
                 $lens[] = [
                     'aid' => $v['id'],
                     'name' => $v['lens_name'],
-                    'cover_img' => $v['online_cover_url'],
-                    'vurl' => $v['online_url'],
+                    'cover_img' => $cover_img,
+                    'vurl' => $vurl,
                     'vurl_reback' => $v['playback_url'],
                     'reback_img' => $v['marvellous_url'],
                     'click' => number_format($v['click_num']),
                     'pic' => $v['online_cover_url'],
                     'vnum' => md5($v['id']),
-                    'vtype' => 'lens',
+                    'vtype' => $lens_type,
                 ];
             }
         }
