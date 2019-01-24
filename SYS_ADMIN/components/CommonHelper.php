@@ -46,7 +46,7 @@ class CommonHelper
     {
         $flag = true;
         $user_room = LiveRoom::getUserRoomId();
-        if(!CommonHelper::isAdmin() && !array_key_exists($room_id, $user_room)){
+        if (!CommonHelper::isAdmin() && !array_key_exists($room_id, $user_room)) {
             $flag = false;
         }
 

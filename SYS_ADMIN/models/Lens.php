@@ -3,11 +3,10 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2018/11/3
- * Time: 0:57
+ * Time: 0:57.
  */
 
 namespace SYS_ADMIN\models;
-
 
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -22,7 +21,6 @@ class Lens extends ActiveRecord
             [['sort_num', 'status'], 'integer'],
         ];
     }
-
 
     public function attributeLabels()
     {
@@ -42,35 +40,32 @@ class Lens extends ActiveRecord
     }
 
     /**
-     * 获取镜头列表
+     * 获取镜头列表.
      */
-    public static function  getLensList()
+    public static function getLensList()
     {
         $user_room = LiveRoom::getUserRoomId();
         $room_id = array_keys($user_room);
         $model = self::find()
             ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
 
-        if(!CommonHelper::isAdmin()){ // 非管理员
+        if (!CommonHelper::isAdmin()) { // 非管理员
             $model->andWhere(['in', 'room_id', $room_id]);
         }
 
         $lens_list = $model->orderBy('id desc')->asArray()->all();
-        if(count($lens_list)){
-            $pic_id = array_column($lens_list,'cover_img');
+        if (count($lens_list)) {
+            $pic_id = array_column($lens_list, 'cover_img');
             $pic_list = Pictrue::getPictrueList($pic_id);
 
-            foreach ($lens_list as &$len){
-                $len['room_name'] = isset($user_room[$len['room_id']]) ? $user_room[$len['room_id']]['room_name'] : "";
+            foreach ($lens_list as &$len) {
+                $len['room_name'] = isset($user_room[$len['room_id']]) ? $user_room[$len['room_id']]['room_name'] : '';
                 $len['created_at'] = date('Y-m-d H:i');
                 $len['status'] = ConStatus::$STATUS_LIST[$len['status']];
-                $len['pic_path'] = isset($pic_list[$len['cover_img']])  ? $pic_list[$len['cover_img']]['pic_path'] : "";
+                $len['pic_path'] = isset($pic_list[$len['cover_img']]) ? $pic_list[$len['cover_img']]['pic_path'] : '';
             }
         }
 
         return $lens_list;
     }
-
-
-
 }

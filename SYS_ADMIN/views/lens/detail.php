@@ -99,8 +99,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="form-group">
                         <label class="col-sm-2 control-label">镜头缩略图</label>
 
-                        <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img"
-                                                      value="<?= $info['cover_img'] ?? "" ?>"></div>
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" name="pcover_img" id="pcover_img"
+                                                      value="<?= $info['cover_img'] ?? "" ?>">
+                        </div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
