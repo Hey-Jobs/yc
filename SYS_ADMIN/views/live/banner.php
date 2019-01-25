@@ -2,14 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 2019/1/23
- * Time: 22:36
+ * Date: 2019/1/24
+ * Time: 21:46
  */
 
 
 use SYS_ADMIN\assets\AppAsset;
+use yii\widgets\ActiveForm;
 
-$this->title = "轮播图管理";
+$this->title = $title;
 
 AppAsset::addScript($this, '/vendor/data-tables/js/jquery.dataTables.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' . Yii::$app->params['versionJS']);
@@ -27,16 +28,16 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 ?>
 
 
-
-
-
 <style type="text/css">
     .position {
         padding-top: 7px;
         margin-bottom: 0;
     }
+
+    #allmap{height: 300px;}
     .show-img{width: 150px; }
 </style>
+
 
 <div class="content animate-panel">
     <div class="row">
@@ -47,8 +48,19 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    Standard table
+                    <?= $title?>
                 </div>
+
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>" >
+                            基础信息
+                        </a>
+                    </li>
+                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>">扩展信息</a></li>
+                    <li class="active"><a href="#home">广告栏</a></li>
+                </ul>
+
                 <div class="panel-body">
                     <p>
                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateBanner()">添加轮播图</button>
@@ -59,11 +71,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             <div class="modal-content">
                                 <form id="banner-form" method="post" action="<?php echo yii\helpers\Url::to("/banner/save"); ?>">
                                     <div class="form-group row text-left" style="display: none;">
-                                        <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
-                                    </div>
-
-                                    <div class="form-group row text-left" style="display: none;">
-                                        <div class="col-sm-9"><input style="display: none" type="text" name="room_id" class="form-control params" placeholder="room_id"></div>
+                                        <div class="col-sm-9"><input type="hidden" name="id" class="form-control params" placeholder="autoId"></div>
+                                        <div class="col-sm-9">
+                                            <input type="hidden" name="room_id" value="<?= $room_id ?>"/>
+                                            <input type="hidden" name="banner_type" value="2"/>
+                                        </div>
                                     </div>
 
                                     <div class="modal-header text-center">
@@ -77,6 +89,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                                     <input type="text" class="form-control" name="title"  placeholder="名称"/>
                                                 </div>
                                             </div>
+
 
                                             <div class="form-group row text-left">
                                                 <label class="col-sm-3 control-label position">链接：</label>
@@ -143,9 +156,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </table>
                 </div>
             </div>
+            <input type="hidden" id="banner_room" value="<?= $room_id ?>"/>
         </div>
     </div>
 </div>
+
 
 <script type="application/javascript">
   $(function () {
@@ -170,7 +185,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     });
 
     $("#banner_table").DataTable({
-      ajax: '<?php echo \yii\helpers\Url::to('/banner/index?api=true')?>',
+      ajax: '<?php echo \yii\helpers\Url::to('/banner/room?api=true&room_id='.$room_id)?>',
       bAutoWidth: false,
       ordering: true,
       /*aLengthMenu:[1,2,3,5,10],*/
@@ -228,7 +243,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             url: '<?php echo \yii\helpers\Url::to('/banner/delete')?>',
             dataType: 'json',
             type: "POST",
-            data: {'id' : autoId},
+            data: {'id' : autoId, 'room_id': $('#banner_room').val()},
             success: function (result) {
               if (result.status == 200) {
                 affirmSwals('Deleted!', '删除成功！', 'success', confirmFunc);
@@ -253,13 +268,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         dataType: 'json',
         type: "get",
         async : false,
-        data: {'id' : autoId},
+        data: {'id' : autoId, 'room_id':$('#banner_room').val()},
         success: function (result) {
           if (result.status == 200) {
             data = result.data;
 
             $("[name='id']").val(data.id);
             $("[name='title']").val(data.title);
+            $("[name='links']").val(data.links);
             $("[name='sort_num']").val(data.sort_num);
             // $("#w0").select2('val',data.room_id);
             if(data.status == 1){
@@ -272,8 +288,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
               $("#status1").removeAttr("checked");
             }
 
+
             $("[name='cover_img']").val(data.cover_img);
-            $("[name='links']").val(data.links);
             var initialPreview = [data.cover];
             var initialPreviewConfig = [{showRemove: false}];
             $("#img").fileinput('destroy');
@@ -335,11 +351,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       $(this).fileinput("upload");
     });
 
-   $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
-       if (data.response.status == 200) {
-           $("#cover_img").val(data.response.data.images)
-       }
-   });
+    $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
+      if (data.response.status == 200) {
+        $("#cover_img").val(data.response.data.images)
+      }
+    });
 
     $("#img").on('fileerror', function (event, data, msg) {//异步上传失败结果处理
       alert("uploadError");

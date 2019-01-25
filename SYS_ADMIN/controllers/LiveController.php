@@ -15,6 +15,7 @@ use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Pictrue;
+use SYS_ADMIN\models\RoomTemplate;
 use yii\web\UploadedFile;
 
 class LiveController extends CommonController
@@ -94,12 +95,18 @@ class LiveController extends CommonController
         $title = empty($id) ? '新增直播间' : '编辑直播间';
         $user_html = SearchWidget::instance()->userList('user_id', $user_id);
 
+        $templateList = RoomTemplate::find()
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->asArray()
+            ->all();
+
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,
             'pic_info' => $pic_info,
             'is_admin' => $this->isAdmin,
             'title' => $title,
+            'templateList' => $templateList,
         ]);
     }
 
@@ -118,6 +125,7 @@ class LiveController extends CommonController
         $online_cover = \Yii::$app->request->post('online_cover', '');
         $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
         $sort_num = \Yii::$app->request->post('sort_num');
+        $templet_id = \Yii::$app->request->post('templet_id');
 
         $model = new LiveRoom();
         $model->attributes = \Yii::$app->request->post();
@@ -148,6 +156,7 @@ class LiveController extends CommonController
         $model->logo_img = $logo_img;
         $model->room_name = $room_name;
         $model->updated_at = time();
+        $model->templet_id = $templet_id;
 
         if ($this->isAdmin) {
             $model->sort_num = $sort_num;
@@ -283,4 +292,22 @@ class LiveController extends CommonController
             return $this->errorInfo(400, '操作失败，请稍后重试');
         }
     }
+
+
+    /**
+     * 直播间轮播图
+     */
+    public function actionBanner()
+    {
+        $id = \Yii::$app->request->get('id');
+        if (!CommonHelper::checkRoomId($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $title = "广告栏";
+        return $this->render('banner', ['room_id' => $id, 'title' => $title]);
+    }
+
+
+
 }

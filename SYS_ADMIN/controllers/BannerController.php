@@ -31,11 +31,15 @@ class BannerController extends CommonController
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
             }
 
+            if (!$this->isAdmin) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            }
+
             $query = Banner::find()
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
                 ->andWhere(['banner_type' => $bannerType]);
 
-            if (!$this->isAdmin) {
+            if (!empty($room_id)) {
                 $query->andWhere(['room_id' => $room_id]);
             }
 
@@ -45,6 +49,8 @@ class BannerController extends CommonController
 
             foreach ($lists as &$item) {
                 $item['cover'] = $picLists[$item['cover_img']]['pic_path'] ?? '';
+                $item['created_at'] = date('Y-m-d H:i', strtotime($item['created_at']));
+                $item['status'] = ConStatus::$STATUS_LIST[$item['status']];
             }
 
             return $this->successInfo($lists);
@@ -54,10 +60,55 @@ class BannerController extends CommonController
     }
 
 
+    /**
+     * 获取轮播图列表.
+     */
+    public function actionRoom()
+    {
+        $room_id = \Yii::$app->request->get('room_id');
+        $bannerType = \Yii::$app->request->get('bannerType', ConStatus::$BANNER_TYPE_ROOM);
+
+        if (empty($room_id) || empty($bannerType)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!empty($room_id) && !CommonHelper::checkRoomId($room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!in_array($bannerType, [ConStatus::$BANNER_TYPE_SYS, ConStatus::$BANNER_TYPE_ROOM])) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+
+        $query = Banner::find()
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->andWhere(['banner_type' => $bannerType])
+            ->andWhere(['room_id' => $room_id]);
+
+        $lists = $query->asArray()->all();
+
+        $picIds = array_column($lists, 'cover_img');
+        $picLists = Pictrue::getPictrueList($picIds);
+
+        foreach ($lists as &$item) {
+            $item['cover'] = $picLists[$item['cover_img']]['pic_path'] ?? '';
+            $item['created_at'] = date('Y-m-d H:i', strtotime($item['created_at']));
+            $item['status'] = ConStatus::$STATUS_LIST[$item['status']];
+        }
+
+        return $this->successInfo($lists);
+    }
+
     public function actionOne()
     {
         $id = \Yii::$app->request->get('id');
+        $room_id = \Yii::$app->request->get('room_id');
         if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!empty($room_id) && !CommonHelper::checkRoomId($room_id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -78,7 +129,13 @@ class BannerController extends CommonController
     public function actionDelete()
     {
         $id = \Yii::$app->request->post('id');
+        $room_id = \Yii::$app->request->get('room_id');
+
         if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!empty($room_id) && !CommonHelper::checkRoomId($room_id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -109,6 +166,7 @@ class BannerController extends CommonController
         $sort_num = \Yii::$app->request->post('sort_num');
         $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
         $room_id = \Yii::$app->request->post('room_id');
+        $links = \Yii::$app->request->post('links');
 
         $bannerModel = new Banner();
         $bannerModel->attributes = \Yii::$app->request->post();
@@ -134,6 +192,7 @@ class BannerController extends CommonController
         $bannerModel->remarks = $remarks;
         $bannerModel->status = $status;
         $bannerModel->sort_num = $sort_num;
+        $bannerModel->links = $links;
         $bannerModel->room_id = $room_id;
 
         if (!$bannerModel->save()) {

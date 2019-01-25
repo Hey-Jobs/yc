@@ -10,6 +10,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 use app\models\Comment;
 use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\models\Banner;
 use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
@@ -312,4 +313,43 @@ class RoomController extends CommonController
         return $this->successInfo($roomList);
     }
 
+    /**
+     * 直播间轮播图
+     */
+    public function actionBanner()
+    {
+        $id = \Yii::$app->request->post('id');
+
+        $lists = Banner::find()
+            ->select(['title', 'cover_img', 'links'])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['banner_type' => ConStatus::$BANNER_TYPE_ROOM])
+            ->andWhere(['room_id' => $id])
+            ->asArray()
+            ->all();
+
+        if (count($lists)) {
+            $picIds = array_column($lists, 'cover_img');
+            $picLists = Pictrue::getPictrueList($picIds);
+
+            foreach ($lists as &$item) {
+                $item['cover'] = $picLists[$item['cover_img']]['pic_path'] ?? '';
+            }
+        }
+
+        return $this->successInfo(['banner' => $lists]);
+    }
+
+    /**
+     * 获取直播间模板信息
+     */
+    public function actionTemplate()
+    {
+        $id = \Yii::$app->request->post('id', 0);
+
+        $room = LiveRoom::findOne($id);
+        $template = $room->templet_id ?? 1;
+
+        return $this->successInfo(['template' => $template]);
+    }
 }

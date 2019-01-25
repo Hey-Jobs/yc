@@ -49,8 +49,8 @@ class Video extends ActiveRecord
         }
 
         $video_list = $model->asArray()->all();
-        if(count($video_list) > 0){
-            foreach ($video_list as &$video){
+        if (count($video_list) > 0) {
+            foreach ($video_list as &$video) {
                 $video['created_at'] = date('Y-m-d H:i', $video['created_at']);
                 $video['status'] = ConStatus::$STATUS_LIST[$video['status']];
                 $video['room_name'] = $user_room[$video['room_id']]['room_name'];

@@ -53,6 +53,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </li>
                     <?php if(count($info) > 0) :?>
                     <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$info['id'])?>">扩展信息</a></li>
+                    <li class="">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/banner?id='.$info['id'])?>">
+                            广告栏
+                        </a>
+                    </li>
                     <?php endif; ?>
                 </ul>
 
@@ -115,6 +120,19 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">直播间模板</label>
+
+                        <div class="col-sm-10">
+                            <select name="templet_id" id="templet_id" class="form-control">
+                                <?php foreach ($templateList as $item) { ?>
+                                    <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
                     <?php if($is_admin === true) :?>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">所属用户</label>
@@ -169,6 +187,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 <script type="application/javascript">
 
     $(function () {
+      $("#templet_id").val("<?= $info['templet_id'] ?>");
         $("#pcover_img").fileinput({
             language: 'zh', //设置语言
             uploadUrl: '', //上传的地址

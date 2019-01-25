@@ -22,6 +22,11 @@ class CategoryController extends CommonController
                 ->asArray()
                 ->all();
 
+            foreach ($lists as &$item) {
+                $item['created_at'] = date('Y-m-d H:i', strtotime($item['created_at']));
+                $item['status'] = ConStatus::$STATUS_LIST[$item['status']];
+            }
+
             return $this->successInfo($lists);
         } else {
             return $this->render('list');

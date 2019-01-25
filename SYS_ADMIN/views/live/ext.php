@@ -65,7 +65,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
                     </li>
                     <li class="active"><a href="#" >扩展信息</a></li>
                     <li class="">
-                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/banner?id='.$room_id)?>">
                             广告栏
                         </a>
                     </li>

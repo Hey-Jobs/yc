@@ -60,7 +60,7 @@ class Lens extends ActiveRecord
 
             foreach ($lens_list as &$len) {
                 $len['room_name'] = isset($user_room[$len['room_id']]) ? $user_room[$len['room_id']]['room_name'] : '';
-                $len['created_at'] = date('Y-m-d H:i');
+                $len['created_at'] = date('Y-m-d H:i', $len['created_at']);
                 $len['status'] = ConStatus::$STATUS_LIST[$len['status']];
                 $len['pic_path'] = isset($pic_list[$len['cover_img']]) ? $pic_list[$len['cover_img']]['pic_path'] : '';
             }
