@@ -69,6 +69,7 @@ class RoomController extends CommonController
                     'vlength' => $v['video_length'],
                     'click' => number_format($v['click_num']),
                     'pic' => $v['cover_img'],
+                    'sort_num' => $v['sort_num'],
                     'vnum' => md5($v['id']),
                 ];
             }
@@ -325,6 +326,8 @@ class RoomController extends CommonController
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['banner_type' => ConStatus::$BANNER_TYPE_ROOM])
             ->andWhere(['room_id' => $id])
+            ->limit(4)
+            ->orderBy('sort_num asc, id desc')
             ->asArray()
             ->all();
 
