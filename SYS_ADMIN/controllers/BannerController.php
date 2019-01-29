@@ -140,8 +140,7 @@ class BannerController extends CommonController
         }
 
         $model = Banner::findOne($id);
-        $room_id = array_keys($this->user_room);
-        if (!$this->isAdmin && !in_array($model->room_id, $room_id)) {
+        if (empty($model)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -173,6 +172,12 @@ class BannerController extends CommonController
         if (!$bannerModel->validate()) {
             $errors = implode($bannerModel->getFirstErrors(), "\r\n");
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
+        }
+
+
+        // 封面图不能为空
+        if (empty($cover_img)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_BANNER_IMG, ConStatus::$ERROR_BANNER_IMG);
         }
 
         if (!$this->isAdmin && !array_key_exists($room_id, $this->user_room)) {

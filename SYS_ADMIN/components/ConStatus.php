@@ -14,6 +14,11 @@ class ConStatus
     public static $PAGE_NUM = 1;
     public static $PAGE_SIZE = 10;
 
+    //分页条数
+    public static $INDEX_ROOM_PAGE_SIZE = 8; // 直播列表每页显示数量
+    public static $INDEX_VIDEO_PAGE_SIZE = 5; // 视频列表数量
+
+
     // common 公共
     public static $STATUS_PENDING = 0;
     public static $STATUS_ENABLE = 1;
@@ -102,6 +107,7 @@ class ConStatus
     // 状态码
     public static $ERROR_PARAMS_MSG = '参数错误';
     public static $ERROR_SYS_MSG = '网络错误';
+    public static $ERROR_BANNER_IMG = '请上传轮播图';
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -115,4 +121,5 @@ class ConStatus
     public static $STATUS_ERROR_USER_EXIT = 4008; // 用户不存在
     public static $STATUS_ERROR_ORDER_CREATE = 4009; // 订单创建失败
     public static $STATUS_ERROR_ORDER_DETAIL = 4010; // 订单详情创建失败
+    public static $STATUS_ERROR_BANNER_IMG = 4011; // 缺少轮播图
 }

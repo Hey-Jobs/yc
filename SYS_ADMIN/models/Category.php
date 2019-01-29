@@ -2,6 +2,7 @@
 
 namespace SYS_ADMIN\models;
 
+use SYS_ADMIN\components\ConStatus;
 use Yii;
 
 /**
@@ -49,5 +50,27 @@ class Category extends CommonModel
             'created_at' => 'Created At',
             'updatea_at' => 'Updatea At',
         ];
+    }
+
+    /**
+     * 获取所有分类
+     */
+    public static function getCategoryList()
+    {
+        $list = self::find()
+            ->select(['id', 'title'])
+            ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->orderBy('sort_num asc, id desc')
+            ->asArray()
+            ->all();
+
+        if (count($list)) {
+            foreach ($list as $key => $item) {
+                if (in_array($item['title'], ['推荐', '全部'])) {
+                    unset($list[$key]);
+                }
+            }
+        }
+        return $list;
     }
 }

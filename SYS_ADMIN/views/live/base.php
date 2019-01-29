@@ -121,6 +121,19 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">所属行业</label>
+
+                        <div class="col-sm-10">
+                            <select name="category_id" id="category_id" class="form-control">
+                                <?php foreach ($category as $item) { ?>
+                                    <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">直播间模板</label>
 
                         <div class="col-sm-10">
@@ -187,7 +200,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 <script type="application/javascript">
 
     $(function () {
-      $("#templet_id").val("<?= $info['templet_id'] ?>");
+      $("#templet_id").val("<?= isset($info['templet_id']) ? $info['templet_id'] : '' ?>");
+      $("#category_id").val("<?= isset($info['category_id']) ? $info['category_id'] : '' ?>");
         $("#pcover_img").fileinput({
             language: 'zh', //设置语言
             uploadUrl: '', //上传的地址

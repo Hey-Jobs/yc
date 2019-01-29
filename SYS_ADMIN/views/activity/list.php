@@ -9,7 +9,7 @@
 
 use SYS_ADMIN\assets\AppAsset;
 
-$this->title = "分类管理";
+$this->title = "活动管理";
 
 AppAsset::addScript($this, '/vendor/data-tables/js/jquery.dataTables.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' . Yii::$app->params['versionJS']);
@@ -50,30 +50,43 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                 </div>
                 <div class="panel-body">
                     <p>
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateCategory()">添加分类</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateactivity()">添加活动</button>
                     </p>
 
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form id="category-form" method="post" action="<?php echo yii\helpers\Url::to("/category/save"); ?>">
+                                <form id="activity-form" method="post" action="<?php echo yii\helpers\Url::to("/activity/save"); ?>">
                                     <div class="form-group row text-left" style="display: none;">
                                         <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                     </div>
 
                                     <div class="modal-header text-center">
-                                        <h4 class="modal-title"><span id="btnText">添加分类</span></h4>
+                                        <h4 class="modal-title"><span id="btnText">添加活动</span></h4>
                                     </div>
                                     <div class="modal-body" style="300px;">
                                         <form id="video_form" method="post" >
                                             <div class="form-group row text-left">
-                                                <label class="col-sm-3 control-label position">名称：</label>
+                                                <label class="col-sm-3 control-label position">活动名称：</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" name="title"  placeholder="名称"/>
                                                 </div>
                                             </div>
 
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">活动时间：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="activity_time"  placeholder="活动时间"/>
+                                                </div>
+                                            </div>
 
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">活动链接：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="activity_url"  placeholder="活动链接"/>
+                                                </div>
+                                            </div>
 
                                             <div class="form-group row text-left">
                                                 <label class="col-sm-3 control-label position">排序值：</label>
@@ -101,18 +114,20 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                     <div class="modal-footer">
 
                                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                        <button type="button" class="btn btn-primary" onclick="saveCategory()">保存信息</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveactivity()">保存信息</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
 
-                    <table id="category_table"  class="table table-striped table-bordered table-hover" width="100%">
+                    <table id="activity_table"  class="table table-striped table-bordered table-hover" width="100%">
                         <thead>
                         <tr>
                             <th>编号</th>
                             <th>名称</th>
+                            <th>时间</th>
+                            <th>链接</th>
                             <th>排序</th>
                             <th>状态</th>
                             <th>添加时间</th>
@@ -133,10 +148,17 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     var initialPreviewConfig = [];
     editImage(initialPreview, initialPreviewConfig);
 
-    $("#category-form").validate({
+    $("#activity-form").validate({
       rules:{
         title:{
           required: true,
+        },
+        activity_time:{
+          required: true,
+        },
+        activity_url:{
+          required: true,
+          url: true,
         },
         sort_num: {
           required: true,
@@ -145,8 +167,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
     });
 
-    $("#category_table").DataTable({
-      ajax: '<?php echo \yii\helpers\Url::to('/category/index?api=true')?>',
+    $("#activity_table").DataTable({
+      ajax: '<?php echo \yii\helpers\Url::to('/activity/index?api=true')?>',
       bAutoWidth: false,
       ordering: true,
       /*aLengthMenu:[1,2,3,5,10],*/
@@ -159,6 +181,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       columns: [
         {"data": "id"},
         {"data": "title"},
+        {"data": "activity_time"},
+        {"data": "activity_url"},
         {"data": "sort_num"},
         {"data": "status"},
         {"data": "created_at"},
@@ -166,11 +190,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       order: [[ 0, "desc" ]],
       aoColumnDefs: [
         {
-          "targets": 5,
+          "targets": 7,
           "render" : function(data, type, row) {
             var html = '';
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateCategory('"+ row.id +"')\"> 编辑 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteCategory('"+ row.id +"')\"> 删除 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateactivity('"+ row.id +"')\"> 编辑 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteactivity('"+ row.id +"')\"> 删除 </a>";
             return html;
           }
         },
@@ -178,7 +202,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     });
   });
 
-  function deleteCategory(autoId)
+  function deleteactivity(autoId)
   {
     swal({
         title: "你确认删除这条信息吗?",
@@ -193,7 +217,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       function (isConfirm) {
         if (isConfirm) {
           $.ajax({
-            url: '<?php echo \yii\helpers\Url::to('/category/delete')?>',
+            url: '<?php echo \yii\helpers\Url::to('/activity/delete')?>',
             dataType: 'json',
             type: "POST",
             data: {'id' : autoId},
@@ -210,14 +234,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     );
   }
 
-  function updateCategory(autoId = '')
+  function updateactivity(autoId = '')
   {
     if (autoId.length != 0) {
       // 初始化选中 所属直播间
       var data;
-      $("#btnText").html('修改分类信息');
+      $("#btnText").html('修改活动信息');
       $.ajax({
-        url: '<?php echo \yii\helpers\Url::to('/category/one')?>',
+        url: '<?php echo \yii\helpers\Url::to('/activity/one')?>',
         dataType: 'json',
         type: "get",
         async : false,
@@ -228,6 +252,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
             $("[name='id']").val(data.id);
             $("[name='title']").val(data.title);
+            $("[name='activity_time']").val(data.activity_time);
+            $("[name='activity_url']").val(data.activity_url);
             $("[name='sort_num']").val(data.sort_num);
             // $("#w0").select2('val',data.room_id);
             if(data.status == 1){
@@ -253,21 +279,21 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       $('#myModal').modal('show');
 
     } else {
-      $("#btnText").html('添加分类信息');
+      $("#btnText").html('添加活动信息');
     }
   }
 
-  function saveCategory()
+  function saveactivity()
   {
-    if(!$("#category-form").valid()){
+    if(!$("#activity-form").valid()){
       return false;
     }
 
     $.ajax({
       type:'POST',
       dataType: 'json',
-      url : '<?php echo yii\helpers\Url::to('/category/save')?>',
-      data : $("#category-form").serialize(),
+      url : '<?php echo yii\helpers\Url::to('/activity/save')?>',
+      data : $("#activity-form").serialize(),
       success: function(result) {
         if ('200' == result.status) {
           affirmSwals('成功', '成功', 'success', confirmFunc);

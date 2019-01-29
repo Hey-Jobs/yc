@@ -127,4 +127,29 @@ class CommonHelper
         return $grouped;
     }
 
+    /**
+     * @param integer $num 数值
+     * @param integer $type 格式化类型 1 点击数格式化
+     * 数字格式化
+     */
+    public static function numberFormat($num, $type = 1)
+    {
+        $data = "";
+
+        switch ($type) {
+            case 1:
+                if ($num >= 10000) {
+                    $data = round($num / 10000, 2).'万';
+                } else if ($num >= 1000) {
+                    $data = round($num / 1000, 2).'千';
+                } else {
+                    $data = $num;
+                }
+
+                break;
+        }
+
+        return $data;
+    }
+
 }

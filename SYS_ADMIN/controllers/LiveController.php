@@ -12,6 +12,7 @@ use common\models\User;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
+use SYS_ADMIN\models\Category;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Pictrue;
@@ -94,12 +95,14 @@ class LiveController extends CommonController
 
         $title = empty($id) ? '新增直播间' : '编辑直播间';
         $user_html = SearchWidget::instance()->userList('user_id', $user_id);
-
+        // 模板列表
         $templateList = RoomTemplate::find()
             ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
             ->asArray()
             ->all();
 
+        // 分类
+        $category = Category::getCategoryList();
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,
@@ -107,6 +110,7 @@ class LiveController extends CommonController
             'is_admin' => $this->isAdmin,
             'title' => $title,
             'templateList' => $templateList,
+            'category' => $category,
         ]);
     }
 
@@ -126,6 +130,7 @@ class LiveController extends CommonController
         $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
         $sort_num = \Yii::$app->request->post('sort_num');
         $templet_id = \Yii::$app->request->post('templet_id');
+        $category_id = \Yii::$app->request->post('category_id');
 
         $model = new LiveRoom();
         $model->attributes = \Yii::$app->request->post();
@@ -157,6 +162,7 @@ class LiveController extends CommonController
         $model->room_name = $room_name;
         $model->updated_at = time();
         $model->templet_id = $templet_id;
+        $model->category_id = $category_id;
 
         if ($this->isAdmin) {
             $model->sort_num = $sort_num;

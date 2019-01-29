@@ -2,22 +2,30 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 2019/1/23
- * Time: 22:06
+ * Date: 2019/1/26
+ * Time: 23:15
  */
 
 namespace SYS_ADMIN\controllers;
 
-
 use SYS_ADMIN\components\ConStatus;
-use SYS_ADMIN\models\Category;
+use SYS_ADMIN\models\Activity;
 
-class CategoryController extends CommonController
+/**
+ * Class ActivityController
+ * @package SYS_ADMIN\controllers
+ * 活动管理
+ */
+class ActivityController extends CommonController
 {
+    /**
+     * @return array|string
+     * 获取列表
+     */
     public function actionIndex()
     {
         if (\Yii::$app->request->get('api')) {
-            $lists = Category::find()
+            $lists = Activity::find()
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
                 ->asArray()
                 ->all();
@@ -33,6 +41,7 @@ class CategoryController extends CommonController
         }
     }
 
+
     public function actionOne()
     {
         $id = \Yii::$app->request->get('id');
@@ -41,43 +50,14 @@ class CategoryController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $info = Category::findOne($id)->toArray();
+        $info = Activity::findOne($id)->toArray();
         return $info;
     }
 
-    public function actionSave()
-    {
-        $id = \Yii::$app->request->post('id');
-        $title = \Yii::$app->request->post('title');
-        $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
-        $sort_num = \Yii::$app->request->post('sort_num');
-
-        $model = new Category();
-        $model->attributes = \Yii::$app->request->post();
-
-        if (!$model->validate()) {
-            $errors = implode($model->getFirstErrors(), "\r\n");
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
-        }
-
-        if (!empty($id)) { // 更新
-            $model = Category::findOne($id);
-            if (empty($model)) {
-                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
-            }
-        }
-
-        $model->title = $title;
-        $model->status = $status;
-        $model->sort_num = $sort_num;
-
-        if (!$model->save()) {
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
-        } else {
-            return $this->successInfo(ConStatus::$STATUS_SUCCESS);
-        }
-    }
-
+    /**
+     * @return array|void
+     * 删除活动
+     */
     public function actionDelete()
     {
         $id = \Yii::$app->request->get('id');
@@ -85,7 +65,7 @@ class CategoryController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $model = Category::findOne($id);
+        $model = Activity::findOne($id);
         if (empty($model)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
@@ -97,4 +77,47 @@ class CategoryController extends CommonController
             return $this->successInfo(ConStatus::$STATUS_SUCCESS);
         }
     }
+
+    /**
+     * @return array|void
+     * 更新活动
+     */
+    public function actionSave()
+    {
+        $id = \Yii::$app->request->post('id');
+        $title = \Yii::$app->request->post('title');
+        $activity_url = \Yii::$app->request->post('activity_url');
+        $activity_time = \Yii::$app->request->post('activity_time');
+        $status = \Yii::$app->request->post('status', ConStatus::$STATUS_ENABLE);
+        $sort_num = \Yii::$app->request->post('sort_num');
+
+        $model = new Activity();
+        $model->attributes = \Yii::$app->request->post();
+
+        if (!$model->validate()) {
+            $errors = implode($model->getFirstErrors(), "\r\n");
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
+        }
+
+        if (!empty($id)) { // 更新
+            $model = Activity::findOne($id);
+            if (empty($model)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
+
+        $model->title = $title;
+        $model->activity_url = $activity_url;
+        $model->activity_time = $activity_time;
+        $model->status = $status;
+        $model->sort_num = $sort_num;
+
+        if (!$model->save()) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
+        } else {
+            return $this->successInfo(ConStatus::$STATUS_SUCCESS);
+        }
+    }
+
+
 }
