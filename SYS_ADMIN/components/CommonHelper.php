@@ -129,7 +129,7 @@ class CommonHelper
 
     /**
      * @param integer $num 数值
-     * @param integer $type 格式化类型 1 点击数格式化
+     * @param integer $type 格式化类型 1 点击数格式化 2整数转成时间格式
      * 数字格式化
      */
     public static function numberFormat($num, $type = 1)
@@ -147,9 +147,33 @@ class CommonHelper
                 }
 
                 break;
+
+            case 2:
+                $minute = floor($num / 60);
+                $second = $num % 60;
+                $data = sprintf("%02d", $minute).':'.sprintf('%02d', $second);
+                break;
         }
 
         return $data;
+    }
+
+    /**
+     * 获取直播间默认logo
+     */
+    public static function getDefaultLogo()
+    {
+        return CommonHelper::getImgPath('images/default.png');
+    }
+
+    /**
+     * @param $pic
+     * @return string
+     *
+     */
+    public static function getImgPath($pic)
+    {
+        return CommonHelper::getDomain().CommonHelper::getPicPath($pic);
     }
 
 }

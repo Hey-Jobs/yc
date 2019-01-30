@@ -3,14 +3,13 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2018/11/19
- * Time: 19:50
+ * Time: 19:50.
  */
 
 namespace SYS_ADMIN\controllers\rest\v1;
+
 use abei2017\wx\Application;
 use app\models\Comment;
-use Codeception\Module\Cli;
-use SYS_ADMIN\components\ArrayHelper;
 use SYS_ADMIN\components\BaseDataBuilder;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -23,18 +22,17 @@ use SYS_ADMIN\models\Order;
 use SYS_ADMIN\models\OrderDetail;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Product;
+use SYS_ADMIN\models\ShoppingMall;
 use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
 
 /**
- * Class ClientController
- * @package SYS_ADMIN\controllers\rest\v1
- * 用户信息相关
+ * Class ClientController.
  */
 class ClientController extends CommonController
 {
     /**
-     *  用户地址管理
+     *  用户地址管理.
      */
     public function actionAddrList()
     {
@@ -113,6 +111,7 @@ class ClientController extends CommonController
         if ($add_info) {
             $add_info['sex'] = ConStatus::$SEX[$add_info['client_sex']];
         }
+
         return $this->successInfo($add_info);
     }
 
@@ -134,6 +133,7 @@ class ClientController extends CommonController
         $model->attributes = \Yii::$app->request->post();
         if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
+
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
@@ -160,7 +160,7 @@ class ClientController extends CommonController
     }
 
     /**
-     * 订单列表
+     * 订单列表.
      */
     public function actionOrders()
     {
@@ -181,8 +181,9 @@ class ClientController extends CommonController
                 'user_address',
                 'user_phone',
                 'express_id',
+                'express_no',
                 'deliver_money',
-                'create_time'
+                'create_time',
             ])
             ->where(['in', 'order_status', [
                 ConStatus::$ORDER_PENDING,
@@ -200,12 +201,12 @@ class ClientController extends CommonController
             $query->limit(1);
         }
 
-        if($order_id){ // 查看订单详情
+        if ($order_id) { // 查看订单详情
             $query->andWhere(['order_id' => $order_id]);
         }
 
         $orderList = $query->asArray()->all();
-        if(empty($orderList)){
+        if (empty($orderList)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -216,9 +217,9 @@ class ClientController extends CommonController
             ->all();
 
         $pic_list = Pictrue::getPictrueList(array_column($orderDetails, 'cover_img'));
-        if(count($pic_list)){
-            foreach ($orderDetails as &$od){
-                $pic_path = isset($pic_list[$od['cover_img']]) ? $pic_list[$od['cover_img']]['pic_path'] : "";
+        if (count($pic_list)) {
+            foreach ($orderDetails as &$od) {
+                $pic_path = isset($pic_list[$od['cover_img']]) ? $pic_list[$od['cover_img']]['pic_path'] : '';
                 $od['cover_img'] = $pic_path;
             }
         }
@@ -243,10 +244,10 @@ class ClientController extends CommonController
             ->asArray()
             ->all();
 
-       foreach ($orderList as $key => $row) {
-            $logo_pic_tmp = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : "";
+        foreach ($orderList as $key => $row) {
+            $logo_pic_tmp = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : '';
             $data[$key]['order_id'] = $row['order_id'] ?? '';
-            $data[$key]['room_name'] = isset($room_list[$row['room_id']]) ?  $room_list[$row['room_id']]['room_name']: "";
+            $data[$key]['room_name'] = isset($room_list[$row['room_id']]) ? $room_list[$row['room_id']]['room_name'] : '';
             $data[$key]['logo_img'] = $logo_pic_tmp;
             $data[$key]['mobile'] = isset($room_list[$row['room_id']]) ? $user_info[$room_list[$row['room_id']]['user_id']]['phone'] : '';
             $data[$key]['order_status'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
@@ -257,6 +258,7 @@ class ClientController extends CommonController
             $data[$key]['user_address'] = $row['user_address'] ?? '';
             $data[$key]['user_phone'] = $row['user_phone'] ?? '';
             $data[$key]['create_time'] = $row['create_time'] ?? '';
+            $data[$key]['express_no'] = $row['express_no'] ?? '';
             $data[$key]['express_name'] = Express::$EXPRESS[$row['express_id']] ?? '';
             $data[$key]['list'] = $orderDetails[$row['id']] ?? '';
         }
@@ -265,12 +267,12 @@ class ClientController extends CommonController
     }
 
     /**
-     * 提交订单
+     * 提交订单.
      */
     public function actionOrderSub()
     {
         $user_id = $this->user_info['uid'];
-        $room_id = 0 ;
+        $room_id = 0;
 
         $products_id = [];
         $product_num = [];
@@ -284,17 +286,16 @@ class ClientController extends CommonController
         $user_address = \Yii::$app->request->post('address');
         $user_phone = \Yii::$app->request->post('user_phone');
 
-
-        if(empty($products)){
+        if (empty($products)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
         $products = json_decode($products, true);
-        if(empty($products)){
+        if (empty($products)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        foreach ($products as $item){
+        foreach ($products as $item) {
             $products_id[] = $item['product_id'];
             $product_num[$item['product_id']] = $item['num'];
         }
@@ -306,12 +307,11 @@ class ClientController extends CommonController
             ->asArray()
             ->all();
 
-
         $order_status = ConStatus::$ORDER_NO_PAY;
-        $order_id =  date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+        $order_id = date('Ymd').str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
         $total_money = 0; //总价格
         $real_total_money = 0; // 实际付款
-        foreach ($products_list as &$pro){
+        foreach ($products_list as &$pro) {
             $pro['num'] = $product_num[$pro['id']];
             $total_money += round($pro['price'] * $product_num[$pro['id']], 2);
         }
@@ -335,12 +335,11 @@ class ClientController extends CommonController
         $model->user_address = $user_address;
         $model->user_phone = $user_phone;
 
-
         // 订单详情
-        if($model->save()){
-            $product_detail = "";
+        if ($model->save()) {
+            $product_detail = '';
             $detail_data = [];
-            foreach ($products_list as $item){
+            foreach ($products_list as $item) {
                 $product_detail .= $item['title'].'×'.$item['num'].'#';
                 $detail_data[] = [
                     'order_id' => $model->id,
@@ -356,53 +355,55 @@ class ClientController extends CommonController
             $res = \Yii::$app->db->createCommand()
                 ->batchInsert(
                     OrderDetail::tableName(),
-                    ['order_id', 'client_id','product_id', 'title', 'price', 'cover_img', 'num'],
+                    ['order_id', 'client_id', 'product_id', 'title', 'price', 'cover_img', 'num'],
                     $detail_data)
                 ->execute();
-            if($res){
+            if ($res) {
                 $connection->commit();
 
                 $conf = \Yii::$app->params['wx']['mp'];
-                $wechat = new Application(['conf'=>$conf]);
-                $payment = $wechat->driver("mp.pay");
+                $wechat = new Application(['conf' => $conf]);
+                $payment = $wechat->driver('mp.pay');
 
                 $attributes = [
-                    'body'=>"商品购买#{$order_id}",
-                    'detail'=>"商品购买#{$order_id}",
-                    'out_trade_no'=>$order_id,
-                    'total_fee'=> $model->real_total_money * 100,
-                    'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
-                    'openid'=> $this->user_info['open_id'],
+                    'body' => "商品购买#{$order_id}",
+                    'detail' => "商品购买#{$order_id}",
+                    'out_trade_no' => $order_id,
+                    'total_fee' => $model->real_total_money * 100,
+                    'notify_url' => \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+                    'openid' => $this->user_info['open_id'],
                 ];
 
                 $jsApi = $payment->js($attributes);
-                if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+                if ('SUCCESS' == $jsApi['return_code'] && 'SUCCESS' == $jsApi['result_code']) {
                     $prepayId = $jsApi['prepay_id'];
                     $arr = $payment->configForPayment($prepayId);
-                    return $this->successInfo(['pay' => $arr, 'order_no'=> $order_id, 'subscribe' => $this->user_info['subscribe']]);
-                }else {
+
+                    return $this->successInfo(['pay' => $arr, 'order_no' => $order_id, 'subscribe' => $this->user_info['subscribe']]);
+                } else {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, $jsApi['return_msg']);
                 }
-
-
             } else {
                 $connection->rollBack();
                 CommonHelper::writeOrderLog($detail_data);
                 CommonHelper::writeOrderLog($res);
+
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_DETAIL, ConStatus::$ERROR_SYS_MSG);
             }
         } else {
             $connection->rollBack();
             CommonHelper::writeOrderLog($model->toArray());
             CommonHelper::writeOrderLog($model->getErrors());
+
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_CREATE, ConStatus::$ERROR_SYS_MSG);
         }
-
     }
 
-
     /**
-     * 点赞
+     * 点赞./ 收藏
+     * @param integer uid 用户id
+     * @param integer id 对应id
+     * @param integer stype 类型  1 视频  2 评论 3直播间
      */
     public function actionUserStart()
     {
@@ -410,20 +411,24 @@ class ClientController extends CommonController
         $id = \Yii::$app->request->post('id', 0);
         $stype = \Yii::$app->request->post('stype', 0);
 
-        if(!array_key_exists($stype, ConStatus::$CLIENT_START)){
+        if (!array_key_exists($stype, ConStatus::$CLIENT_START)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        switch ($stype){
-            case ConStatus::$CLIENT_START_VIDEO : // 视频
+        switch ($stype) {
+            case ConStatus::$CLIENT_START_VIDEO: // 视频
                 $info = Video::findOne($id);
                 break;
-            case ConStatus::$CLIENT_START_COMMENT : // 评论
+            case ConStatus::$CLIENT_START_COMMENT: // 评论
                 $info = Comment::findOne($id);
+                break;
+
+            case ConStatus::$CLIENT_START_ROOM: // 直播间
+                $info = LiveRoom::findOne($id);
                 break;
         }
 
-        if(empty($info)){
+        if (empty($info)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -431,19 +436,65 @@ class ClientController extends CommonController
             ->where(['target_id' => $id, 'client_id' => $user_id, 'stype' => $stype])
             ->one();
 
-        if(empty($model)){ // 收藏
+        if (empty($model)) { // 收藏
             $model = new ClientStart();
             $model->target_id = $id;
             $model->client_id = $user_id;
             $model->stype = $stype;
             $model->save();
-
         } else { // 取消收藏
             $model->delete();
         }
 
         $this->successInfo(true);
     }
+
+    /**
+     * 直播间收藏列表
+     */
+    public function actionRoomStart()
+    {
+        $user_id = $this->user_info['uid'];
+
+        $lists = ClientStart::find()
+            ->select(['target_id as room_id'])
+            ->where(['client_id' => $user_id])
+            ->andWhere(['stype' => ConStatus::$CLIENT_START_ROOM])
+            ->orderBy('id desc')
+            ->asArray()
+            ->all();
+
+        if (count($lists)) {
+            $roomIds = array_column($lists, 'room_id');
+            $roomList = LiveRoom::find()
+                ->select(['id as room_id',  'click_num', 'online_cover', 'logo_img'])
+                ->where(['in', 'id', $roomIds])
+                ->indexBy('room_id')
+                ->asArray()
+                ->all();
+
+            $malls = ShoppingMall::find()
+                ->select(['title', 'introduction', 'room_id'])
+                ->where(['status' => ConStatus::$STATUS_ENABLE])
+                ->andWhere(['in', 'room_id', $roomIds])
+                ->indexBy('room_id')
+                ->asArray()
+                ->all();
+
+            $picIds = array_column($roomList, 'logo_img');
+            $picList = Pictrue::getPictrueList($picIds);
+
+            foreach ($lists as &$item) {
+                $logo_img = $roomList[$item['room_id']]['logo_img'];
+                $item['title'] = $malls[$item['room_id']]['title'] ?? $item['room_name'];
+                $item['logo_img'] = $picList[$logo_img] ? $picList[$logo_img]['pic_path'] : CommonHelper::getDefaultLogo();
+                $item['online_cover'] = $roomList[$item['room_id']]['online_cover'] ?? '';
+                $item['click_num'] = CommonHelper::numberFormat($roomList[$item['room_id']]['click_num']);
+            }
+        }
+        return $this->successInfo($lists);
+    }
+
     /**
      * 用户评论
      * 商品
@@ -467,8 +518,9 @@ class ClientController extends CommonController
         $model->thumb_img = $this->user_info['user_img'];
         $model->content = $content;
 
-        if($model->save()){
+        if ($model->save()) {
             $data = $model->toArray();
+
             return $this->successInfo($data);
         } else {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_SYS_MSG);
@@ -477,22 +529,22 @@ class ClientController extends CommonController
 
     public function actionTest()
     {
-        $product_detail = "test";
-        $order_id = "123456";
+        $product_detail = 'test';
+        $order_id = '123456';
         $attributes = [
-            'body'=>$product_detail."#{$order_id}",
-            'detail'=>"test#{$order_id}",
-            'out_trade_no'=>$order_id,
-            'total_fee'=> 1,
-            'notify_url'=> \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
-            'openid'=> $this->user_info['open_id'],
+            'body' => $product_detail."#{$order_id}",
+            'detail' => "test#{$order_id}",
+            'out_trade_no' => $order_id,
+            'total_fee' => 1,
+            'notify_url' => \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+            'openid' => $this->user_info['open_id'],
         ];
 
         $conf = \Yii::$app->params['wx']['mp'];
-        $wechat = new Application(['conf'=>$conf]);
-        $payment = $wechat->driver("mp.pay");
+        $wechat = new Application(['conf' => $conf]);
+        $payment = $wechat->driver('mp.pay');
         $jsApi = $payment->js($attributes);
-        if($jsApi['return_code'] == 'SUCCESS' && $jsApi['result_code'] == 'SUCCESS'){
+        if ('SUCCESS' == $jsApi['return_code'] && 'SUCCESS' == $jsApi['result_code']) {
             $prepayId = $jsApi['prepay_id'];
             $arr = $payment->configForPayment($prepayId);
         } else {
@@ -500,6 +552,4 @@ class ClientController extends CommonController
 
         return false;
     }
-
-
 }

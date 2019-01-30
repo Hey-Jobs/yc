@@ -79,14 +79,18 @@ class ConStatus
     public static $COMMENT_TYPE_ROOM = 1;
     public static $COMMENT_TYPE_PROD = 2;
 
+
+
     // 点赞
     public static $CLIENT_START = [
         1 => '视频点赞',
         2 => '评论点赞',
+        3 => '直播间收藏',
     ];
 
     public static $CLIENT_START_VIDEO = 1;
     public static $CLIENT_START_COMMENT = 2;
+    public static $CLIENT_START_ROOM = 3;
 
     //商品图片数量
     public static $PRODUCT_MAX_NUM = 10;
