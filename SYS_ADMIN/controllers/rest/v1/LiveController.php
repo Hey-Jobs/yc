@@ -154,7 +154,8 @@ class LiveController extends  CommonController
         $offset = ($page - 1) * ConStatus::$INDEX_VIDEO_PAGE_SIZE;
         $lists = $model->offset($offset)
             ->limit(ConStatus::$INDEX_VIDEO_PAGE_SIZE)
-            ->select(['room_id', 'video_name', 'cover_img', 'video_length', 'video_url', 'click_num'])
+            ->select(['id', 'room_id', 'video_name', 'cover_img',
+                'video_length', 'video_url', 'click_num', 'video_url as vurl'])
             ->orderBy('id desc')
             ->asArray()
             ->all();

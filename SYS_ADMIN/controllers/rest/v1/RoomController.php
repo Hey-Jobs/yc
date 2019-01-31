@@ -2,11 +2,10 @@
 /**
  * User: liwj
  * Date:2018/11/14
- * Time:20:57
+ * Time:20:57.
  */
 
 namespace SYS_ADMIN\controllers\rest\v1;
-
 
 use app\models\Comment;
 use SYS_ADMIN\components\CommonHelper;
@@ -24,16 +23,15 @@ use SYS_ADMIN\models\ClientStart;
 class RoomController extends CommonController
 {
     /**
-     * 获取 所有视频
+     * 获取 所有视频.
      */
-
     public function actionVideos()
     {
         $user_id = $this->user_info['uid'];
         $id = \Yii::$app->request->get('id');
 
         $room_info = LiveRoom::findOne($id);
-        if(empty($id) || empty($room_info)){
+        if (empty($id) || empty($room_info)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -46,11 +44,11 @@ class RoomController extends CommonController
             ->orderBy('sort_num asc, id desc')
             ->all();
 
-        if(count($video_list)){
+        if (count($video_list)) {
             //$pic_id = array_column($video_list, 'cover_img');
             //$pic_list = Pictrue::getPictrueList($pic_id);
 
-            if($user_id > 0){
+            if ($user_id > 0) {
                 $video_start = ClientStart::find()
                     ->where(['client_id' => $user_id])
                     ->select(['target_id', 'client_id'])
@@ -59,7 +57,7 @@ class RoomController extends CommonController
                     ->all();
             }
 
-            foreach ($video_list as $v){
+            foreach ($video_list as $v) {
                 //$pic_path = isset($pic_list[$v['cover_img']]) ? $pic_list[$v['cover_img']]['pic_path'] : "";
                 $videos[] = [
                     'id' => $v['id'],
@@ -78,23 +76,22 @@ class RoomController extends CommonController
         return $this->successInfo(['videos' => $videos]);
     }
 
-
     /**
-     * 点击次数
+     * 点击次数.
      */
     public function actionClickNum()
     {
         $ctype = \Yii::$app->request->post('ctype'); // 类型
         $cid = \Yii::$app->request->post('cid');
 
-        if(empty($ctype) || empty($cid)){
+        if (empty($ctype) || empty($cid)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        switch ($ctype){
+        switch ($ctype) {
             case 'video':
                 $model = Video::findOne($cid);
-                if(empty($model)){
+                if (empty($model)) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
                 }
 
@@ -103,7 +100,7 @@ class RoomController extends CommonController
 
             case 'lens':
                 $model = Lens::findOne($cid);
-                if(empty($model)){
+                if (empty($model)) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
                 }
 
@@ -115,7 +112,7 @@ class RoomController extends CommonController
     }
 
     /**
-     * 获取直播间镜头
+     * 获取直播间镜头.
      */
     public function actionLens()
     {
@@ -128,12 +125,12 @@ class RoomController extends CommonController
             ->orderBy('sort_num asc, id desc')
             ->all();
 
-        if(count($lens_list)){
-            foreach ($lens_list as $v){
+        if (count($lens_list)) {
+            foreach ($lens_list as $v) {
                 $lens_type = 'lens';
                 $vurl = $v['online_url'];
                 $cover_img = $v['online_cover_url'];
-                if($v['stream_status'] == ConStatus::$STATUS_DISABLE){
+                if ($v['stream_status'] == ConStatus::$STATUS_DISABLE) {
                     $lens_type = 'video';
                     $vurl = $v['playback_url'];
                     $cover_img = $v['marvellous_url'];
@@ -163,10 +160,10 @@ class RoomController extends CommonController
             ->orderBy('sort_num asc, id desc')
             ->all();
 
-        if(count($video_list)){
+        if (count($video_list)) {
             //$pic_id = array_column($video_list, 'cover_img');
             //$pic_list = Pictrue::getPictrueList($pic_id);
-            foreach ($video_list as $v){
+            foreach ($video_list as $v) {
                 $lens[] = [
                     'aid' => $v['id'],
                     'name' => $v['video_name'],
@@ -182,15 +179,11 @@ class RoomController extends CommonController
             }
         }
 
-
         return $this->successInfo($lens);
-
     }
 
-
-
     /**
-     * 根据ID获取直播间信息
+     * 根据ID获取直播间信息.
      */
     public function actionInfo()
     {
@@ -207,21 +200,21 @@ class RoomController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS);
         }
 
-        if(!empty($list['logo_img'])){ // logo
+        if (!empty($list['logo_img'])) { // logo
             $logo_pic = Pictrue::getPictrueById($list['logo_img']);
-            $list['logo_img'] = $logo_pic['pic_path'] ?? "";
+            $list['logo_img'] = $logo_pic['pic_path'] ?? '';
         }
 
-        if(!empty($list['cover_img'])){ // cover
+        if (!empty($list['cover_img'])) { // cover
             $cover_pic = Pictrue::getPictrueById($list['cover_img']);
-            $list['cover_img'] = $cover_pic['pic_path'] ?? "";
+            $list['cover_img'] = $cover_pic['pic_path'] ?? '';
         }
 
-        $list['content'] = str_replace("/uploads/images/", CommonHelper::getDomain()."/uploads/images/", $list['content']);
+        $list['content'] = str_replace('/uploads/images/', CommonHelper::getDomain().'/uploads/images/', $list['content']);
         // 增加点击量
         $model = LiveRoom::findOne($id);
         $model->updateCounters(['click_num' => 1]);
-        $list['click_num']++;
+        ++$list['click_num'];
         // 联系电话
         $user_info = User::findOne($list['user_id']);
         $list['mobile'] = $user_info['phone'];
@@ -238,7 +231,7 @@ class RoomController extends CommonController
 
         // 更新访问量
 
-        if($mall){
+        if ($mall) {
             $list['title'] = $mall['title'];
             $list['sub_title'] = $mall['sub_title'];
             $list['intro'] = $mall['introduction'];
@@ -249,7 +242,7 @@ class RoomController extends CommonController
     }
 
     /**
-     * 获取直播间的评论
+     * 获取直播间的评论.
      */
     public function actionComments()
     {
@@ -266,20 +259,19 @@ class RoomController extends CommonController
         $logM->url = $this->action->controller->module->requestedRoute ?? '';
         $logM->save();
 
-        if(empty($id) || empty($room_info)){
+        if (empty($id) || empty($room_info)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $lists =  Comment::find()
+        $lists = Comment::find()
             ->where(['from_id' => $id, 'type' => ConStatus::$COMMENT_TYPE_ROOM])
             ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
             ->asArray()
             ->orderBy('id desc')
             ->all();
 
-        if(count($lists)){
-
-            if($user_id > 0){ // 用户收藏
+        if (count($lists)) {
+            if ($user_id > 0) { // 用户收藏
                 $start_list = ClientStart::find()
                     ->where(['client_id' => $user_id])
                     ->select(['target_id', 'client_id'])
@@ -289,7 +281,7 @@ class RoomController extends CommonController
             }
 
             $i = 1;
-            foreach ($lists as &$com){
+            foreach ($lists as &$com) {
                 $com['date'] = date('Y-m-d H:i', strtotime($com['created_at']));
                 $com['num'] = $i++;
                 $com['start'] = array_key_exists($com['id'], $start_list) ? 1 : 0;
@@ -300,7 +292,7 @@ class RoomController extends CommonController
     }
 
     /**
-     * 直播间列表
+     * 直播间列表.
      */
     public function actionList()
     {
@@ -314,7 +306,7 @@ class RoomController extends CommonController
     }
 
     /**
-     * 直播间轮播图
+     * 直播间轮播图.
      */
     public function actionBanner()
     {
@@ -343,7 +335,7 @@ class RoomController extends CommonController
     }
 
     /**
-     * 获取直播间模板信息
+     * 获取直播间模板信息.
      */
     public function actionTemplate()
     {
