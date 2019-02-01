@@ -147,6 +147,8 @@ class RoomController extends CommonController
                     'pic' => $cover_img,
                     'vnum' => md5($v['id']),
                     'vtype' => $lens_type,
+                    'lens_music' => $v['bgm_url'], // 镜头背景音乐
+                    'live_music' => $v['live_music'], // 直播音乐
                 ];
             }
         }
@@ -175,6 +177,8 @@ class RoomController extends CommonController
                     'reback_img' => $v['cover_img'],
                     'vnum' => md5($v['id']),
                     'vtype' => 'video',
+                    'lens_music' => '', // 镜头背景音乐
+                    'live_music' => '', // 直播音乐
                 ];
             }
         }

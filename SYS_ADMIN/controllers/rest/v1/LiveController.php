@@ -8,6 +8,8 @@
 
 namespace SYS_ADMIN\controllers\rest\v1;
 
+use Flc\Dysms\Client;
+use Flc\Dysms\Request\SendSms;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Activity;
@@ -190,5 +192,28 @@ class LiveController extends  CommonController
         }
 
         return $this->successInfo($lists);
+    }
+
+    /**
+     * 短信
+     */
+    public function actionSms()
+    {
+        $config = [
+            'accessKeyId'    => 'LTAI4wypDAoFY7q8',
+            'accessKeySecret' => 'mgFQLuRjcZgL9YO6z9ZfOgSJpLRQUI',
+        ];
+
+
+        $sendClient = new Client($config);
+        $sendSms = new SendSms();
+
+        $sendSms->setPhoneNumbers('13750509674');
+        $sendSms->setSignName('云窗在线');
+        $sendSms->setTemplateCode('SMS_157215581');
+        $sendSms->setTemplateParam(['code' => rand(100000, 999999)]);
+        //$sendSms->setOutId();
+
+        var_dump($sendClient->execute($sendSms));
     }
 }
