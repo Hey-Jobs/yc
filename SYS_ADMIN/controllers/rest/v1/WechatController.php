@@ -148,8 +148,8 @@ class WechatController extends CommonController
             $redis->set($auth_info['openid'], json_encode($user_detail));
             $redis->expire($auth_info['openid'], 7200); // 缓存2小时
             setcookie('uid', $auth_info['openid'], time() + 7200, '/');
-            setcookie('uname', $auth_info['user_name'], time() + 7200, '/');
-            setcookie('uimg', $auth_info['user_img'], time() + 7200, '/');
+            setcookie('uname', $user_detail['user_name'], time() + 7200, '/');
+            setcookie('uimg', $user_detail['user_img'], time() + 7200, '/');
 
             $redirect = $refer ? $refer : CommonHelper::getDomain() . '/front/#/';
             return $this->redirect($redirect);
