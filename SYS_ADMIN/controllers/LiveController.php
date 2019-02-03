@@ -163,7 +163,6 @@ class LiveController extends CommonController
         $model->updated_at = time();
         $model->templet_id = $templet_id;
         $model->category_id = $category_id;
-        $model->live_music = $live_music;
 
         if ($this->isAdmin) {
             $model->sort_num = $sort_num;
