@@ -340,7 +340,7 @@ class WechatController extends CommonController
         $buttons = [
             'button' => [
                 [
-                    'type' => 'click',
+                    'type' => 'view',
                     'name' => '溯源直播',
                     'url' => 'https://yc.adaxiang.com/front/?from=singlemessage#/',
                 ],
