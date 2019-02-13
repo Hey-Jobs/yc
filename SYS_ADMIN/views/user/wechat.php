@@ -53,7 +53,7 @@ AppAsset::addScript($this, '/static/js/qrcode.min.js?v=' . Yii::$app->params['ve
                         <label class="col-sm-2 control-label bind-user-title">已绑定微信</label>
                         <div class="col-sm-10zxS">
                             <div class="wechat-img">
-                                <?php if(!$wechat['wechat_name']): ?>
+                                <?php if($wechat['wechat_name']): ?>
                                     <img src="<?= $wechat['wechat_img'] ?>"/>
                                 <?php else: ?>
                                     <img src="../static/images/my2.png"/>
