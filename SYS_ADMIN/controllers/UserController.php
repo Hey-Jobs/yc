@@ -54,6 +54,7 @@ class UserController extends CommonController
         $user_name = $redis->get($key);
 
         if ($user_name) {
+            $redis->del($key);
             return $this->successInfo(['status' => 1]);
         } else {
             return $this->successInfo(['status' => 0]);
