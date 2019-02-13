@@ -11,7 +11,8 @@ input,select,textarea{ border: none;}
 body{ max-width: 720px; margin: 0 auto; }
 
 /* css common */
-body{ background: #fff }
+html, body{height: 100%;}
+body{ background: #fff;  }
 .logo{ position: absolute; top: 20px; right: 5px; width: 100px; z-index: 10 }
 .line{ border-top: 1px solid #ededed; border-bottom: 1px solid #ededed; background: #faf9f9; height: 12px; }
 .videoIcon{ background: url('../images/videoIcon.png') no-repeat left center; background-size: 15px; padding-left: 20px; }
@@ -51,10 +52,10 @@ h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px;
 .homeBottom a img{ display: inline-block; width: 15px;vertical-align: middle; margin-top: -3px; margin-right: 5px; }
 
 /* 直播首页 */
-.video{ width: 100%; display: inline-block; overflow: hidden; background: #ddd; position: relative; z-index: 1; }
+.video{height: calc((100vw * 9) / 16); width: 100%; display: inline-block; overflow: hidden; background: #ddd; position: relative; z-index: 1; }
 .videoCover{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 10 }
-.title{ display: block; }
-.title dl{ padding: 10px 14px 14px; overflow: hidden;  }
+.title{ display: block; margin-top: -5px}
+.title dl{ padding: 5px 14px 5px; overflow: hidden;  }
 .title dt{ float: left; width: calc(100% - 80px); }
 .title dt h1{ font-size: 16px; font-weight: normal; padding-bottom: 3px;  }
 .title dt h1 span:first-child{ width: calc(100% - 60px); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; float: left; }
@@ -75,7 +76,7 @@ h3.tit{ font-size: 14px; color: #8a8a8a; font-weight: normal; padding-top: 10px;
 .videoList dl dt{ padding-bottom: 10px; }
 .videoList dl dd{ font-size: 14px; text-align: center; color: #57c220;}
 
-.company{ padding: 5px 15px 10px; }
+.company{ padding: 5px 15px 0px; }
 .company dl{ overflow: hidden; }
 .company dt{ float: left; width: 70px; margin-right: 15px; }
 .company dd{  }
@@ -253,7 +254,7 @@ background-size: 8px;    margin: 0 15px; }
 .my-order a{color: #999 !important;}
 /* 重置插件css */
 .swiper-slide{ height: auto; }
-.room_content{margin: 10px auto; display: block; min-height: 10px; padding: 10px}
+.room_content{margin: 0px auto 10px; display: block; min-height: 10px; padding: 0 10px 10px}
 .room_content img{max-width: 100% }
 
 .video_info{width: 100%;}
