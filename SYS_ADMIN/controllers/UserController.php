@@ -34,7 +34,7 @@ class UserController extends CommonController
         return $this->render('wechat', [
             'wechat' => $bindInfo,
             'title' => '微信绑定',
-            'qrcode' => $qrcode['url'],
+            'qrcode' => $qrInfo['url'],
         ]);
     }
 }
