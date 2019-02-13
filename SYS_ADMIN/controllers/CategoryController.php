@@ -42,7 +42,7 @@ class CategoryController extends CommonController
         }
 
         $info = Category::findOne($id)->toArray();
-        return $info;
+        return $this->successInfo($info);
     }
 
     public function actionSave()
@@ -80,7 +80,7 @@ class CategoryController extends CommonController
 
     public function actionDelete()
     {
-        $id = \Yii::$app->request->get('id');
+        $id = \Yii::$app->request->post('id');
         if (empty($id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }

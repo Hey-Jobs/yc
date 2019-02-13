@@ -357,7 +357,6 @@ class WechatController extends CommonController
             ]
         ];
         $result = $menu->create($buttons);
-        var_dump($result);
     }
 
     /**
@@ -368,8 +367,27 @@ class WechatController extends CommonController
         $conf = \Yii::$app->params['wx']['mp'];
         $server = (new Application(['conf' => $conf]))->driver("mp.server");
         $server->setMessageHandler(function($message) {
-            file_put_contents('wx.txt', json_encode($message), FILE_APPEND);
-            return "欢迎你";
+            //file_put_contents('wx.txt', json_encode($message), FILE_APPEND);
+            if ($message['MsgType'] == 'event') { // 事件
+                switch ($message['Event']) {
+                    case 'SCAN': // 扫码
+                        break;
+                    case 'subscribe': // 关注
+
+                        break;
+                    case 'VIEW':
+                        break;
+                }
+            } elseif ($message['MsgType'] == 'text') { // 文本内容
+
+            }
+
+            $redis = \Yii::$app->redis;
+            $key = 'bindWechat:'.$userId;
+            $redis->set($key, json_encode($user_detail));
+            $redis->expire($key, 7200); // 缓存2小时
+
+            //return "欢迎你";
         });
 
         $response = $server->serve();
