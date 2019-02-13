@@ -30,8 +30,13 @@ class UserController extends CommonController
 
         // 生成二维码
         $conf = \Yii::$app->params['wx']['mp'];
-        $qrcode = (new Application(['conf' => $conf]))->driver("mp.qrcode");
-        $qrInfo = $qrcode->strForver(ConStatus::$BIND_WECHAT.$userInfo->getId());
+        if(getenv('API_DEBUGE')){
+            $qrInfo['url'] = 'xxx';
+        } else {
+            $qrcode = (new Application(['conf' => $conf]))->driver("mp.qrcode");
+            $qrInfo = $qrcode->strForver(ConStatus::$BIND_WECHAT.$userInfo->getId());
+        }
+
         return $this->render('wechat', [
             'wechat' => $bindInfo,
             'title' => '微信绑定',
