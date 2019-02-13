@@ -382,10 +382,10 @@ class WechatController extends CommonController
 
             }
 
-            $redis = \Yii::$app->redis;
+            /*$redis = \Yii::$app->redis;
             $key = 'bindWechat:'.$userId;
             $redis->set($key, json_encode($user_detail));
-            $redis->expire($key, 7200); // 缓存2小时
+            $redis->expire($key, 7200); // 缓存2小时*/
 
             //return "欢迎你";
         });
