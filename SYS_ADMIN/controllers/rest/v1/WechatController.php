@@ -371,5 +371,8 @@ class WechatController extends CommonController
             file_put_contents('wx.txt', json_encode($message), FILE_APPEND);
             return "欢迎你";
         });
+
+        $response = $server->serve();
+        return $response;
     }
 }

@@ -9,9 +9,9 @@ return [
             //  账号基本信息
             'app_id'  => 'wx6813aaf9a23e0aaa', // 公众号的appid
             'secret'  => 'd8a6f5c0b285e1819bd45f6c72494ee8', // 公众号的秘钥
-            'token'   => '', // 接口的token
-            'encodingAESKey'=>'',
-            'safeMode'=>0,
+            'token'   => '54fa59fbb8328d7a2753d3a4d8695b6c', // 接口的token
+            'encodingAESKey'=>'BCPJrxX23RM5xBrKheG5WgPzBjhQOpl1wYGF584wq5P',
+            'safeMode'=> 2,
 
             //  微信支付
             'payment'=>[
