@@ -381,22 +381,17 @@ class WechatController extends CommonController
                                 $redis->expire($message['EventKey'], 7200); // 缓存2小时
                             }
                         }
-
+                        return "欢迎你";
                         break;
-                    case 'subscribe': // 关注
+                    /*case 'subscribe': // 关注
 
                         break;
                     case 'VIEW':
-                        break;
+                        break;*/
                 }
             } elseif ('text' == $message['MsgType']) { // 文本内容
+
             }
-
-            /*$redis = \Yii::$app->redis;
-            $key = 'bindWechat:'.$userId;
-            $redis->set($key, json_encode($user_detail));
-            $redis->expire($key, 7200); // 缓存2小时*/
-
             //return "欢迎你";
         });
 
