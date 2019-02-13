@@ -82,6 +82,7 @@ class ComposerStaticInit0da678e43b8020007e6aa6b8b4affe98
         ),
         'F' => 
         array (
+            'Flc\\Dysms\\' => 10,
             'Firebase\\JWT\\' => 13,
             'Faker\\' => 6,
         ),
@@ -221,6 +222,10 @@ class ComposerStaticInit0da678e43b8020007e6aa6b8b4affe98
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'Flc\\Dysms\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/flc/dysms/src',
         ),
         'Firebase\\JWT\\' => 
         array (

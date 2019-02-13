@@ -105,6 +105,7 @@ class ConStatus
         'publish_done' => 2, // 断流
     ];
 
+    public static $BIND_WECHAT = 'bindWechat:';
     // 轮播图类型
     public static $BANNER_TYPE_SYS = 1;
     public static $BANNER_TYPE_ROOM = 2;

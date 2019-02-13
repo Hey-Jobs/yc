@@ -9,6 +9,7 @@
 namespace SYS_ADMIN\controllers;
 
 use abei2017\wx\Application;
+use SYS_ADMIN\components\ConStatus;
 
 /**
  * Class UserController
@@ -29,9 +30,8 @@ class UserController extends CommonController
 
         // 生成二维码
         $conf = \Yii::$app->params['wx']['mp'];
-        //$qrcode = (new Application(['conf' => $conf]))->driver("mp.qrcode");
-        //$qrInfo = $qrcode->strForver('bindWechat_'.$userInfo->getId());
-        $qrInfo['url'] = 'https://www.baidu.com';
+        $qrcode = (new Application(['conf' => $conf]))->driver("mp.qrcode");
+        $qrInfo = $qrcode->strForver(ConStatus::$BIND_WECHAT.$userInfo->getId());
         return $this->render('wechat', [
             'wechat' => $bindInfo,
             'title' => '微信绑定',
@@ -45,7 +45,7 @@ class UserController extends CommonController
     public function actionCheckBind()
     {
         $redis = \Yii::$app->redis;
-        $key = 'bindWechat:'.\Yii::$app->user->getId();
+        $key = ConStatus::$BIND_WECHAT.\Yii::$app->user->getId();
         $user_name = $redis->get($key);
 
         if ($user_name) {

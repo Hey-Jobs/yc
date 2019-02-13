@@ -78,5 +78,20 @@ AppAsset::addScript($this, '/static/js/qrcode.min.js?v=' . Yii::$app->params['ve
         });
     });
 
+    window.setInterval(function () {
+      getBindWechat();
+    }, 1000);
 
+    function getBindWechat() {
+      $.ajax({
+        type : 'get',
+        dataType: 'json',
+        url : "/user/check-bind",
+        success : function(data) {
+          if (data.data.status == 1) {
+            location.reload();
+          }
+        },
+      });
+    }
 </script>
