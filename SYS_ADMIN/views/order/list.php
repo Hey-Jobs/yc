@@ -119,11 +119,12 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                             <th>订单编号</th>
                             <th>归属直播间</th>
                             <th>收货人</th>
-                            <th>收获地址</th>
-                            <th>收获号码</th>
+                            <th>收货地址</th>
+                            <th>收货号码</th>
                             <th>快递公司</th>
                             <th>快递单号</th>
                             <th>下单时间</th>
+                            <th>订单详情</th>
                             <th>订单状态</th>
                             <th>操作</th>
                         </tr>
@@ -156,15 +157,16 @@ AppAsset::addScript($this, '/vendor/select2/js/select2-form-extend.js?v=' . Yii:
                 {"data": "express_name"},
                 {"data": "express_no"},
                 {"data": "create_time"},
+                {"data": "detail"},
                 {"data": "order_status_name"},
             ],
             aoColumnDefs: [
                 {
-                    "targets": 9,
+                    "targets": 10,
                     "render": function (data, type, row) {
                         var html = '';
                         html += "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateInfo('" + row.id + "')\"> 发货 </a>";
-                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"orderDetail('"+ row.id +"')\"> 详情 </a>";
+                        //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"orderDetail('"+ row.id +"')\"> 详情 </a>";
                         return html;
                     }
                 }

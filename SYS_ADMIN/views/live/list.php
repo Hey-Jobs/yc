@@ -94,6 +94,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                     "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLive('"+ row.id +"')\"> 编辑 </a>";
+                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteLive('"+ row.id +"')\"> 删除 </a>";
                         return html;
                     }
                 },
@@ -127,7 +128,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: '<?php echo \yii\helpers\Url::to('/lens/del')?>',
+                        url: '<?php echo \yii\helpers\Url::to('/live/del')?>',
                         dataType: 'json',
                         type: "POST",
                         data: {'id' : autoId},

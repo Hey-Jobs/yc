@@ -255,4 +255,39 @@ class ProductController extends CommonController
             return $this->errorInfo(400);
         }
     }
+
+    /**
+     * @return array|void
+     * 删除商品
+     */
+    public function actionDelete()
+    {
+        $id = \Yii::$app->request->post('id');
+        $id = intval($id);
+
+        if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, '参数错误');
+        }
+
+        $model = Product::find()
+            ->where(['id' => $id])
+            ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->one();
+
+        if (empty($model)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, '参数错误');
+        }
+
+        if (!$this->isAdmin && array_key_exists($model->room_id, $this->user_room)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
+        }
+
+        $model->status = ConStatus::$STATUS_DELETED;
+
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(400, '操作失败，请稍后重试');
+        }
+    }
 }

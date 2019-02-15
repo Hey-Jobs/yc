@@ -91,6 +91,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                     "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateProduct('"+ row.id +"')\"> 编辑 </a>";
+                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteProduct('"+ row.id +"')\"> 删除 </a>";
                         return html;
                     }
                 },
@@ -118,5 +119,34 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         window.location.href = url;
     }
 
-
+    function deleteProduct(autoId) {
+      swal({
+          title: "你确认删除这条信息吗?",
+          type: "warning",
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "确认删除！",
+          cancelButtonText: "不，我再想想！",
+          closeOnConfirm: false,
+          closeOnCancel: true,
+          showCancelButton: true,
+        },
+        function (isConfirm) {
+          if (isConfirm) {
+            $.ajax({
+              url: '<?php echo \yii\helpers\Url::to('/product/delete')?>',
+              dataType: 'json',
+              type: "POST",
+              data: {'id' : autoId},
+              success: function (result) {
+                if (result.status == 200) {
+                  affirmSwals('Deleted!', '删除成功！', 'success', confirmFunc);
+                } else {
+                  affirmSwals('Deleted!', result.message, 'error', confirmFunc);
+                }
+              }
+            });
+          }
+        }
+      );
+    }
 </script>

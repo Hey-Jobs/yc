@@ -272,15 +272,14 @@ class LiveController extends CommonController
      */
     public function actionDel()
     {
-        return false;
-        $id = \Yii::$app->request->post('rid');
+        $id = \Yii::$app->request->post('id');
         $id = intval($id);
         if (empty($id)) {
-            return $this->errorInfo(400, '参数错误');
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, '参数错误');
         }
 
-        if (LiveRoom::getRoomId() && LiveRoom::getRoomId() !== $id) {
-            return $this->errorInfo(400, '无权操作');
+        if (!$this->isAdmin && array_key_exists($id, $this->user_room)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
         }
 
         $where['id'] = $id;

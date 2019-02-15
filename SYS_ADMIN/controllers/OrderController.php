@@ -39,12 +39,25 @@ class OrderController extends CommonController
             $list = $query->asArray()->all();
 
             $roomPairs = BaseDataBuilder::instance('LiveRoom');
-            foreach ($list as $key => $row) {
-                $list[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
-                $list[$key]['order_status_name'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
-                $list[$key]['express_name'] = Express::$EXPRESS[$row['express_id']] ?? '';
-                $list[$key]['create_time'] = date('Y-m-d H:i', strtotime($row['create_time']));
+            if (count($list)) {
+                $orderIds = array_column($list, 'id');
+                $detailList = OrderDetail::find()
+                    ->select(["GROUP_CONCAT(CONCAT(title,'×', num) SEPARATOR '</br>') as title", 'order_id'])
+                    ->where(['in', 'order_id', $orderIds])
+                    ->groupBy('order_id')
+                    ->asArray()
+                    ->all();
+
+                $detail = array_column($detailList, 'title', 'order_id');
+                foreach ($list as $key => $row) {
+                    $list[$key]['room_name'] = $roomPairs[$row['room_id']] ?? '';
+                    $list[$key]['order_status_name'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
+                    $list[$key]['express_name'] = Express::$EXPRESS[$row['express_id']] ?? '';
+                    $list[$key]['create_time'] = date('Y-m-d H:i', strtotime($row['create_time']));
+                    $list[$key]['detail'] = $detail[$row['id']];
+                }
             }
+
             return $this->successInfo($list);
         } else {
             return $this->render('list');
