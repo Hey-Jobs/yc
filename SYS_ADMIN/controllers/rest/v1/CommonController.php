@@ -29,6 +29,8 @@ class CommonController extends \yii\rest\Controller
         $action_name = trim($action_name, '/');
         $no_auth = ['jssdk', 'auth-login', 'notify', 'auth-login-back', 'add-menu', 'message'];
 
+        // 校验参数
+        $data = \Yii::$app->request->req
         if (1 == $debug) { //调式模式
             $open_id = 'o5NW-52_GfBdOhc4nm2-Ggtardkg';
             $check_info = Client::findOne(['open_id' => $open_id]);
