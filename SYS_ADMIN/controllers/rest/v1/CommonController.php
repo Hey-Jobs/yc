@@ -37,7 +37,7 @@ class CommonController extends \yii\rest\Controller
             $params = \Yii::$app->request->post();
         }
 
-        if (empty($params['signature']) || empty($params['timestamp'])) {
+        if ((empty($params['signature']) || empty($params['timestamp'])) && !in_array($action_name, $no_auth)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         } else {
             $sign = $params['signature'];
