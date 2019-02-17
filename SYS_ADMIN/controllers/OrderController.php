@@ -124,6 +124,8 @@ class OrderController extends CommonController
         $result = $template->send($client_info->open_id, $template_id['delivery'], $notify_url,$msg_data);
         CommonHelper::writeOrderLog(['type' => 'delivery template msg', 'data' => $result]);
 
+        // 发送短信通知
+        CommonHelper::sendSms($orderM->user_phone, 'express', ['name' => Express::$EXPRESS[$expressId], 'number' => $expressNo]);
         return $this->successInfo(ConStatus::$STATUS_SUCCESS);
     }
 

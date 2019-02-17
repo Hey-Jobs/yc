@@ -228,6 +228,7 @@ class WechatController extends CommonController
 
                         // 通知管理员
                         $room_info = LiveRoom::findOne($order_info->room_id);
+                        $roomAdmin = User::findOne($room_info->user_id);
                         $msg_data['first'] = '您有新订单，请尽快安排服务。';
                         $msg_data['keyword2'] = date('Y年m月d日');
                         $msg_data['keyword3'] = $order_info->user_address;
@@ -238,6 +239,13 @@ class WechatController extends CommonController
                             $notify_url, $msg_data);
                         CommonHelper::writeOrderLog(['type' => 'send admin msg', 'data' => $result]);
 
+                        // 通知直播间管理员
+                        if ($roomAdmin->wechat_openid) {
+                            $result = $template->send($roomAdmin->wechat_openid, $template_id['admin_notice'],
+                                $notify_url, $msg_data);
+                            CommonHelper::writeOrderLog(['type' => 'send room admin msg', 'data' => $result]);
+                        }
+                        
                         return true;
                     } else {
                         CommonHelper::writeOrderLog([
