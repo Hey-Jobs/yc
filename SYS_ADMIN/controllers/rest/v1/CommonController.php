@@ -37,16 +37,19 @@ class CommonController extends \yii\rest\Controller
             $params = \Yii::$app->request->post();
         }
 
-        if ((empty($params['signature']) || empty($params['timestamp'])) && !in_array($action_name, $no_auth)) {
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
-        } else {
-            $sign = $params['signature'];
-            unset($params['signature']);
-            ksort($params);
-            if ($sign !== md5(ConStatus::$APP_KEY.implode($params)) || ($params['timestamp'] + 120) < time()) {
+        if (!in_array($action_name, $no_auth)) {
+            if (empty($params['signature']) || empty($params['timestamp'])) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            } else {
+                $sign = $params['signature'];
+                unset($params['signature']);
+                ksort($params);
+                if ($sign !== md5(ConStatus::$APP_KEY.implode($params)) || ($params['timestamp'] + 120) < time()) {
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+                }
             }
         }
+
 
         if (1 == $debug) { //调式模式
             $open_id = 'o5NW-52_GfBdOhc4nm2-Ggtardkg';
@@ -59,7 +62,6 @@ class CommonController extends \yii\rest\Controller
             ];
             $this->user_info = $user_detail;
         } else {
-
             if (strpos($base_url, 'client') != false) {
                 $open_id = \Yii::$app->request->post('openid');
                 if (empty($open_id) && !in_array($action_name, $no_auth)) {
