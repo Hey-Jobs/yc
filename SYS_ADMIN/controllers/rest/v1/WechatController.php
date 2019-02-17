@@ -245,7 +245,7 @@ class WechatController extends CommonController
                                 $notify_url, $msg_data);
                             CommonHelper::writeOrderLog(['type' => 'send room admin msg', 'data' => $result]);
                         }
-                        
+
                         return true;
                     } else {
                         CommonHelper::writeOrderLog([

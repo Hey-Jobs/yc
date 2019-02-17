@@ -108,21 +108,23 @@ class OrderController extends CommonController
         }
 
         // 发送微信通知
-        $template_id = \Yii::$app->params['wx']['template'];
-        $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
-        $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
-        $msg_data = ['first'=>'您购买的订单已经发货啦，正快马加鞭向您飞奔而去。',
-            'keyword1' => $orderM->order_id,
-            'keyword2' => date('Y-m-d H:i'),
-            'keyword3' => Express::$EXPRESS[$expressId],
-            'keyword4' => $expressNo,
-            'keyword5' => $orderM->user_name ." ".$orderM->user_phone." ".$orderM->user_address,
-            'remark' => '请保持收件手机通畅！',
+        $client_info = Client::findOne($orderM->client_id);
+        if ($client_info->open_id) {
+            $template_id = \Yii::$app->params['wx']['template'];
+            $template = (new Application(['conf'=>\Yii::$app->params['wx']['mp']]))->driver("mp.template");
+            $notify_url = CommonHelper::getDomain()."/front/#/order/mylist";
+            $msg_data = ['first'=>'您购买的订单已经发货啦，正快马加鞭向您飞奔而去。',
+                'keyword1' => $orderM->order_id,
+                'keyword2' => date('Y-m-d H:i'),
+                'keyword3' => Express::$EXPRESS[$expressId],
+                'keyword4' => $expressNo,
+                'keyword5' => $orderM->user_name ." ".$orderM->user_phone." ".$orderM->user_address,
+                'remark' => '请保持收件手机通畅！',
             ];
 
-        $client_info = Client::findOne($orderM->client_id);
-        $result = $template->send($client_info->open_id, $template_id['delivery'], $notify_url,$msg_data);
-        CommonHelper::writeOrderLog(['type' => 'delivery template msg', 'data' => $result]);
+            $result = $template->send($client_info->open_id, $template_id['delivery'], $notify_url, $msg_data);
+            CommonHelper::writeOrderLog(['type' => 'delivery template msg', 'data' => $result]);
+        }
 
         // 发送短信通知
         CommonHelper::sendSms($orderM->user_phone, 'express', ['name' => Express::$EXPRESS[$expressId], 'number' => $expressNo]);
