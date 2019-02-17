@@ -158,6 +158,7 @@ class LiveController extends  CommonController
             ->limit(ConStatus::$INDEX_VIDEO_PAGE_SIZE)
             ->select(['id', 'room_id', 'video_name', 'cover_img',
                 'video_length', 'video_url', 'click_num', 'video_url as vurl'])
+            ->where(['<=', 'sort_num', 50])  // 只显示排序值小于50
             ->orderBy('id desc')
             ->asArray()
             ->all();
@@ -199,21 +200,7 @@ class LiveController extends  CommonController
      */
     public function actionSms()
     {
-        $config = [
-            'accessKeyId'    => 'LTAI4wypDAoFY7q8',
-            'accessKeySecret' => 'mgFQLuRjcZgL9YO6z9ZfOgSJpLRQUI',
-        ];
-
-
-        $sendClient = new Client($config);
-        $sendSms = new SendSms();
-
-        $sendSms->setPhoneNumbers('13750509674');
-        $sendSms->setSignName('云窗在线');
-        $sendSms->setTemplateCode('SMS_157215581');
-        $sendSms->setTemplateParam(['code' => rand(100000, 999999)]);
-        //$sendSms->setOutId();
-
-        var_dump($sendClient->execute($sendSms));
+        $res = CommonHelper::sendSms('13750509674', 'verify', ['code' => rand(1000, 9999)]);
+        var_dump($res);
     }
 }

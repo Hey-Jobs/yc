@@ -23,6 +23,7 @@ use SYS_ADMIN\models\OrderDetail;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Product;
 use SYS_ADMIN\models\ShoppingMall;
+use SYS_ADMIN\models\SmsLog;
 use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
 
@@ -128,12 +129,12 @@ class ClientController extends CommonController
         $addr = \Yii::$app->request->post('addr');
         $detail = \Yii::$app->request->post('detail');
         $common = \Yii::$app->request->post('common', 0);
+        $code = \Yii::$app->request->post('code'); // 验证码
 
         $model = new ClientAddr();
         $model->attributes = \Yii::$app->request->post();
         if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
-
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
@@ -141,6 +142,12 @@ class ClientController extends CommonController
             $model = ClientAddr::findOne($aid);
             if ($model->user_id != $uid || empty($model)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        } else { // 新增校验手机号
+            $redis = \Yii::$app->redis;
+            $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+            if (!$redis->get($key)) { // 无效验证码
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
             }
         }
 
@@ -526,6 +533,32 @@ class ClientController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_SYS_MSG);
         }
     }
+
+    /**
+     * 发送短信验证码
+     */
+    public function actionSms()
+    {
+        $mobile = \Yii::$app->request->post('mobile');
+        if (!CommonHelper::checkMobile($mobile)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_MOBILE, ConStatus::$ERROR_MOBILE_MSG);
+        }
+
+        $code = rand(1000, 9999);
+        $sendSms = CommonHelper::sendSms($mobile, 'verify', ['code' => $code]);
+
+        CommonHelper::smsLog($mobile, $sendSms['message'], $sendSms['bizId'], ['code' => $code], $this->user_info['uid']);
+        if ($sendSms['code'] == 'OK') {
+            $redis = \Yii::$app->redis;
+            $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+            $redis->set($key, $code);
+            $redis->expire($key, ConStatus::$SMS_EXPIRE); // 缓存5分钟
+            return $this->successInfo(['status' => 1]);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SMS, $sendSms['message']);
+        }
+    }
+
 
     public function actionTest()
     {

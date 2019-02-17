@@ -6,6 +6,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Client;
 use SYS_ADMIN\models\LiveRoom;
+use yii\helpers\Console;
 
 class CommonController extends \yii\rest\Controller
 {
@@ -30,7 +31,23 @@ class CommonController extends \yii\rest\Controller
         $no_auth = ['jssdk', 'auth-login', 'notify', 'auth-login-back', 'add-menu', 'message'];
 
         // 校验参数
-        $data = \Yii::$app->request->req
+        if (\Yii::$app->request->isGet) {
+            $params = \Yii::$app->request->get();
+        } elseif (\Yii::$app->request->isPost) {
+            $params = \Yii::$app->request->post();
+        }
+
+        if (empty($params['signature']) || empty($params['timestamp'])) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        } else {
+            $sign = $params['signature'];
+            unset($params['signature']);
+            ksort($params);
+            if ($sign !== md5(ConStatus::$APP_KEY.implode($params)) || ($params['timestamp'] + 120) < time()) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
+
         if (1 == $debug) { //调式模式
             $open_id = 'o5NW-52_GfBdOhc4nm2-Ggtardkg';
             $check_info = Client::findOne(['open_id' => $open_id]);
@@ -42,8 +59,9 @@ class CommonController extends \yii\rest\Controller
             ];
             $this->user_info = $user_detail;
         } else {
+
             $open_id = \Yii::$app->request->post('openid');
-            if (empty($open_id) && !in_array($action_name, $no_auth)) {
+            if (empty($open_id) && !in_array($action_name, $no_auth) && strpos($base_url, 'client') != false) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
             }
 

@@ -105,6 +105,8 @@ class ConStatus
         'publish_done' => 2, // 断流
     ];
 
+    public static $SMS_EXPIRE = 300;
+    public static $RECEIVER = 'receiver';
     public static $APP_KEY = 'YCLIVE';
     public static $BIND_WECHAT = 'bindWechat:';
     // 轮播图类型
@@ -114,6 +116,8 @@ class ConStatus
     public static $ERROR_PARAMS_MSG = '参数错误';
     public static $ERROR_SYS_MSG = '网络错误';
     public static $ERROR_BANNER_IMG = '请上传轮播图';
+    public static $ERROR_MOBILE_MSG = '无效手机号码';
+    public static $ERROR_MOBILE_CODE_MSG = '无效验证码';
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -128,4 +132,6 @@ class ConStatus
     public static $STATUS_ERROR_ORDER_CREATE = 4009; // 订单创建失败
     public static $STATUS_ERROR_ORDER_DETAIL = 4010; // 订单详情创建失败
     public static $STATUS_ERROR_BANNER_IMG = 4011; // 缺少轮播图
+    public static $STATUS_ERROR_MOBILE = 4012; // 手机号码无效
+    public static $STATUS_ERROR_SMS = 4013; // 手机号码无效
 }

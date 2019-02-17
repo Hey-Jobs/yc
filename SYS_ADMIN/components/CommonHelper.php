@@ -8,7 +8,10 @@
 namespace SYS_ADMIN\components;
 
 
+use Flc\Dysms\Client;
+use Flc\Dysms\Request\SendSms;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\SmsLog;
 
 class CommonHelper
 {
@@ -174,6 +177,66 @@ class CommonHelper
     public static function getImgPath($pic)
     {
         return CommonHelper::getDomain().CommonHelper::getPicPath($pic);
+    }
+
+    /**
+     * @param $mobile
+     * 检测是否是手机号码
+     */
+    public static function checkMobile($mobile)
+    {
+        if (preg_match('/^1[34578]\d{9}$/', $mobile)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $mobile  手机号码
+     * @param string $template 短信模板名称
+     * @param array $params 短信参数
+     * @param string $sign 短信签名名称
+     * 发送短信
+     *
+     */
+    public static function sendSms($mobile, $template, $params = [], $sign = 'yclive')
+    {
+        $smsConf = \Yii::$app->params['sms'];
+        $smsTemplate = $smsConf['template'][$template];
+        $smsTemplate['param'] = $params;
+        $config = [
+            'accessKeyId'    => $smsConf['accessKeyId'],
+            'accessKeySecret' => $smsConf['accessKeySecret'],
+        ];
+
+        $sendClient = new Client($config);
+        $sendSms = new SendSms();
+
+        $sendSms->setPhoneNumbers($mobile);
+        $sendSms->setSignName($smsConf['signName'][$sign]);
+        $sendSms->setTemplateCode($smsTemplate['code']);
+        $sendSms->setTemplateParam($smsTemplate['param']);
+        $res = $sendClient->execute($sendSms);
+
+        return [
+            'bizId' => $res->BizId ?? "",
+            'code' => $res->Code,
+            'message' => $res->Message,
+            'requestId' => $res->RequestId,
+        ];
+    }
+
+
+    public static function smsLog($mobile, $message, $bizId, $content = [], $clientId = null)
+    {
+        $model = new SmsLog();
+        $model->mobile = $mobile;
+        $model->biz_id = $bizId;
+        $model->message = $message;
+        $model->content = json_encode($content);
+        $model->client_id = $clientId;
+        $model->save();
     }
 
 }

@@ -36,5 +36,24 @@ return [
         ],
         'notify' => "o5NW-51dtx7F1e-lU2uu9acOOPh4", // 囧良
         //'notify' => "o5NW-52_GfBdOhc4nm2-Ggtardkg", //伟坚
-    ]
+    ],
+    'sms' => [
+        'accessKeyId' => 'LTAI4wypDAoFY7q8',
+        'accessKeySecret' => 'mgFQLuRjcZgL9YO6z9ZfOgSJpLRQUI',
+        'signName' => ['yclive' => '云窗在线'], // 短信签名
+        'template' => [
+          'verify' => [
+              'code' => 'SMS_157215581',
+              'param' => ['code' => ''],
+          ], // 验证码
+          'express' => [
+              'code' => 'SMS_154588241',
+              'param' => ['name' => '', 'number' => '',],
+          ], //快递通知
+          'order' => [
+              'code' => 'SMS_154588240',
+              'param' => ['name' => ''],
+          ], //下单通知
+        ],
+    ],
 ];
