@@ -360,3 +360,6 @@ body{ max-width: 720px; margin: 0 auto; }
   z-index: 10;
   color: #EDECEA
 }
+
+.video_item{z-index: 1 !important;}
+.gallery-top{padding-bottom: 2.5rem}

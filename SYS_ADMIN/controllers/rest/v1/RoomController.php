@@ -275,6 +275,7 @@ class RoomController extends CommonController
             ->all();
 
         if (count($lists)) {
+            $start_list = [];
             if ($user_id > 0) { // 用户收藏
                 $start_list = ClientStart::find()
                     ->where(['client_id' => $user_id])
