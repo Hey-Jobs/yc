@@ -151,6 +151,7 @@ class LiveController extends  CommonController
         $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
 
         $model = Video::find()
+            ->leftJoin('sys_live_room', '=', '')
             ->where(['status' => ConStatus::$STATUS_ENABLE]);
 
         $offset = ($page - 1) * ConStatus::$INDEX_VIDEO_PAGE_SIZE;
@@ -200,7 +201,7 @@ class LiveController extends  CommonController
      */
     public function actionSms()
     {
-        $res = CommonHelper::sendSms('13750509674', 'verify', ['code' => rand(1000, 9999)]);
-        var_dump($res);
+        //$res = CommonHelper::sendSms('13750509674', 'verify', ['code' => rand(1000, 9999)]);
+        //var_dump($res);
     }
 }
