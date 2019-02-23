@@ -354,17 +354,18 @@ body{ max-width: 720px; margin: 0 auto; }
 
 .live-view-icon{
   position: absolute;
-  bottom: 1rem;
+  bottom: 0.8rem;
   right: 3rem;
   background: url("../images/roomView.png") no-repeat;
   background-position: left center;
   background-size: 1.2rem 1.2rem;
   z-index: 10;
-  font-size: 0.5rem;
+  font-size: 0.8rem;
   padding-left: 1.2rem;
   text-align: center;
   color: white;
   height: 1.2rem;
+  vertical-align: middle;
 }
 
 .live-view-num{
@@ -381,6 +382,6 @@ body{ max-width: 720px; margin: 0 auto; }
 .video_item{z-index: 1 !important;}
 .gallery-top{padding-bottom: 2.5rem}
 .live-title-roll{position: absolute;top: 0; z-index: 10;
-  width: 100%; height: 1.3rem; line-height: 1.3rem; font-size: 0.6rem; background: #B2B2B2; opacity: 0.8;
+  width: 100%; height: 1.3rem; line-height: 1.3rem; font-size: 0.8rem; background: #B2B2B2; opacity: 0.8;
   color:white;
 }

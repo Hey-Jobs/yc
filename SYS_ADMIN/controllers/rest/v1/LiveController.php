@@ -97,7 +97,8 @@ class LiveController extends  CommonController
         $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
 
         $model = LiveRoom::find()
-            ->where(['status' => ConStatus::$STATUS_ENABLE]);
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['>', 'category_id', 0]);
 
         if ($room_type == 2) { // 首页推荐，显示直播间  排序值为 1~10之间
             $model->andWhere(['<=', 'sort_num', 10]);
@@ -151,7 +152,6 @@ class LiveController extends  CommonController
         $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
 
         $model = Video::find()
-            ->leftJoin('sys_live_room', '=', '')
             ->where(['status' => ConStatus::$STATUS_ENABLE]);
 
         $offset = ($page - 1) * ConStatus::$INDEX_VIDEO_PAGE_SIZE;
@@ -160,6 +160,7 @@ class LiveController extends  CommonController
             ->select(['id', 'room_id', 'video_name', 'cover_img',
                 'video_length', 'video_url', 'click_num', 'video_url as vurl'])
             ->where(['<=', 'sort_num', 50])  // 只显示排序值小于50
+            ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
             ->orderBy('id desc')
             ->asArray()
             ->all();
