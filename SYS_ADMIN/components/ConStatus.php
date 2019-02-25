@@ -105,6 +105,12 @@ class ConStatus
         'publish_done' => 2, // 断流
     ];
 
+
+    // 数字格式化
+    public static $NUM_FORMAT_CLIK = 1; // 点击数
+    public static $NUM_FORMAT_TIME = 2; // 时长
+    public static $NUM_FORMAT_DURATION = 3; // 天 时 分
+
     public static $SMS_EXPIRE = 300;
     public static $RECEIVER = 'receiver';
     public static $APP_KEY = 'YCLIVE';

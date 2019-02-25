@@ -51,7 +51,7 @@ class ActivityController extends CommonController
         }
 
         $info = Activity::findOne($id)->toArray();
-        return $info;
+        return $this->successInfo($info);
     }
 
     /**
@@ -60,7 +60,7 @@ class ActivityController extends CommonController
      */
     public function actionDelete()
     {
-        $id = \Yii::$app->request->get('id');
+        $id = \Yii::$app->request->post('id');
         if (empty($id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }

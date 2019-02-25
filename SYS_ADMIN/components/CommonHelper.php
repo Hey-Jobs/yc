@@ -132,7 +132,7 @@ class CommonHelper
 
     /**
      * @param integer $num 数值
-     * @param integer $type 格式化类型 1 点击数格式化 2整数转成时间格式
+     * @param integer $type 格式化类型 1 点击数格式化 2整数转成时间格式 3 天 时 分 秒
      * 数字格式化
      */
     public static function numberFormat($num, $type = 1)
@@ -155,6 +155,22 @@ class CommonHelper
                 $minute = floor($num / 60);
                 $second = $num % 60;
                 $data = sprintf("%02d", $minute).':'.sprintf('%02d', $second);
+                break;
+
+            case 3:
+                $day = floor($num / (3600*24));
+                $hour = floor(($num % (3600*24)) / 3600);
+                $minute = ceil((($num % (3600*24)) % 3600) / 60);
+                if ($day > 0) {
+                    return $day."天".$hour.'时'.$minute.'分';
+                } else {
+                    if ($hour) {
+                        return $hour.'时'.$minute.'分';
+                    } else {
+                        return $minute.'分';
+                    }
+                }
+
                 break;
         }
 
