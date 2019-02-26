@@ -90,7 +90,7 @@ class ApiController extends CommonApiController
         // 2、 在线时间统计
         $equipCountModel = EquipmentCount::find()
             ->where(['appname' => $appname, 'stream' => $stream])
-            ->andWhere(['IS','name',null])
+            ->andWhere(['IS','push_done_time',null])
             ->orderBy('id desc')
             ->one();
 
