@@ -71,7 +71,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
       },
       columns: [
         {"data": "id"},
-        {"data": "app"},
+        {"data": "appname"},
         {"data": "stream"},
         {"data": "online_time"},
         {"data": "push_time"},

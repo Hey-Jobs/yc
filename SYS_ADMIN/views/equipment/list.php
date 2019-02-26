@@ -70,8 +70,8 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
           "targets": 4,
           "render" : function(data, type, row) {
             var html = '';
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 推流 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 断流 </a>";
+            //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 推流 </a>";
+            //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
