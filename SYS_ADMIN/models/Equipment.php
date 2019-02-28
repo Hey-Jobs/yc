@@ -13,6 +13,7 @@ use Yii;
  * @property string $stream
  * @property string $push_time
  * @property integer $status
+ * @property integer $push_type
  * @property string $created_at
  * @property string $updated_at
  */
@@ -50,6 +51,7 @@ class Equipment extends \SYS_ADMIN\models\CommonModel
             'stream' => 'Stream',
             'push_time' => 'Push Time',
             'status' => 'Status',
+            'push_type' => 'Push Type',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

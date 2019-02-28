@@ -38,8 +38,11 @@ class ApiController extends CommonApiController
             return $this->errorInfo(400);
         }
 
-        Lens::updateAll(['playback_url' => 'https://ycycc.yunchuanglive.com/'.$info['uri']],
-            ['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
+        if ($info['duration'] > 60) {  // 大于60秒才更新
+            Lens::updateAll(['playback_url' => 'https://ycycc.yunchuanglive.com/'.$info['uri']],
+                ['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
+        }
+
 
         return $this->successInfo(true);
     }
@@ -85,6 +88,7 @@ class ApiController extends CommonApiController
         }
 
         $equipModel->push_time = date('Y-m-d H:i:s');
+        $equipModel->push_type = ConStatus::$STREAM_STATUS[$action];
         $equipModel->save();
 
         // 2、 在线时间统计

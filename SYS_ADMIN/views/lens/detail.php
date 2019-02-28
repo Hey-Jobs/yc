@@ -45,7 +45,17 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <?php echo count($info) > 0 ? "编辑镜头" : "新增镜头"; ?>
                 </div>
 
-
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#home" >
+                            基本
+                        </a>
+                    </li>
+                    <?php if(count($info) > 0) :?>
+                        <li><a href="<?php echo \yii\helpers\Url::to('/lens/ext?id='.$info['id'])?>">扩展</a></li>
+                    <?php endif; ?>
+                </ul>
+                
                 <div class="panel-body">
                     <?php
                     $form = ActiveForm::begin([

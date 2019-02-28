@@ -29,7 +29,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    Standard table
+                    <a href="<?php echo yii\helpers\Url::to('/equipment/index') ?>" class="btn btn-primary">返回列表</a>
                 </div>
                 <div class="panel-body">
                     <table id="equipment_count_table"  class="table table-striped table-bordered table-hover" width="100%">
@@ -61,7 +61,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
           'stream' => $stream])?>',
       bAutoWidth: false,
       ordering: true,
-      /*aLengthMenu:[1,2,3,5,10],*/
+      aLengthMenu:[30,40,50,100],
       oLanguage: {
         sEmptyTable: "暂无数据",
         oPaginate: {

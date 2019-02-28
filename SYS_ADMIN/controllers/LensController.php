@@ -8,6 +8,7 @@
 
 namespace SYS_ADMIN\controllers;
 
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\Lens;
@@ -197,6 +198,39 @@ class LensController extends CommonController
             return $this->successInfo(true);
         } else {
             return $this->errorInfo(400, '操作失败，请稍后重试');
+        }
+    }
+
+    /**
+     * 扩展信息
+     */
+    public function actionExt()
+    {
+        $lensId = \Yii::$app->request->get('id');
+        $lens = Lens::findOne($lensId)->toArray();
+
+        if (CommonHelper::checkRoomId($lens['room_id'])) {
+            return $this->render('ext', ['info' => $lens]);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+    }
+
+    public function actionExtSave()
+    {
+        $lensId = \Yii::$app->request->post('id');
+        $storage = \Yii::$app->request->post('storage');
+        $lens = Lens::findOne($lensId);
+
+        if (empty($lens) || !CommonHelper::checkRoomId($lens->room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $lens->storage = $storage;
+        if ($lens->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
         }
     }
 }

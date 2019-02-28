@@ -13,6 +13,13 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
 ?>
 
+<style>
+    .push_status{display: inline-block; width: 10px; height: 10px; border-radius: 10px;
+        margin-right: 5px}
+    .push_online{background: green; }
+    .push_offline{background: red}
+</style>
+
 <div class="content animate-panel">
     <div class="row">
         <div class="col-lg-12">
@@ -33,6 +40,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                             <th>AppName</th>
                             <th>StreamName</th>
                             <th>推流时间</th>
+                            <th>设备状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -51,7 +59,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
       ajax: '<?php echo \yii\helpers\Url::to('/equipment/index?api=true')?>',
       bAutoWidth: false,
       ordering: true,
-      /*aLengthMenu:[1,2,3,5,10],*/
+      aLengthMenu:[30,40,50,100],
       oLanguage: {
         oPaginate: {
           sPrevious: "上一页",
@@ -63,11 +71,24 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         {"data": "appname"},
         {"data": "stream"},
         {"data": "push_time"},
+        {"data": "push_type"},
       ],
       order: [[ 0, "desc" ]],
       aoColumnDefs: [
         {
           "targets": 4,
+          "render" : function(data, type, row) {
+            var html = '';
+            if(data == 1) {
+              html = "<span class='push_status push_online'></span>在线";
+            } else {
+              html = "<span class='push_status push_offline'></span>下线";
+            }
+            return html;
+          },
+        },
+        {
+          "targets": 5,
           "render" : function(data, type, row) {
             var html = '';
             //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 推流 </a>";
