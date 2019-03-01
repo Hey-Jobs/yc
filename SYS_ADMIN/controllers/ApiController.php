@@ -23,8 +23,8 @@ class ApiController extends CommonApiController
         }
 
         $info = json_decode($content, true);
-        $info['domain'] = array_key_exists($info['domain'], ConStatus::$STORAGE_DOMAIN) ? $info['domain']: 'live';
-        $domain = ConStatus::$STORAGE_DOMAIN[$info['domain']];
+        $info['app'] = array_key_exists($info['app'], ConStatus::$STORAGE_DOMAIN) ? $info['app']: 'live';
+        $domain = ConStatus::$STORAGE_DOMAIN[$info['app']];
         $equipM = new EquipmentBack();
         $equipM->content = $content;
         $equipM->stream = $info['stream'];
