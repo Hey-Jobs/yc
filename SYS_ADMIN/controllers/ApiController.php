@@ -23,13 +23,15 @@ class ApiController extends CommonApiController
         }
 
         $info = json_decode($content, true);
+        $info['domain'] = array_key_exists($info['domain'], ConStatus::$STORAGE_DOMAIN) ? $info['domain']: 'live';
+        $domain = ConStatus::$STORAGE_DOMAIN[$info['domain']];
         $equipM = new EquipmentBack();
         $equipM->content = $content;
         $equipM->stream = $info['stream'];
         $equipM->domain = $info['domain'];
         $equipM->app = $info['app'];
         $equipM->stream = $info['stream'];
-        $equipM->uri = 'https://ycycc.yunchuanglive.com/'.$info['uri'];
+        $equipM->uri = $domain.$info['uri'];
         $equipM->duration = $info['duration'];
         $equipM->stop_time = date('Y-m-d H:i:s', $info['stop_time']);
         $equipM->start_time = date('Y-m-d H:i:s', $info['start_time']);
@@ -39,7 +41,7 @@ class ApiController extends CommonApiController
         }
 
         if ($info['duration'] > 60) {  // 大于60秒才更新
-            Lens::updateAll(['playback_url' => 'https://ycycc.yunchuanglive.com/'.$info['uri']],
+            Lens::updateAll(['playback_url' => $domain.$info['uri']],
                 ['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
         }
 

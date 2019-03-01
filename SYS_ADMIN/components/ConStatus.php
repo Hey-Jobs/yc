@@ -105,6 +105,12 @@ class ConStatus
         'publish_done' => 2, // 断流
     ];
 
+    // 存储域名
+    public static $STORAGE_DOMAIN = [
+        'live' => 'https://ycycc.yunchuanglive.com/',
+        'live-hb' => 'https://ycycc-hb.yunchuanglive.com/',
+    ];
+
 
     // 数字格式化
     public static $NUM_FORMAT_CLIK = 1; // 点击数

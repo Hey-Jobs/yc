@@ -18,8 +18,9 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
 ?>
 <style>
-    .storage-btn{margin-top: 30px}
-    .storageDay{display: inline-block; width: 30px;  }
+    .storage-btn{margin-top: 50px}
+    .storageDay{display: inline-block; width: 40px;  }
+    .storage-num{display: inline-block}
 </style>
 <div class="content animate-panel">
     <div class="row">
@@ -47,17 +48,15 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                 </ul>
 
                 <div class="panel-body">
-                    <!--<form id="lens_form" method="post">
+                    <form id="lens_form" method="post">
                     <div class="form-group ">
                         <label class="col-sm-2 control-label">视频存储天数</label>
 
                         <div class="col-sm-10">
-                            <input type="radio" name="status"  value="0"
-                                           class="" <?php /*echo empty($info['storage']) ? "checked" : "" */?>>
+                            <input type="radio" id="storage1" value="0" class="storage-type" >
                                 不启用
-                            <input type="radio" name="status"  value="2"
-                                           class="" <?php /*echo $info['status'] == 2 ? "checked" : "" */?> >启用
-                            &nbsp;&nbsp;<span>循环存储  <input type="text" class="storageDay" />  天数</span>
+                            <input type="radio" id="storage2" value="2"  class="storage-type" >启用
+                            <div class="storage-num">&nbsp;&nbsp;<span>循环存储  <input type="text" id="storageDay" class="storageDay" value="<?= $info['storage'] > 0 ? $info['storage'] : '' ?>"/>  天数</span><div>
 
                         </div>
                     </div>
@@ -66,12 +65,13 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2 storage-btn">
-                            <input type="hidden" name="id" value="<?/*= $info['id'] ?? 0 */?>"/>
+                            <input type="hidden" name="id" value="<?= $info['id'] ?? 0 ?>"/>
+                            <input type="hidden" name="storage" value="<?= $info['storage'] ?? 0 ?>"/>
                             <button class="btn btn-primary" type="button" id="sub-form">保存</button>
-                            <a href="<?php /*echo yii\helpers\Url::to('/lens/list') */?>" class="btn btn-default">返回列表</a>
+                            <a href="<?php echo yii\helpers\Url::to('/lens/list') ?>" class="btn btn-default">返回列表</a>
                         </div>
                     </div>
-                    </form>-->
+                    </form>
                 </div>
             </div>
         </div>
@@ -81,12 +81,48 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
 <script type="application/javascript">
   $(function () {
+
+    //初始化
+    var storageType = '<?php echo $info['storage'] > 0 ? $info['storage'] : 0?>';
+    if(parseInt(storageType) > 0) {
+        $("#storage2").attr("checked",'checked');
+        $("#storage1").removeAttr("checked");
+        $(".storage-num").show()
+    } else {
+      $("#storage1").attr("checked",'checked');
+      $("#storage2").removeAttr("checked");
+      $(".storage-num").hide()
+    }
+
+    
+    $(".storage-type").click(function () {
+      if(parseInt($(this).val()) > 0) {
+        $("#storage2").attr("checked",'checked');
+        $("#storage1").removeAttr("checked");
+        $(".storage-num").show()
+
+      } else {
+        $("#storage1").attr("checked",'checked');
+        $("#storage2").removeAttr("checked");
+        $(".storage-num").hide()
+      }
+    });
+
+
     $("#sub-form").click(function () {
       if ($("#lens_form").valid()) {
-        if ($("#cover_img").val() == '' && $("#pcover_img").val() == '') {
-          affirmSwals('失败', "请上传封面图片", 'error', placeholder);
-          return false;
+        if(parseInt($("input[type='radio']:checked").val()) > 0) {
+            if($("#storageDay").val()){
+              $("input[name='storage']").val($("#storageDay").val());
+            }else {
+              affirmSwals('失败', '请填写存储天数', 'error', placeholder);
+              return false;
+            }
+
+        } else {
+          $("input[name='storage']").val(0);
         }
+
 
         var form_data = new FormData($("#lens_form")[0]);
         $.ajax({
