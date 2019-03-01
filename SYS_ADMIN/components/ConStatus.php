@@ -111,6 +111,7 @@ class ConStatus
         'live-hb' => 'https://ycycc-hb.yunchuanglive.com/',
     ];
 
+    public static $DEFAULT_STORAGE = 3;
 
     // 数字格式化
     public static $NUM_FORMAT_CLIK = 1; // 点击数

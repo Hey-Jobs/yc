@@ -65,9 +65,12 @@ class EquipmentController extends CommonController
                 }
             }
 
+            // 获取镜头信息
+            $lens = Lens::findOne(['app_name' => $appname, 'stream_name' => $stream]);
+            $storage = !empty($lens) && $lens->storage ? $lens->storage : ConStatus::$DEFAULT_STORAGE;
             $list = EquipmentBack::find()
                 ->where(['app' => $appname, 'stream' => $stream])
-                ->andWhere(['>', 'start_time', date('Y-m-d', strtotime('-3 day'))])
+                ->andWhere(['>', 'start_time', date('Y-m-d', strtotime("-{$storage} day"))])
                 ->orderBy('id desc')
                 ->asArray()
                 ->all();
