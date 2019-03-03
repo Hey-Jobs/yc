@@ -91,8 +91,8 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
           "targets": 5,
           "render" : function(data, type, row) {
             var html = '';
-            //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 推流 </a>";
-            //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 断流 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish')\"> 推流 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish_done')\"> 断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
@@ -135,6 +135,23 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
         }
       }
     );
+  }
+
+
+  function updateDevice(appname, stream, type) {
+    $.ajax({
+      url: '<?php echo \yii\helpers\Url::to('/equipment/push')?>',
+      dataType: 'json',
+      type: "POST",
+      data: {'appname' : appname, 'stream':stream, 'type': type},
+      success: function (result) {
+        if (result.status == 200) {
+          affirmSwals('Sucess!', '操作成功！', 'success', confirmFunc);
+        } else {
+          affirmSwals('Error!', result.message, 'error', confirmFunc);
+        }
+      }
+    });
   }
 
   function videoDevice(appname, stream) {

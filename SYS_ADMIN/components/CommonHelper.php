@@ -255,4 +255,85 @@ class CommonHelper
         $model->save();
     }
 
+    /**
+     * 获取阿里请求sign
+     * @param $param
+     * @param $secret
+     */
+    public static function getAliSign($params, $secret)
+    {
+
+        ksort($params);  // 排序
+
+        $arr = [];
+        foreach ($params as $k => $v) {
+            $arr[] = CommonHelper::percentEncode($k) . '=' . CommonHelper::percentEncode($v);
+        }
+
+        $queryStr = implode('&', $arr);
+        $strToSign =  'POST&%2F&' . CommonHelper::percentEncode($queryStr);
+        return base64_encode(hash_hmac('sha1', $strToSign, $secret . '&', true));
+    }
+
+    /**
+     * 签名拼接转码
+     * @param  string $str 转码前字符串
+     * @return string
+     */
+    public static function percentEncode($str)
+    {
+        $res = urlencode($str);
+        $res = preg_replace('/\+/', '%20', $res);
+        $res = preg_replace('/\*/', '%2A', $res);
+        $res = preg_replace('/%7E/', '~', $res);
+
+        return $res;
+    }
+
+    /**
+     * 返回时间格式
+     * @return string
+     */
+    public static function getTimestamp()
+    {
+        $timezone = date_default_timezone_get();
+        date_default_timezone_set('GMT');
+        $timestamp = date('Y-m-d\TH:i:s\Z');
+        date_default_timezone_set($timezone);
+
+        return $timestamp;
+    }
+
+    /**
+     * curl请求
+     * @param  string $url        string
+     * @param  array|null $postFields 请求参数
+     * @return [type]             [description]
+     */
+    public static function curl($url, $postFields = null)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //https 请求
+        if(strlen($url) > 5 && strtolower(substr($url,0,5)) == "https" ) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
+        if (is_array($postFields) && 0 < count($postFields)) {
+            $postBodyString = "";
+            foreach ($postFields as $k => $v) {
+                $postBodyString .= "$k=" . urlencode($v) . "&";
+            }
+            unset($k, $v);
+            curl_setopt($ch, CURLOPT_POST, true);
+            $header = array("content-type: application/x-www-form-urlencoded; charset=UTF-8");
+            curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, substr($postBodyString,0,-1));
+        }
+        $reponse = curl_exec($ch);
+        return $reponse;
+    }
+
 }

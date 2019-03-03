@@ -46,7 +46,32 @@ class EquipmentController extends CommonController
      */
     public function actionPush()
     {
+        $appname = \Yii::$app->request->post('appname');
+        $stream = \Yii::$app->request->post('stream');
+        $type = \Yii::$app->request->post('type');
 
+        if (!array_key_exists($type, ConStatus::$STREAM_STATUS)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $info = Equipment::findOne(['appname' => $appname, 'stream' => $stream]);
+        if (empty($info)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!$this->isAdmin) {
+            if (!$this->checkEquipement($appname, $stream)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
+
+
+        $res = $this->httpGetLive($type, $info->appname, $info->stream, $info->app);
+        if (!isset($res['Code'])) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG.$res['Code']);
+        }
     }
 
     /**
@@ -175,4 +200,39 @@ class EquipmentController extends CommonController
             return false;
         }
     }
+
+    /**
+     * @param $type publish_done 禁止推流  publish 恢复推流
+     * @param $app
+     * @param $stream
+     * @param $domain
+     */
+    private function httpGetLive($type, $app, $stream, $domain)
+    {
+        $liveConfig = \Yii::$app->params['live'];
+        $liveType = $type === 'publish_done' ? $liveConfig['forbid']: $liveConfig['resume'];
+        $params = [
+            'Action' => $liveType,
+            'AppName' => $app,
+            'DomainName' => $domain,
+            'StreamName' => $stream,
+            'LiveStreamType' => 'publisher',
+            'Version' => $liveConfig['version'],
+            'AccessKeyId' => $liveConfig['accessKeyId'],
+            'SignatureMethod' => $liveConfig['signatureMethod'],
+            'Timestamp' => CommonHelper::getTimestamp(),
+            'SignatureVersion' => $liveConfig['signatureVersion'],
+            'SignatureNonce' => uniqid(),
+            'ResourceOwnerAccount' => $liveConfig['account'],
+            'Format' => $liveConfig['format'],
+        ];
+
+        $sign = CommonHelper::getAliSign($params, $liveConfig['accessKeySecret']);
+        $params['Signature'] = $sign;
+        $res = CommonHelper::curl($liveConfig['url'], $params);
+        return json_decode($res, true);
+    }
+
+
+
 }

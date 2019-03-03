@@ -56,4 +56,16 @@ return [
           ], //下单通知
         ],
     ],
+    'live' => [
+        'accessKeyId' => 'LTAIrvPGtJKX8ahF',
+        'accessKeySecret' => 'vtQtSAcoVEChUVWT0SjtpZPVo5Ghak',
+        'url' => 'https://live.aliyuncs.com/',
+        'version' => '2016-11-01',
+        'signatureMethod' => 'HMAC-SHA1',
+        'signatureVersion' => '1.0',
+        'account' => 'zhiboapi@1516941066527038.onaliyun.com',
+        'format' => 'json',
+        'forbid' => 'ForbidLiveStream', // 禁止推流
+        'resume' => 'ResumeLiveStream', // 恢复推流
+    ],
 ];
