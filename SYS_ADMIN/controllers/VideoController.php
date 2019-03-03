@@ -6,6 +6,7 @@
  */
 
 namespace SYS_ADMIN\controllers;
+
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
@@ -24,7 +25,7 @@ class VideoController extends CommonController
      */
     public function actionList()
     {
-        if(\Yii::$app->request->get('api')){
+        if (\Yii::$app->request->get('api')) {
             $video_list = Video::getVideoList();
             return $this->successInfo($video_list);
         } else {
@@ -41,7 +42,7 @@ class VideoController extends CommonController
     {
         $video_id = \Yii::$app->request->post('id');
         $video_id = intval($video_id);
-        if(empty($video_id)){
+        if (empty($video_id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, "参数错误");
         }
 
@@ -50,11 +51,11 @@ class VideoController extends CommonController
             ->andWhere(['id' => $video_id]);
 
         $info = $model->asArray()->one();
-        if(!empty($info)){
+        if (!empty($info)) {
             /*if(!$this->isAdmin && !array_keys($info['room_id'], $this->user_room)){
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
             }*/
-            if(!CommonHelper::checkRoomId($info['room_id'])){
+            if (!CommonHelper::checkRoomId($info['room_id'])) {
                 return $this->render('/site/error', [
                     "message" => ConStatus::$ERROR_PARAMS_MSG,
                     "name" => "编辑直播间",
@@ -73,6 +74,7 @@ class VideoController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, "参数错误");
         }
     }
+
     /**
      * @return array|void
      * 删除
@@ -82,22 +84,22 @@ class VideoController extends CommonController
         $id = \Yii::$app->request->post('id');
         $id = intval($id);
 
-        if(empty($id)){
+        if (empty($id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, "参数错误");
         }
 
         $model = Video::findOne(['id' => $id]);
-        if(empty($model)){
+        if (empty($model)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, "参数错误");
         }
 
-        if(!$this->isAdmin && !array_keys($model->room_id, $this->user_room)){
+        if (!$this->isAdmin && !array_key_exists($model->room_id, $this->user_room)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, "参数错误");
         }
 
         $model->status = ConStatus::$STATUS_DELETED;
         $model->updated_at = time();
-        if($model->save()){
+        if ($model->save()) {
             return $this->successInfo(true);
         } else {
             return $this->errorInfo(400, "操作失败，请稍后重试");
@@ -121,18 +123,18 @@ class VideoController extends CommonController
 
         $model = new Video();
         $model->attributes = $data;
-        if(!$model->validate()){
+        if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
-        if(!empty($id)){
+        if (!empty($id)) {
             $model = Video::findOne($id);
-            if(empty($model)){
+            if (empty($model)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
-            if(!CommonHelper::checkRoomId($model->room_id)){
+            if (!CommonHelper::checkRoomId($model->room_id)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
@@ -150,7 +152,7 @@ class VideoController extends CommonController
         $model->cover_img = $cover_img;
         $model->updated_at = time();
 
-        if($model->save()){
+        if ($model->save()) {
             return $this->successInfo(true);
         } else {
             return $this->errorInfo(400);
