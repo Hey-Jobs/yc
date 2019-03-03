@@ -278,7 +278,7 @@ class LiveController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, '参数错误');
         }
 
-        if (!$this->isAdmin && array_key_exists($id, $this->user_room)) {
+        if (!$this->isAdmin && !array_key_exists($id, $this->user_room)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
         }
 
