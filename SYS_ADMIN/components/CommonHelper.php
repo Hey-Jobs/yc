@@ -138,6 +138,9 @@ class CommonHelper
     public static function numberFormat($num, $type = 1)
     {
         $data = "";
+        if (!is_numeric($num)) {
+            return $num;
+        }
 
         switch ($type) {
             case 1:

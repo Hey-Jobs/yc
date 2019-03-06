@@ -161,6 +161,7 @@ class LiveController extends  CommonController
                 'video_length', 'video_url', 'click_num', 'video_url as vurl'])
             ->where(['<=', 'sort_num', 50])  // 只显示排序值小于50
             ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['<>', 'cover_img', ''])
             ->orderBy('id desc')
             ->asArray()
             ->all();
