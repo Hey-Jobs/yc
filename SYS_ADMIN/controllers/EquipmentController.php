@@ -8,6 +8,7 @@ use SYS_ADMIN\models\CommonModel;
 use SYS_ADMIN\models\Equipment;
 use SYS_ADMIN\models\EquipmentBack;
 use SYS_ADMIN\models\EquipmentCount;
+use SYS_ADMIN\models\EquipmentTask;
 use SYS_ADMIN\models\Lens;
 
 class EquipmentController extends CommonController
@@ -66,11 +67,11 @@ class EquipmentController extends CommonController
         }
 
 
-        $res = $this->httpGetLive($type, $info->appname, $info->stream, $info->app);
+        $res = CommonHelper::httpGetLive($type, $info->appname, $info->stream, $info->app);
         if (!isset($res['Code'])) {
             return $this->successInfo(true);
         } else {
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG.$res['Code']);
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG . $res['Code']);
         }
     }
 
@@ -183,6 +184,138 @@ class EquipmentController extends CommonController
     }
 
     /**
+     *
+     * 定时推断流
+     */
+    public function actionTask()
+    {
+        $list = [];
+        $appname = '';
+        $stream = '';
+        $id = \Yii::$app->request->get('id');
+        if (\Yii::$app->request->get('api')) {
+            $info = Equipment::findOne($id);
+
+            if (count($info) && ($this->isAdmin || $this->checkEquipement($info->appname, $info->stream))) {
+                $list = EquipmentTask::find()
+                    ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+                    ->andWhere(['equip_id' => $id])
+                    ->orderBy('id desc')
+                    ->asArray()
+                    ->all();
+
+                if (count($list)) {
+                    foreach ($list as &$item) {
+                        $item['task_time'] = date('H:i', strtotime($item['task_time']));
+                        $item['task_type'] = ConStatus::$TASK_TYPE[$item['task_type']];
+                    }
+                }
+            }
+
+            return $this->successInfo($list);
+        } else {
+            return $this->render('task', ['id' => $id]);
+        }
+
+
+    }
+
+    /**
+     * 获取信息
+     */
+    public function actionTaskInfo()
+    {
+        $id = \Yii::$app->request->get('id');
+        $info = EquipmentTask::find()
+            ->where(['id' => $id])
+            ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
+            ->asArray()
+            ->one();
+
+        if (!$this->isAdmin) {
+            $equipInfo = Equipment::findOne($info['equip_id']);
+            if (!$this->checkEquipement($equipInfo->appname, $equipInfo->stream)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
+        $info['taskDate'] = date('Y-m-d').' '.$info['task_time'];
+        $info['taskTimeStr'] = date('H:i', strtotime($info['task_time']));
+        return $this->successInfo($info);
+    }
+
+    /**
+     * @return array|void
+     * 保存
+     */
+    public function actionTaskSave()
+    {
+        $id = \Yii::$app->request->post('id');
+        $equip_id = \Yii::$app->request->post('equip_id');
+        $task_time = \Yii::$app->request->post('task_time');
+        $task_type = \Yii::$app->request->post('task_type');
+
+        $equipInfo = Equipment::findOne($equip_id);
+        if (empty($equipInfo) || (!$this->isAdmin && !$this->checkEquipement($equipInfo->appname,
+                    $equipInfo->stream))) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!empty($id)) {
+            $model = EquipmentTask::findOne($id);
+            if (empty($model) || ($model->equip_id != $equip_id)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        } else {
+            $model = new EquipmentTask();
+        }
+
+        $model->equip_id = $equip_id;
+        $model->task_time = $task_time;
+        $model->task_type = $task_type;
+
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
+        }
+    }
+
+    /**
+     * @return array|void
+     * 删除定时任务
+     */
+    public function actionTaskDel()
+    {
+        $id = \Yii::$app->request->post('id');
+        if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $model = EquipmentTask::find()
+            ->where(['id' => $id])
+            ->andWhere(['<>', 'status', ConStatus::$STATUS_DELETED])
+            ->one();
+
+        if (empty($model)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (!$this->isAdmin) {
+            $info = Equipment::findOne($model->equip_id);
+            if (!$this->checkEquipement($info->appname, $info->stream)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        }
+
+        $model->status = ConStatus::$STATUS_DELETED;
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
+        }
+    }
+
+    /**
      * @param $appname
      * @param $stream
      * 检测设备是否属于当前管理员
@@ -200,39 +333,6 @@ class EquipmentController extends CommonController
             return false;
         }
     }
-
-    /**
-     * @param $type publish_done 禁止推流  publish 恢复推流
-     * @param $app
-     * @param $stream
-     * @param $domain
-     */
-    private function httpGetLive($type, $app, $stream, $domain)
-    {
-        $liveConfig = \Yii::$app->params['live'];
-        $liveType = $type === 'publish_done' ? $liveConfig['forbid']: $liveConfig['resume'];
-        $params = [
-            'Action' => $liveType,
-            'AppName' => $app,
-            'DomainName' => $domain,
-            'StreamName' => $stream,
-            'LiveStreamType' => 'publisher',
-            'Version' => $liveConfig['version'],
-            'AccessKeyId' => $liveConfig['accessKeyId'],
-            'SignatureMethod' => $liveConfig['signatureMethod'],
-            'Timestamp' => CommonHelper::getTimestamp(),
-            'SignatureVersion' => $liveConfig['signatureVersion'],
-            'SignatureNonce' => uniqid(),
-            'ResourceOwnerAccount' => $liveConfig['account'],
-            'Format' => $liveConfig['format'],
-        ];
-
-        $sign = CommonHelper::getAliSign($params, $liveConfig['accessKeySecret']);
-        $params['Signature'] = $sign;
-        $res = CommonHelper::curl($liveConfig['url'], $params);
-        return json_decode($res, true);
-    }
-
 
 
 }

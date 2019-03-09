@@ -95,6 +95,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish_done')\"> 断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"TaskDevice('"+ row.id +"')\"> 定时推断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
             return html;
           }
@@ -164,6 +165,10 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
     window.location.href = url;
   }
 
+  function TaskDevice(id) {
+    var url = "/equipment/task?id="+id;
+    window.location.href = url;
+  }
 
 
 </script>

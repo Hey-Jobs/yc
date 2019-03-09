@@ -281,7 +281,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     url: true
                 },
                 bgm_url: {
-                    required: true,
+                    //required: true,
                     url: true
                 },
                 marvellous_url: {

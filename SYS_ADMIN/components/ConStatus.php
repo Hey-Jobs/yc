@@ -104,6 +104,10 @@ class ConStatus
         'publish' => 1, // 推流
         'publish_done' => 2, // 断流
     ];
+    public static $TASK_TYPE = [
+        1 => '推流',
+        2 => '断流',
+    ];
 
     // 存储域名
     public static $STORAGE_DOMAIN = [

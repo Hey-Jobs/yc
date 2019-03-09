@@ -22,7 +22,7 @@ class CommonHelper
      */
     public static function getPicPath($path)
     {
-        return "/".$path;
+        return "/" . $path;
     }
 
 
@@ -34,7 +34,7 @@ class CommonHelper
     {
         $user_role = \Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id);
         $role = key($user_role);
-        if($role == 'admin'){
+        if ($role == 'admin') {
             return true;
         } else {
             return false;
@@ -71,28 +71,30 @@ class CommonHelper
      */
     public static function getUrl()
     {
-        return CommonHelper::getDomain().$_SERVER['REQUEST_URI'];
+        return CommonHelper::getDomain() . $_SERVER['REQUEST_URI'];
     }
 
-    public static function writeLog($data, $filename = 'log.log'){
-        $dir = "log/".date('Ymd')."/";
-        if(!is_dir($dir)){
+    public static function writeLog($data, $filename = 'log.log')
+    {
+        $dir = "log/" . date('Ymd') . "/";
+        if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $file = "log/".date('Ymd')."/".$filename;
+        $file = "log/" . date('Ymd') . "/" . $filename;
         $content = "";
-        if(!is_string($data)){
+        if (!is_string($data)) {
             $content = json_encode($data);
         } else {
             $content = $data;
         }
 
-        file_put_contents($file, date('Y-m-d H:i:s').$content."\r\n", FILE_APPEND);
+        file_put_contents($file, date('Y-m-d H:i:s') . $content . "\r\n", FILE_APPEND);
         return true;
     }
 
 
-    public static function writeOrderLog($data){
+    public static function writeOrderLog($data)
+    {
         return self::writeLog($data, "order.log");
     }
 
@@ -142,14 +144,17 @@ class CommonHelper
             return $num;
         }
 
+
         switch ($type) {
             case 1:
                 if ($num >= 10000) {
-                    $data = round($num / 10000, 2).'万';
-                } else if ($num >= 1000) {
-                    $data = round($num / 1000, 2).'千';
+                    $data = round($num / 10000, 2) . '万';
                 } else {
-                    $data = $num;
+                    if ($num >= 1000) {
+                        $data = round($num / 1000, 2) . '千';
+                    } else {
+                        $data = $num;
+                    }
                 }
 
                 break;
@@ -157,20 +162,20 @@ class CommonHelper
             case 2:
                 $minute = floor($num / 60);
                 $second = $num % 60;
-                $data = sprintf("%02d", $minute).':'.sprintf('%02d', $second);
+                $data = sprintf("%02d", $minute) . ':' . sprintf('%02d', $second);
                 break;
 
             case 3:
-                $day = floor($num / (3600*24));
-                $hour = floor(($num % (3600*24)) / 3600);
-                $minute = ceil((($num % (3600*24)) % 3600) / 60);
+                $day = floor($num / (3600 * 24));
+                $hour = floor(($num % (3600 * 24)) / 3600);
+                $minute = ceil((($num % (3600 * 24)) % 3600) / 60);
                 if ($day > 0) {
-                    return $day."天".$hour.'时'.$minute.'分';
+                    return $day . "天" . $hour . '时' . $minute . '分';
                 } else {
                     if ($hour) {
-                        return $hour.'时'.$minute.'分';
+                        return $hour . '时' . $minute . '分';
                     } else {
-                        return $minute.'分';
+                        return $minute . '分';
                     }
                 }
 
@@ -195,7 +200,7 @@ class CommonHelper
      */
     public static function getImgPath($pic)
     {
-        return CommonHelper::getDomain().CommonHelper::getPicPath($pic);
+        return CommonHelper::getDomain() . CommonHelper::getPicPath($pic);
     }
 
     /**
@@ -212,7 +217,7 @@ class CommonHelper
     }
 
     /**
-     * @param string $mobile  手机号码
+     * @param string $mobile 手机号码
      * @param string $template 短信模板名称
      * @param array $params 短信参数
      * @param string $sign 短信签名名称
@@ -225,7 +230,7 @@ class CommonHelper
         $smsTemplate = $smsConf['template'][$template];
         $smsTemplate['param'] = $params;
         $config = [
-            'accessKeyId'    => $smsConf['accessKeyId'],
+            'accessKeyId' => $smsConf['accessKeyId'],
             'accessKeySecret' => $smsConf['accessKeySecret'],
         ];
 
@@ -274,7 +279,7 @@ class CommonHelper
         }
 
         $queryStr = implode('&', $arr);
-        $strToSign =  'POST&%2F&' . CommonHelper::percentEncode($queryStr);
+        $strToSign = 'POST&%2F&' . CommonHelper::percentEncode($queryStr);
         return base64_encode(hash_hmac('sha1', $strToSign, $secret . '&', true));
     }
 
@@ -309,7 +314,7 @@ class CommonHelper
 
     /**
      * curl请求
-     * @param  string $url        string
+     * @param  string $url string
      * @param  array|null $postFields 请求参数
      * @return [type]             [description]
      */
@@ -320,7 +325,7 @@ class CommonHelper
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         //https 请求
-        if(strlen($url) > 5 && strtolower(substr($url,0,5)) == "https" ) {
+        if (strlen($url) > 5 && strtolower(substr($url, 0, 5)) == "https") {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
@@ -332,11 +337,48 @@ class CommonHelper
             unset($k, $v);
             curl_setopt($ch, CURLOPT_POST, true);
             $header = array("content-type: application/x-www-form-urlencoded; charset=UTF-8");
-            curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, substr($postBodyString,0,-1));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, substr($postBodyString, 0, -1));
         }
         $reponse = curl_exec($ch);
         return $reponse;
     }
+
+    /**
+     * @param $type publish_done 禁止推流  publish 恢复推流
+     * @param $app
+     * @param $stream
+     * @param $domain
+     */
+    public static function httpGetLive($type, $app, $stream, $domain)
+    {
+        $logStr = 'params: domain:' . $domain . ' appname:' . $app . 'stream:' . $stream . 'action:' . $type . "\r\n";
+        CommonHelper::writeLog($logStr, 'push.log');
+
+        $liveConfig = \Yii::$app->params['live'];
+        $liveType = $type === 'publish_done' ? $liveConfig['forbid'] : $liveConfig['resume'];
+        $params = [
+            'Action' => $liveType,
+            'AppName' => $app,
+            'DomainName' => $domain,
+            'StreamName' => $stream,
+            'LiveStreamType' => 'publisher',
+            'Version' => $liveConfig['version'],
+            'AccessKeyId' => $liveConfig['accessKeyId'],
+            'SignatureMethod' => $liveConfig['signatureMethod'],
+            'Timestamp' => CommonHelper::getTimestamp(),
+            'SignatureVersion' => $liveConfig['signatureVersion'],
+            'SignatureNonce' => uniqid(),
+            'ResourceOwnerAccount' => $liveConfig['account'],
+            'Format' => $liveConfig['format'],
+        ];
+
+        $sign = CommonHelper::getAliSign($params, $liveConfig['accessKeySecret']);
+        $params['Signature'] = $sign;
+        $res = CommonHelper::curl($liveConfig['url'], $params);
+        CommonHelper::writeLog('rest:'.$res, 'push.log');
+        return json_decode($res, true);
+    }
+
 
 }
