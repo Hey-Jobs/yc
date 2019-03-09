@@ -140,6 +140,22 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">备用播放地址</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="spare_url"
+                                                      value="<?= $info['spare_url'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">备用播放封面</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="spare_cover_url"
+                                                      value="<?= $info['spare_cover_url'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">背景音乐地址</label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="bgm_url"
@@ -284,6 +300,12 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     //required: true,
                     url: true
                 },
+              spare_url:{
+                url: true,
+              },
+              spare_cover_url:{
+                url: true,
+              },
                 marvellous_url: {
                     required: true,
                     url: true

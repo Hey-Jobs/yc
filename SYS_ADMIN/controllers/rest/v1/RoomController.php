@@ -149,6 +149,8 @@ class RoomController extends CommonController
                     'vtype' => $lens_type,
                     'lens_music' => $v['bgm_url'], // 镜头背景音乐
                     'live_music' => $v['live_music'], // 直播音乐
+                    'spare_url' => $v['spare_url'],
+                    'spare_cover_url' => $v['spare_cover_url'],
                 ];
             }
         }
@@ -179,6 +181,8 @@ class RoomController extends CommonController
                     'vtype' => 'video',
                     'lens_music' => '', // 镜头背景音乐
                     'live_music' => '', // 直播音乐
+                    'spare_url' => '', // 备用播放
+                    'spare_cover_url' => '',
                 ];
             }
         }
