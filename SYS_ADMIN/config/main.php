@@ -92,6 +92,7 @@ return [
             'login/logout',
             'login/captcha',
             'api/*',
+            'console/*',
         ]
     ],
 
