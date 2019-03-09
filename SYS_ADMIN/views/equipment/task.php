@@ -163,7 +163,7 @@ AppAsset::addCss($this, '/vendor/bootstrap-datetimepicker/css/bootstrap-datetime
           "targets": 5,
           "render" : function(data, type, row) {
             var html = '';
-            //html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateTask('"+ row.id +"')\"> 编辑 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateTask('"+ row.id +"')\"> 编辑 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteTask('"+ row.id +"')\"> 删除 </a>";
             return html;
           }
@@ -220,7 +220,7 @@ AppAsset::addCss($this, '/vendor/bootstrap-datetimepicker/css/bootstrap-datetime
             data = result.data;
 
             $("[name='id']").val(data.id);
-            $("[name='task_time']").val(data.task_time);
+            $("[name='task_time']").val(data.taskTimeStr);
             $("input[name='task_type'][value='"+data.task_type+"']").attr('checked', 'true');
           }
         }
