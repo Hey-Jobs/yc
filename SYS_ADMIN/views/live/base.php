@@ -125,6 +125,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                         <div class="col-sm-10">
                             <select name="category_id" id="category_id" class="form-control">
+                                <option value="">请选择行业</option>
                                 <?php foreach ($category as $item) { ?>
                                     <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
                                 <?php }?>
