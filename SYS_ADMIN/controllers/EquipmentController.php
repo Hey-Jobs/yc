@@ -135,7 +135,7 @@ class EquipmentController extends CommonController
 
             if (count($list)) {
                 foreach ($list as &$item) {
-                    $online_time = !empty($item['online_time']) ? $item['online_time'] : (time() - $item['push_time']);
+                    $online_time = !empty($item['online_time']) ? $item['online_time'] : (time() - strtotime($item['push_time']));
                     $item['online_time'] = CommonHelper::numberFormat($online_time, ConStatus::$NUM_FORMAT_DURATION);
                 }
             }
