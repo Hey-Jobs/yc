@@ -111,7 +111,7 @@ class LiveController extends CommonController
             $path = "/pages/index/index?room_id=" . $room_info['id'] . "&title= " . $room_info['room_name'];
 
             $data = $qrcode->forever($path);
-            $base_path = '/uploads/img/' . date('Ymd') . '/';
+            $base_path = 'uploads/img/' . date('Ymd') . '/';
             if (!is_dir($base_path) || !is_writable($base_path)) {
                 \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
             }
