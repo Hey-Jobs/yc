@@ -8,6 +8,7 @@
 
 namespace SYS_ADMIN\controllers;
 
+use abei2017\wx\Application;
 use common\models\User;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
@@ -103,6 +104,16 @@ class LiveController extends CommonController
 
         // 分类
         $category = Category::getCategoryList();
+
+        //小程序码
+        $qrcode = (new Application(['conf'=>\Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
+
+        $pageUrl = CommonHelper::getDomain()."/front/#/room?room_id="+$room_info['id'];
+        $path = "/pages/index/index?url=" + encodeURIComponent($pageUrl) + "&title=" + $room_info['room_name'];
+
+        $data = $qrcode->forever($path);
+        // 存储小程序
+        file_put_contents('./uploads/img/'.time().'.jpg', $data);
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,

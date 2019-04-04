@@ -28,6 +28,10 @@ return [
                 'callback' => '',// 授权回调
             ],
         ],
+        'mini'=>[ //小程序
+          'app_id' => 'wx0845cba853b32d5a',
+          'secret' => '42f16894b03de727701a4abcbfa02181',
+        ],
         'template' => [
             'order_success' => 'soksY_RsROaESZZJ8WNsHrR-PxkdpXQq-0rwEFKbFLU',
             'admin_notice' => 'vGxHFy55QyukuHqVz-NAmcWgyv3FsA7mr83uLnEK4KA',
