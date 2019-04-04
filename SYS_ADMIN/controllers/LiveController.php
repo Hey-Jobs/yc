@@ -121,9 +121,9 @@ class LiveController extends CommonController
 
             // 保存到数据库
             $model = LiveRoom::findOne($room_info['id']);
-            $model->mini_code = $file;
+            $model->mini_code = CommonHelper::getPicPath($file);
             $model->save();
-            $room_info['mini_code'] = $file;
+            $room_info['mini_code'] = CommonHelper::getPicPath($file);
         }
 
         return $this->render('base', [
