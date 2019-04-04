@@ -104,16 +104,28 @@ class LiveController extends CommonController
 
         // 分类
         $category = Category::getCategoryList();
+        if (empty($room_info['mini_code'])) {
+            //小程序码
+            $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
-        //小程序码
-        $qrcode = (new Application(['conf'=>\Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
+            $path = "/pages/index/index?room_id=" . $room_info['id'] . "&title= " . $room_info['room_name'];
 
-        $pageUrl = CommonHelper::getDomain()."/front/#/room?room_id="+$room_info['id'];
-        $path = "/pages/index/index?url=" + encodeURIComponent($pageUrl) + "&title=" + $room_info['room_name'];
+            $data = $qrcode->forever($path);
+            $base_path = '/uploads/img/' . date('Ymd') . '/';
+            if (!is_dir($base_path) || !is_writable($base_path)) {
+                \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
+            }
+            // 存储小程序
+            $file = $base_path . md5($room_info['id']) . '.jpg';
+            file_put_contents($file, $data);
 
-        $data = $qrcode->forever($path);
-        // 存储小程序
-        file_put_contents('./uploads/img/'.time().'.jpg', $data);
+            // 保存到数据库
+            $model = LiveRoom::findOne($room_info['id']);
+            $model->mini_code = $file;
+            $model->save();
+            $room_info['mini_code'] = $file;
+        }
+
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,
@@ -323,7 +335,6 @@ class LiveController extends CommonController
         $title = "广告栏";
         return $this->render('banner', ['room_id' => $id, 'title' => $title]);
     }
-
 
 
 }

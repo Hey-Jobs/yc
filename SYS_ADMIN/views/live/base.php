@@ -90,6 +90,17 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                         <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>
                     </div>
+
+                    <?php if (!empty($info['mini_code'])) { ?>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">直播间小程序码</label>
+
+                        <div class="col-sm-10">
+                            <img src="<?= $info['mini_code'] ?>" width="200" height="200"/>
+                        </div>
+                    </div>
+                    <?php }?>
+
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
