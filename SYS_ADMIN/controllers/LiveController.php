@@ -108,7 +108,7 @@ class LiveController extends CommonController
             //小程序码
             $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
-            $path = "/pages/index/index?room_id=" . $room_info['id'] . "&title= " . $room_info['room_name'];
+            $path = "/pages/index/index?roomId=" . $room_info['id'] . "&title= " . $room_info['room_name'];
 
             $data = $qrcode->forever($path);
             $base_path = 'uploads/img/' . date('Ymd') . '/';
