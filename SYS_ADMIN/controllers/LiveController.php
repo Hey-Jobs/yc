@@ -104,7 +104,7 @@ class LiveController extends CommonController
 
         // 分类
         $category = Category::getCategoryList();
-        if (empty($room_info['mini_code'])) {
+        if (empty($room_info['mini_code']) && !empty($room_info)) {
             //小程序码
             $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
@@ -254,6 +254,7 @@ class LiveController extends CommonController
         $cover_img = \Yii::$app->request->post('cover_img');
         $introduce = \Yii::$app->request->post('introduce');
         $content = \Yii::$app->request->post('content');
+        $secret_key = \Yii::$app->request->post('secret_key'); //秘钥
 
         if (!CommonHelper::checkRoomId($id)) { // 普通人编辑直播间不一致
             return $this->errorInfo(400, '参数错误');
@@ -269,6 +270,7 @@ class LiveController extends CommonController
         $model->content = $content;
         $model->introduce = $introduce;
         $model->cover_img = $cover_img;
+        $model->secret_key = $secret_key;
         $model->updated_at = time();
 
         if (isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])) { // 新上传图片
