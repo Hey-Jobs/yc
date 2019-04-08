@@ -127,11 +127,12 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">密钥</label>
+                        <label class="col-sm-2 control-label">直播间加密</label>
 
                         <div class="col-sm-10">
                             <textarea name="secret_key" style="width: 100%; height: 100px"><?= $info['secret_key'] ?? "" ?></textarea>
                             <div>不为空，表示开启房间密钥。多个手机号码用逗号隔开。</div>
+                            <div>例如：1501355000,1352222546,1375050...</div>
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
