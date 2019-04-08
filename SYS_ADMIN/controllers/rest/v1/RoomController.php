@@ -10,6 +10,7 @@ namespace SYS_ADMIN\controllers\rest\v1;
 use app\models\Comment;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\models\Banner;
+use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Lens;
@@ -351,8 +352,33 @@ class RoomController extends CommonController
         $id = \Yii::$app->request->post('id', 0);
 
         $room = LiveRoom::findOne($id);
-        $template = $room->templet_id ?? 1;
+        $template = 1;
+        $secret = 0;
+        if (!empty($room)) {
+            $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
+            $template = $room->templet_id ?? 1;
+            $secret = !empty($room_info->secret_key) ? 1 : 0;
+        }
 
-        return $this->successInfo(['template' => $template]);
+        return $this->successInfo(['template' => $template, 'secret' => $secret]);
+    }
+
+    /**
+     * 房间密钥检测
+     */
+    public function actionCheckSecret()
+    {
+        $id = \Yii::$app->request->post('id', 0);
+        $secret_key = \Yii::$app->request->post('secretKey', 0);
+
+        $check = false;
+        $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
+        if (!empty($room_info)) {
+            if (strpos($room_info->secret_key, $secret_key) !== false) {
+                $check = true;
+            }
+        }
+
+        return $this->successInfo(['check' => $check]);
     }
 }

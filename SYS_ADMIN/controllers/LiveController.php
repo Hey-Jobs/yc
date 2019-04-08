@@ -255,7 +255,7 @@ class LiveController extends CommonController
         $introduce = \Yii::$app->request->post('introduce');
         $content = \Yii::$app->request->post('content');
         $secret_key = \Yii::$app->request->post('secret_key'); //秘钥
-
+        $secret_key = trim($secret_key);
         if (!CommonHelper::checkRoomId($id)) { // 普通人编辑直播间不一致
             return $this->errorInfo(400, '参数错误');
         }

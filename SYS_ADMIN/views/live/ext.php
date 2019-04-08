@@ -127,6 +127,16 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">密钥</label>
+
+                        <div class="col-sm-10">
+                            <textarea name="secret_key" style="width: 100%; height: 100px"><?= $info['secret_key'] ?? "" ?></textarea>
+                            <div>不为空，表示开启房间密钥。多个手机号码用逗号隔开。</div>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
                             <textarea style="display: none" id="initContent"><?= $info['content'] ?? "" ?></textarea>
                             <input type="hidden" name="cover_img" id="cover_img" value="<?= $info['cover_img'] ?? '' ?>"/>
