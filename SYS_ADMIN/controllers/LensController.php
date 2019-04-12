@@ -191,7 +191,7 @@ class LensController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, '参数错误');
         }
 
-        if (!$this->isAdmin && array_key_exists($model->room_id, $this->user_room)) {
+        if (!$this->isAdmin && !array_key_exists($model->room_id, $this->user_room)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
         }
 
