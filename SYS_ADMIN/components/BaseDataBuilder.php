@@ -100,7 +100,7 @@ class BaseDataBuilder
     private static function ShoppingMallPair() {
         $room_id = CommonHelper::isAdmin() ? [] : array_keys(LiveRoom::getUserRoomId());
         $list = \SYS_ADMIN\models\ShoppingMall::find()
-            ->select(['room_id', 'room_name as text'])
+            ->select(['id', 'title as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->filterWhere(['in',  'room_id', $room_id ])
             ->asArray()
