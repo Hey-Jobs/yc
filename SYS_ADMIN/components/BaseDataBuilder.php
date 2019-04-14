@@ -46,7 +46,7 @@ class BaseDataBuilder
                 break;
 
             case "ShoppingMall":
-                $list = self::defaultPair($modelBuild, 'id', 'title');
+                $list = self::ShoppingMallPair();
                 break;
                 
             case "Product":
@@ -91,6 +91,18 @@ class BaseDataBuilder
         $list = \SYS_ADMIN\models\User::find()
             ->select(['id', 'name as text'])
             ->where(['status' => ConStatus::$USER_ENABLE])
+            ->asArray()
+            ->all();
+        return $list;
+    }
+
+
+    private static function ShoppingMallPair() {
+        $room_id = CommonHelper::isAdmin() ? [] : array_keys(LiveRoom::getUserRoomId());
+        $list = \SYS_ADMIN\models\ShoppingMall::find()
+            ->select(['room_id', 'room_name as text'])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->filterWhere(['in',  'room_id', $room_id ])
             ->asArray()
             ->all();
         return $list;

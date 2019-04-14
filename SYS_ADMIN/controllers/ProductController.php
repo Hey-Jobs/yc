@@ -22,23 +22,23 @@ class ProductController extends CommonController
 {
     public function actionIndex()
     {
-        if(\Yii::$app->request->get('api')){
+        if (\Yii::$app->request->get('api')) {
             $room_id = array_keys($this->user_room);
             // 管理员
             $model = Product::find()
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
 
-            if(!$this->isAdmin){
+            if (!$this->isAdmin) {
                 $model->andWhere(['in', 'room_id', $room_id]);
             }
 
             $product_list = $model->asArray()->all();
-            if(count($product_list) > 0){
+            if (count($product_list) > 0) {
                 $picid_list = array_column($product_list, 'cover_img');
 
                 $pic_list = Pictrue::getPictrueList($picid_list);
-                foreach ($product_list as &$product){
-                    $product['pic_path'] = isset($pic_list[$product['cover_img']]) ?  $pic_list[$product['cover_img']]['pic_path'] : "";
+                foreach ($product_list as &$product) {
+                    $product['pic_path'] = isset($pic_list[$product['cover_img']]) ? $pic_list[$product['cover_img']]['pic_path'] : "";
                     $product['room_name'] = isset($this->user_room[$product['room_id']]) ? $this->user_room[$product['room_id']]['room_name'] : "";
                     $product['status'] = ConStatus::$STATUS_LIST[$product['status']];
                 }
@@ -47,7 +47,7 @@ class ProductController extends CommonController
 
             $this->successInfo($product_list);
         } else {
-            return $this->render('list',[
+            return $this->render('list', [
                 'is_admin' => $this->isAdmin
             ]);
         }
@@ -65,20 +65,20 @@ class ProductController extends CommonController
         $mall_id = 0;
 
 
-        if(!empty($product_id)){
+        if (!empty($product_id)) {
             $product_info = Product::find()
                 ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
                 ->andWhere(['id' => $product_id])
                 ->asArray()
                 ->one();
 
-            if(!CommonHelper::checkRoomId($product_info['room_id'])){
+            if (!CommonHelper::checkRoomId($product_info['room_id'])) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
         }
 
-        if(!empty($product_info)){
+        if (!empty($product_info)) {
             $pic_info = Pictrue::getPictrueById($product_info['cover_img']);
             $mall_id = $product_info['mall_id'];
         }
@@ -111,23 +111,23 @@ class ProductController extends CommonController
 
         $model = new Product();
         $model->attributes = \Yii::$app->request->post();
-        if(!$model->validate()){
+        if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
         $mall_info = ShoppingMall::findOne($mall_id);
-        if(empty($mall_info)){
+        if (empty($mall_info)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        if(!empty($id)){ // 编辑
+        if (!empty($id)) { // 编辑
             $model = Product::findOne($id);
-            if(empty($model)){
+            if (empty($model)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
-            if(!CommonHelper::checkRoomId($model->room_id)){
+            if (!CommonHelper::checkRoomId($model->room_id)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
@@ -143,23 +143,23 @@ class ProductController extends CommonController
         $model->sort_num = $sort_num;
         $model->mall_id = $mall_id;
 
-        if(!empty($mall_info)){
+        if (!empty($mall_info)) {
             $model->user_id = $mall_info->user_id;
             $model->room_id = $mall_info->room_id;
         }
 
-        if(isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])){ // 上传封面
+        if (isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])) { // 上传封面
             $picModel = new Pictrue();
             $picModel->imageFile = UploadedFile::getInstanceByName('pcover_img');
             $img_list = $picModel->upload();
-            if(isset($img_list['images'])){
+            if (isset($img_list['images'])) {
                 $model->cover_img = $img_list['images'];
             } else {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_Upload, $img_list['info']);
             }
         }
 
-        if($model->save()){
+        if ($model->save()) {
             return $this->successInfo(['id' => $model->id]);
         } else {
             return $this->errorInfo(400);
@@ -178,12 +178,12 @@ class ProductController extends CommonController
 
         $product_info = Product::findOne($id);
         $detail = ProductDetail::findOne(['product_id' => $id]);
-        if(!empty($detail)){
-            if(!CommonHelper::checkRoomId($product_info->room_id)){
+        if (!empty($detail)) {
+            if (!CommonHelper::checkRoomId($product_info->room_id)) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
             }
 
-            if(!empty($detail['banner_img'])){
+            if (!empty($detail['banner_img'])) {
                 $pic_id = explode(',', $detail['banner_img']);
                 $pic_list = Pictrue::getPictrueList($pic_id);
             }
@@ -191,7 +191,7 @@ class ProductController extends CommonController
 
 
         $title = "商品详情";
-        return $this->render("ext_detail",[
+        return $this->render("ext_detail", [
             'info' => $detail,
             'title' => $title,
             'id' => $id,
@@ -208,26 +208,26 @@ class ProductController extends CommonController
         $content = \Yii::$app->request->post('content');
         $banner_img = \Yii::$app->request->post('banner_img', ',');
 
-        $banner  = array_filter(explode(',', $banner_img));
+        $banner = array_filter(explode(',', $banner_img));
         $model = new ProductDetail();
         $model->attributes = \Yii::$app->request->post();
 
-        if(!$model->validate()){
+        if (!$model->validate()) {
             $errors = implode($model->getFirstErrors(), "\r\n");
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
         $product_info = Product::findOne($id);
-        if(empty($product_info) || !CommonHelper::checkRoomId($product_info->room_id)){
+        if (empty($product_info) || !CommonHelper::checkRoomId($product_info->room_id)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        if(isset($_FILES['pcover_img']) && isset($_FILES['pcover_img']['name'])
-            && !empty($_FILES['pcover_img']['name'][0])){ // 多图上传
+        if (isset($_FILES['pcover_img']) && isset($_FILES['pcover_img']['name'])
+            && !empty($_FILES['pcover_img']['name'][0])) { // 多图上传
             $picModel = new Pictrue();
             $picModel->imageFile = UploadedFile::getInstancesByName('pcover_img');
             $img_list = $picModel->multiUpload();
-            if(isset($img_list['images'])){
+            if (isset($img_list['images'])) {
                 $banner = array_merge($banner, $img_list['images']);
             } else {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_Upload, $img_list['info']);
@@ -235,12 +235,12 @@ class ProductController extends CommonController
         }
 
 
-        if(count($banner) > ConStatus::$PRODUCT_MAX_NUM){
+        if (count($banner) > ConStatus::$PRODUCT_MAX_NUM) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_IMG_NUM, ConStatus::$ERROR_MSG_IMG_NUM);
         }
 
         $model = ProductDetail::findOne(['product_id' => $id]);
-        if(empty($model)){
+        if (empty($model)) {
             $model = new ProductDetail();
             $model->created_at = date('Y-m-d H:i:s');
         }
@@ -249,7 +249,7 @@ class ProductController extends CommonController
         $model->content = $content;
         $model->banner_img = implode($banner, ',');
 
-        if($model->save()){
+        if ($model->save()) {
             return $this->successInfo(true);
         } else {
             return $this->errorInfo(400);
