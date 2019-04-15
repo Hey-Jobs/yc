@@ -157,7 +157,7 @@ AppAsset::addScript($this, '/vendor/summernote/summernote-zh-CN.min.js?v=' . Yii
 <script type="application/javascript">
 
     $(function () {
-        //var content = '<?= $info['content'] ?? "" ?>';
+
                 $('.summernote').summernote({
                     height:300,
                     lang: 'zh-CN',

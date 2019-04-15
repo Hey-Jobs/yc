@@ -106,6 +106,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
+                            <textarea style="display: none" id="initContent"><?= $info['content'] ?? "" ?></textarea>
                             <input type="hidden" name="product_id" value="<?= $id ?>"/>
                             <input type="hidden" name="content" id="content"/>
                             <input type="hidden" name="banner_img" id="banner_img" value="<?= $info['banner_img']?>"/>
@@ -167,7 +168,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             }
         });
 
-        var content = '<?= $info['content'] ?? "" ?>';
+        var content = $("#initContent").val();
         $('.summernote').summernote({
             height:300,
             lang: 'zh-CN',
