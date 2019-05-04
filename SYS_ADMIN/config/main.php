@@ -93,6 +93,7 @@ return [
             'login/captcha',
             'api/*',
             'console/*',
+            'admin/route/*'
         ]
     ],
 

@@ -30,6 +30,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         padding-top: 7px;
         margin-bottom: 0;
     }
+    .video_url{width: 300px; word-break:break-all;}
 </style>
 
 <div class="content animate-panel">
@@ -123,7 +124,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                    <button type="button" class="btn btn-primary" onclick="saveVideo()">保存信息</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveVideo()">保存截图</button>
                                 </div>
                                 </form>
                             </div>
@@ -139,8 +140,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             <th>视频链接</th>
                             <th>点击数</th>
                             <th>状态</th>
-                            <th>添加时间</th>
-                            <th>操作</th>
+                            <th width="85">添加时间</th>
+                            <th width="50">操作</th>
                         </tr>
                         </thead>
                     </table>
@@ -201,6 +202,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             ],
             order: [[ 0, "desc" ]],
             aoColumnDefs: [
+                {
+                  "targets": 3,
+                  "render" : function(data, type, row) {
+                    var html = '';
+                    html+= "<div class='video_url'>"+row.video_url+"</div>";
+                    return html;
+                  }
+                },
                 {
                     "targets": 7,
                     "render" : function(data, type, row) {

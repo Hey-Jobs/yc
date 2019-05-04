@@ -10,6 +10,8 @@ namespace SYS_ADMIN\controllers\rest\v1;
 use app\models\Comment;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\models\Banner;
+use SYS_ADMIN\models\EquipmentBack;
+use SYS_ADMIN\models\EquipmentCount;
 use SYS_ADMIN\models\LiveRoomExtend;
 use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
@@ -17,6 +19,7 @@ use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\ShoppingMall;
+use SYS_ADMIN\models\Snapshot;
 use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
 use SYS_ADMIN\models\ClientStart;
@@ -166,8 +169,6 @@ class RoomController extends CommonController
             ->all();
 
         if (count($video_list)) {
-            //$pic_id = array_column($video_list, 'cover_img');
-            //$pic_list = Pictrue::getPictrueList($pic_id);
             foreach ($video_list as $v) {
                 $lens[] = [
                     'aid' => $v['id'],
@@ -380,5 +381,65 @@ class RoomController extends CommonController
         }
 
         return $this->successInfo(['check' => $check]);
+    }
+
+    /**
+     * 溯源视频
+     */
+    public function actionSourceVideo()
+    {
+
+        $id = \Yii::$app->request->post('id');
+        $sid = \Yii::$app->request->post('sid');
+        $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
+        $lists = [];
+
+        $lens_info = Lens::findOne($sid);
+        if (!empty($lens_info)) {
+            $offset = ($page - 1) * ConStatus::$INDEX_SNAPSHOT_PAGE_SIZE;
+            $lists = EquipmentBack::find()
+                ->select(['uri', 'duration', 'start_time'])
+                ->where(['stream' => $lens_info->stream_name])
+                ->offset($offset)
+                ->limit(ConStatus::$INDEX_SNAPSHOT_PAGE_SIZE)
+                ->orderBy('id desc')
+                ->asArray()
+                ->all();
+
+            if (count($lists)) {
+                foreach ($lists as &$sitem) {
+                    $sitem['start_time'] = date('Y-m-d H:i', strtotime($sitem['start_time']));
+                    $sitem['duration'] = round($sitem['duration']);
+                }
+            }
+        }
+        
+        return $this->successInfo($lists);
+    }
+    /**
+     * 截图
+     */
+    public function actionSnapshot()
+    {
+        $id = \Yii::$app->request->post('id');
+        $lists = Snapshot::find()
+            ->select(['title', 'cover', 'created_at'])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['room_id' => $id])
+            ->orderBy('sort_num asc, id desc')
+            ->asArray()
+            ->all();
+
+        if (count($lists)) {
+            $picIds = array_column($lists, 'cover');
+            $picLists = Pictrue::getPictrueList($picIds);
+
+            foreach ($lists as &$item) {
+                $item['cover'] = $picLists[$item['cover']]['pic_path'] ?? '';
+                $item['created_time'] = date('Y-m-d', strtotime($item['created_at']));
+            }
+        }
+
+        return $this->successInfo($lists);
     }
 }

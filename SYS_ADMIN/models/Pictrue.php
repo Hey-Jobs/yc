@@ -59,6 +59,32 @@ class Pictrue extends ActiveRecord
         }
     }
 
+    public function uploadBase64($data, $extend)
+    {
+        $err = "";
+        $pic_list = [];
+        $base_path = "uploads/images/".date('Ymd').'/';
+        if(!is_dir($base_path) || !is_writable($base_path)){
+            \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
+        }
+
+        $file_name = md5(uniqid().mt_rand(100000, 9999999)). '.' . $extend;
+        $file_path = $base_path.$file_name;
+        if(file_put_contents($file_path, $data)){
+            $model = new Pictrue();
+            $model->pic_name = $file_name;
+            $model->md5_name = $file_name;
+            $model->pic_path = $file_path;
+            $model->pic_size = strlen($data);
+            $model->created_at = time();
+            $model->save(false);
+
+            $pic_list = \Yii::$app->db->getLastInsertID();
+            return ['status' => 1, 'images' => $pic_list, 'img_path' => '/'.$file_path];
+        } else {
+            return ['status' => 401, 'info' => '上传失败'];
+        }
+    }
 
     public function multiUpload()
     {

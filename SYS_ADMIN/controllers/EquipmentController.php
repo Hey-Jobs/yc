@@ -4,6 +4,7 @@ namespace SYS_ADMIN\controllers;
 
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\CommonModel;
 use SYS_ADMIN\models\Equipment;
 use SYS_ADMIN\models\EquipmentBack;
@@ -107,7 +108,12 @@ class EquipmentController extends CommonController
 
             return $this->successInfo($list);
         } else {
-            return $this->render('video', ['appname' => $appname, 'stream' => $stream]);
+            $room_html = SearchWidget::instance()->liveRoom('room_id');
+            return $this->render('video', [
+                'appname' => $appname,
+                'stream' => $stream,
+                'room_html' => $room_html
+            ]);
         }
     }
 
@@ -333,6 +339,7 @@ class EquipmentController extends CommonController
             return false;
         }
     }
+
 
 
 }
