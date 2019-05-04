@@ -413,7 +413,7 @@ class RoomController extends CommonController
                 }
             }
         }
-        
+
         return $this->successInfo($lists);
     }
     /**
