@@ -18,6 +18,7 @@ class ConStatus
     public static $INDEX_ROOM_PAGE_SIZE = 8; // 直播列表每页显示数量
     public static $INDEX_SNAPSHOT_PAGE_SIZE = 20; // 溯源视频列表每页显示数量
     public static $INDEX_VIDEO_PAGE_SIZE = 5; // 视频列表数量
+    public static $INDEX_ARTICLE_PAGE_SIZE = 10; // 视频列表数量
 
 
     // common 公共

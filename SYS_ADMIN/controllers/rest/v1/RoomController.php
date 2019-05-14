@@ -9,20 +9,20 @@ namespace SYS_ADMIN\controllers\rest\v1;
 
 use app\models\Comment;
 use SYS_ADMIN\components\CommonHelper;
-use SYS_ADMIN\models\Banner;
-use SYS_ADMIN\models\EquipmentBack;
-use SYS_ADMIN\models\EquipmentCount;
-use SYS_ADMIN\models\LiveRoomExtend;
-use SYS_ADMIN\models\Log;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\models\Article;
+use SYS_ADMIN\models\Banner;
+use SYS_ADMIN\models\ClientStart;
+use SYS_ADMIN\models\EquipmentBack;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\LiveRoomExtend;
+use SYS_ADMIN\models\Log;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\ShoppingMall;
 use SYS_ADMIN\models\Snapshot;
 use SYS_ADMIN\models\User;
 use SYS_ADMIN\models\Video;
-use SYS_ADMIN\models\ClientStart;
 
 class RoomController extends CommonController
 {
@@ -222,7 +222,8 @@ class RoomController extends CommonController
             $list['cover_img'] = $cover_pic['pic_path'] ?? '';
         }
 
-        $list['content'] = str_replace('/uploads/images/', CommonHelper::getDomain().'/uploads/images/', $list['content']);
+        $list['content'] = str_replace('/uploads/images/', CommonHelper::getDomain() . '/uploads/images/',
+            $list['content']);
         // 增加点击量
         $model = LiveRoom::findOne($id);
         $model->updateCounters(['click_num' => 1]);
@@ -283,7 +284,7 @@ class RoomController extends CommonController
             ->all();
 
         if (count($lists)) {
-            $start_list  = [];
+            $start_list = [];
             if ($user_id > 0) { // 用户收藏
                 $start_list = ClientStart::find()
                     ->where(['client_id' => $user_id])
@@ -418,6 +419,7 @@ class RoomController extends CommonController
 
         return $this->successInfo($lists);
     }
+
     /**
      * 截图
      */
@@ -444,4 +446,73 @@ class RoomController extends CommonController
 
         return $this->successInfo($lists);
     }
+
+    /**
+     * 文章列表
+     */
+    public function actionArticle()
+    {
+        $room_id = \Yii::$app->request->post('room_id');
+        $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
+        $lists = [];
+
+        $room_info = LiveRoom::findOne($room_id);
+        if (!empty($room_info)) {
+            $offset = ($page - 1) * ConStatus::$INDEX_ARTICLE_PAGE_SIZE;
+            $lists = Article::find()
+                ->select(['id', 'room_id', 'title', 'cover', 'click_num', 'created_at'])
+                ->where(['room_id' => $room_id])
+                ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
+                ->offset($offset)
+                ->limit(ConStatus::$INDEX_ARTICLE_PAGE_SIZE)
+                ->orderBy('sort_num asc, id desc')
+                ->asArray()
+                ->all();
+
+            if (count($lists)) {
+                $pic_id = array_column($lists, 'cover');
+                $pic_list = Pictrue::getPictrueList($pic_id);
+                foreach ($lists as &$sitem) {
+                    $sitem['pic_path'] = isset($pic_list[$sitem['cover']]) ? $pic_list[$sitem['cover']]['pic_path'] : '';
+                    $sitem['created_at'] = date('Y-m-d', strtotime($sitem['created_at']));
+                }
+            }
+        }
+
+        return $this->successInfo($lists);
+    }
+
+    /**
+     * 文章详情
+     */
+    public function actionArticleDetail()
+    {
+        $id = \Yii::$app->request->post('article_id');
+        $room_id = \Yii::$app->request->post('room_id');
+
+        if (empty($id) ||empty($room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $room_info = LiveRoom::findOne($room_id);
+        if (!empty($room_info)) {
+            $article = Article::find()
+                ->select(['id', 'room_id', 'title', 'content', 'click_num', 'created_at'])
+                ->where(['room_id' => $room_id])
+                ->andWhere(['id' => $id])
+                ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
+                ->one()
+                ->toArray();
+
+            if (count($article)) {
+                $article['room_name'] = $room_info['room_name'];
+            }
+            return $this->successInfo($article);
+        }
+
+        return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+
+
+    }
+
 }

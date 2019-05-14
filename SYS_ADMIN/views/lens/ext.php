@@ -36,7 +36,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
                 <ul id="myTab" class="nav nav-tabs">
                     <li>
-                        <a href="<?php echo \yii\helpers\Url::to(['/lens/detail', 'id' => $info['id']])?>" >
+                        <a href="<?php echo \yii\helpers\Url::to(['/lens/info', 'id' => $info['id']])?>" >
                             基本
                         </a>
                     </li>

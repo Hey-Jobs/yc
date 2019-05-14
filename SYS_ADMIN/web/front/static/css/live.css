@@ -454,3 +454,69 @@ body{ max-width: 720px; margin: 0 auto; }
   overflow: hidden;
 }
 /*截图列表*/
+.online_video{display: block !important; z-index: 10}
+.outline_video{display: none;}
+
+
+/**教育版本**/
+.edu .videoList dl{ width: 33.333%; box-sizing: border-box;}
+.edu-header{}
+.company-info{background-color: #E24E26 !important; padding-top: 0.5rem; position: relative; height: 5.8rem;}
+.edu .company{background: white; padding: 10px 15px; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;}
+.edu .company .company-logo{height: 3rem; margin-bottom: 0.5rem; width: 100%; text-align: center}
+.edu .company .company-logo img{height: 100%; width: auto; max-width: 100%;}
+.edu .company dl{text-align: center;}
+.edu .company dd p span{background-color: #E25029}
+.edu .live-icon{
+  background-image: url(../images/liveIcon.png);
+  background-size: 1rem;
+  background-position: center left;
+  display: inline-block;
+  background-repeat: no-repeat;
+  padding-left: 1.2rem;
+}
+
+.edu .live-room-content{padding-bottom: 3rem; background-color: #F3F4F6 !important;}
+.edu .slidescroll{padding-bottom: 0;}
+.edu  .image-list{padding-left: 1.5rem; padding-right: 1.5rem; box-sizing: border-box; margin-top: 1rem;}
+.edu .image-list .image-item{background-color: #DFE0E1; border-radius: 4px; font-size: 14px; margin-bottom: 1rem}
+.edu .image-list .image-item .image-content img{border-radius: 4px;}
+.edu .image-list .image-item .image-intro{position:relative; height: 2rem;
+  line-height: 2rem;
+  color: #2D2D2E;
+  padding-left: 0.5rem;
+  padding-right: 9.5rem;
+}
+edu .image-list .image-item .image-title{overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;}
+edu .image-list .image-item .image-time{position:absolute; top:0; right: 0.5rem; color: #797A7A}
+
+.edu .edu-video-slider, .edu .edu-image-slider{padding: 0 !important;}
+.edu .video-container, .edu .image-container{position: relative; background-color: #F3F4F6; border-top: 1px solid #EFEEEE;    box-sizing: border-box; }
+.edu .edu-intro-header{padding-left: 1rem; padding-right: 1rem; margin: 0.5rem; color: #CCCCCC; font-size: 14px}
+.edu .edu-intro-header .title{
+  display: inline-block;
+  padding-left: 1rem;
+  color: #ccc;
+  background: url("../images/times.png") no-repeat;
+  background-size: 0.8rem 0.8rem;
+  background-position: left center;
+}
+.edu .edu-intro-header .mark{display: inline-block; position: absolute; right: 1rem; top: 0.5rem;}
+.edu .videoList dl dd{color: #E25029;}
+.edu .article-list{padding:1rem; background-color: #F3F4F6 !important; color: #777777; font-size: 14px;}
+.edu .article-list .article-item{height: 4.5rem;   margin-bottom: 1rem;  padding-right: 5.5rem; position: relative}
+.edu .article-list .article-item .title{text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; display: inline-block; font-size: 1rem; }
+.edu .article-list .article-item .cover{position: absolute; right: 0.5rem;
+  top: 0rem; width: 5rem; height: 4rem;}
+
+
+.edu .filmList dl dd h3{color : #E25029;}
+.edu .footer{position: fixed}
+.edu .footer .item .active{color: #E25029 !important;}
+.edu .footer .item .live-foot-live .active .item-icon{background-image: url("../images/live3.png"); }
+.edu .footer .item .live-foot-video .active .item-icon{background-image: url("../images/video3.png"); }
+.edu .footer .item .live-foot-user .active .item-icon{background-image: url("../images/my3.png"); }
+/**教育版本**/
