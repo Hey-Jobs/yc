@@ -505,7 +505,9 @@ class RoomController extends CommonController
                 ->toArray();
 
             if (count($article)) {
+                Article::findOne($article['id'])->updateCounters(['click_num' => 1]);
                 $article['room_name'] = $room_info['room_name'];
+                $article['click_num'] ++;
             }
             return $this->successInfo($article);
         }
