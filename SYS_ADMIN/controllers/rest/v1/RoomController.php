@@ -206,6 +206,7 @@ class RoomController extends CommonController
             ->select(['lr.*', 'lre.cover_img', 'lre.introduce', 'lre.content'])
             ->leftJoin('sys_live_room_extend as lre', 'lr.id = lre.room_id')
             ->where(['lr.id' => $id])
+            ->andWhere(['lr.status' => ConStatus::$STATUS_ENABLE])
             ->asArray()
             ->one();
         if (empty($list)) {
@@ -239,6 +240,7 @@ class RoomController extends CommonController
         $list['deliver'] = 0; // 起送条件
         $mall = ShoppingMall::find()
             ->where(['room_id' => $id])
+            ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
             ->asArray()
             ->one();
 
@@ -250,6 +252,7 @@ class RoomController extends CommonController
             $list['intro'] = $mall['introduction'];
             $list['deliver'] = $mall['deliver'];
         }
+
         $list['click_num'] = CommonHelper::numberFormat($list['click_num']);
         return $this->successInfo($list);
     }
