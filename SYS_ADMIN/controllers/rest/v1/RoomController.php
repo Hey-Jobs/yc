@@ -252,7 +252,7 @@ class RoomController extends CommonController
             $list['sub_title'] = $mall['sub_title'];
             $list['intro'] = $mall['introduction'];
             $list['deliver'] = $mall['deliver'];
-            $list['wx_logo'] = $mall['image_src'] ? $mall['image_src'] : $list['cover_img'];
+            $list['wx_logo'] = $mall['image_src'] ? CommonHelper::getImgPath($mall['image_src']) : $list['cover_img'];
         }
 
         $list['click_num'] = CommonHelper::numberFormat($list['click_num']);
