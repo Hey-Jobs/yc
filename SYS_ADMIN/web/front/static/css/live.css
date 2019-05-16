@@ -132,7 +132,7 @@ body{ max-width: 720px; margin: 0 auto; }
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
 }
-.footer .item{width: 32.6%; display: inline-block; text-align: center; padding-top: 0.1rem}
+.footer .item{width: 33.33%; display: inline-block; text-align: center; padding-top: 0.1rem}
 .footer .item .item-icon{height: 1.5rem; margin-bottom: 0.2rem; background-size: 1.5rem; background-position: center center; background-repeat: no-repeat}
 .footer .item .active{color: #58C220 !important;}
 .footer .item .item-icon img{ max-height: 100%}
@@ -461,7 +461,7 @@ body{ max-width: 720px; margin: 0 auto; }
 /**教育版本**/
 .edu .videoList dl{ width: 33.333%; box-sizing: border-box;}
 .edu-header{}
-.company-info{background-color: #E24E26 !important; padding-top: 0.5rem; position: relative; height: 5.8rem;}
+.edu .company-info{background-color: #E24E26 !important; padding-top: 0.5rem; position: relative; height: 5.8rem;}
 .edu .company{background: white; padding: 10px 15px; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;}
 .edu .company .company-logo{height: 3rem; margin-bottom: 0.5rem; width: 100%; text-align: center}
 .edu .company .company-logo img{height: 100%; width: auto; max-width: 100%;}
@@ -506,11 +506,19 @@ edu .image-list .image-item .image-time{position:absolute; top:0; right: 0.5rem;
 .edu .edu-intro-header .mark{display: inline-block; position: absolute; right: 1rem; top: 0.5rem;}
 .edu .videoList dl dd{color: #E25029;}
 .edu .article-list{padding:1rem; background-color: #F3F4F6 !important; color: #777777; font-size: 14px;}
-.edu .article-list .article-item{height: 4.5rem;   margin-bottom: 1rem;  padding-right: 5.5rem; position: relative}
+.edu .article-list .article-item{
+  height: 4rem;
+  padding: 0.25rem 0;
+  padding-right: 5.5rem;
+  margin-bottom: 0.25rem;
+  position: relative;
+  border-bottom: 1px #EEEEEE solid;}
 .edu .article-list .article-item .title{text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;
   -webkit-box-orient: vertical; display: inline-block; font-size: 1rem; }
+.edu .article-list .article-item .spot{color : #E25029; margin: 0 0.5rem;}
 .edu .article-list .article-item .cover{position: absolute; right: 0.5rem;
-  top: 0rem; width: 5rem; height: 4rem;}
+  top: 0rem; width: 5rem; height: 4.2rem;}
+.edu .article-list .article-item .cover img{width: 100% !important; height: 100% !important;}
 
 
 .edu .filmList dl dd h3{color : #E25029;}

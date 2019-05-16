@@ -237,6 +237,7 @@ class RoomController extends CommonController
         $list['title'] = '';
         $list['sub_title'] = '';
         $list['intro'] = '';
+        $list['wx_logo'] = '';
         $list['deliver'] = 0; // 起送条件
         $mall = ShoppingMall::find()
             ->where(['room_id' => $id])
@@ -251,6 +252,7 @@ class RoomController extends CommonController
             $list['sub_title'] = $mall['sub_title'];
             $list['intro'] = $mall['introduction'];
             $list['deliver'] = $mall['deliver'];
+            $list['wx_logo'] = $mall['image_src'] ? $mall['image_src'] : $list['cover_img'];
         }
 
         $list['click_num'] = CommonHelper::numberFormat($list['click_num']);
@@ -500,7 +502,7 @@ class RoomController extends CommonController
         $room_info = LiveRoom::findOne($room_id);
         if (!empty($room_info)) {
             $article = Article::find()
-                ->select(['id', 'room_id', 'title', 'content', 'click_num', 'created_at'])
+                ->select(['id', 'room_id', 'title','cover', 'content', 'click_num', 'created_at'])
                 ->where(['room_id' => $room_id])
                 ->andWhere(['id' => $id])
                 ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
@@ -509,6 +511,12 @@ class RoomController extends CommonController
 
             if (count($article)) {
                 Article::findOne($article['id'])->updateCounters(['click_num' => 1]);
+
+                // 设置封面图
+                if (!empty($article['cover'])) {
+                    $picture = Pictrue::getPictrueById($article['cover']);
+                    $article['cover'] = $picture['pic_path'];
+                }
                 $article['room_name'] = $room_info['room_name'];
                 $article['click_num'] ++;
             }
