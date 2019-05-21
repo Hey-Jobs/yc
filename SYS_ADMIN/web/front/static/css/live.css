@@ -139,10 +139,12 @@ body{ max-width: 720px; margin: 0 auto; }
 .footer .item .live-foot-live .item-icon{background-image: url("../images/live2.png"); }
 .footer .item .live-foot-video .item-icon{background-image: url("../images/video2.png"); }
 .footer .item .live-foot-user .item-icon{background-image: url("../images/my2.png"); }
+.footer .item .live-foot-shop .item-icon{background-image: url("../images/shop2.png"); }
 
 .footer .item .live-foot-live .active .item-icon{background-image: url("../images/live1.png"); }
 .footer .item .live-foot-video .active .item-icon{background-image: url("../images/video1.png"); }
 .footer .item .live-foot-user .active .item-icon{background-image: url("../images/my1.png"); }
+.footer .item .live-foot-shop .active .item-icon{background-image: url("../images/shop1.png"); }
 
 /********个人中心***********/
 .live-my-head{position: relative; height: 6.999rem; background: url("../images/head-bg.png") no-repeat; background-size: 100% 100%;}
@@ -453,6 +455,42 @@ body{ max-width: 720px; margin: 0 auto; }
   border-radius: 3px;
   overflow: hidden;
 }
+
+.snapshot .footer{position: fixed !important;}
+.snapshot .ext-content{background-color: #F3F4F6}
+.snapshot .footer-menu-fixed{width: 100%; position: fixed; bottom: 3.5rem; height: 2.6rem;  }
+.snapshot .footer-menu-fixed .footer-menu-fixed-container{position: relative;
+  width: 100%;
+  border-bottom: 1px solid #797776;
+  background-color: #797776;}
+.snapshot .footer-menu-fixed-container .container{
+  box-sizing: border-box; display: inline-block; height: 2.6rem; line-height: 2.6rem; width: 100%; padding-right: 6.5rem;}
+.snapshot .footer-menu-fixed-container .comment{padding-left: 1.5rem;}
+.snapshot .footer-menu-fixed-container .shop-cart{text-align: right; color: white;}
+.snapshot .shopList dl dd span.num{width: auto}
+.snapshot .ext-content-shop .snapshot-intro-header{padding-top: 0.5rem; margin: 0; position: relative}
+.snapshot .footer-menu-fixed-container .container .icon-container img{width: 100%; height: 100%;}
+.snapshot .footer-menu-fixed-container .input-container{
+  background-image: url("../images/message.png");
+  background-size: 2rem 1.6rem;
+  background-repeat: no-repeat;
+  background-position: center left;
+  padding-left: 2.2rem;
+  height: 2.6rem;
+  vertical-align: center;
+  line-height: 2.6rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.snapshot .footer-menu-fixed-container .input-container input{
+  border-radius: 8px;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.95rem;
+}
+.snapshot .footer-menu-fixed-container .button{position: absolute; top: 0; right: 0rem; display: inline-block; background-color: #57C220; color: white;
+  width: 5rem; height: 2.6rem; line-height: 2.6rem; text-align: center; border: 1px solid #57C220}
+
 /*截图列表*/
 .online_video{display: block !important; z-index: 10}
 .outline_video{display: none;}
@@ -461,7 +499,7 @@ body{ max-width: 720px; margin: 0 auto; }
 /**教育版本**/
 .edu .videoList dl{ width: 33.333%; box-sizing: border-box;}
 .edu-header{}
-.edu .company-info{background-color: #E24E26 !important; padding-top: 0.5rem; position: relative; height: 5.8rem;}
+.edu .company-info{background-color: #E24E26 !important; padding-top: 0.5rem; position: relative; height: 5.7rem;}
 .edu .company{background: white; padding: 10px 15px; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;}
 .edu .company .company-logo{height: 3rem; margin-bottom: 0.5rem; width: 100%; text-align: center}
 .edu .company .company-logo img{height: 100%; width: auto; max-width: 100%;}
@@ -505,21 +543,6 @@ edu .image-list .image-item .image-time{position:absolute; top:0; right: 0.5rem;
 }
 .edu .edu-intro-header .mark{display: inline-block; position: absolute; right: 1rem; top: 0.5rem;}
 .edu .videoList dl dd{color: #E25029;}
-.edu .article-list{padding:1rem; background-color: #F3F4F6 !important; color: #777777; font-size: 14px;}
-.edu .article-list .article-item{
-  height: 4rem;
-  padding: 0.25rem 0;
-  padding-right: 5.5rem;
-  margin-bottom: 0.25rem;
-  position: relative;
-  border-bottom: 1px #EEEEEE solid;}
-.edu .article-list .article-item .title{text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; display: inline-block; font-size: 1rem; }
-.edu .article-list .article-item .spot{color : #E25029; margin: 0 0.5rem;}
-.edu .article-list .article-item .cover{position: absolute; right: 0.5rem;
-  top: 0rem; width: 5rem; height: 4.2rem;}
-.edu .article-list .article-item .cover img{width: 100% !important; height: 100% !important;}
-
 
 .edu .filmList dl dd h3{color : #E25029;}
 .edu .footer{position: fixed}
@@ -528,3 +551,22 @@ edu .image-list .image-item .image-time{position:absolute; top:0; right: 0.5rem;
 .edu .footer .item .live-foot-video .active .item-icon{background-image: url("../images/video3.png"); }
 .edu .footer .item .live-foot-user .active .item-icon{background-image: url("../images/my3.png"); }
 /**教育版本**/
+
+
+/*文章管理*/
+.article-list{padding:1rem; background-color: #F3F4F6 !important; color: #777777; font-size: 14px;}
+.article-list .article-item{
+  height: 4rem;
+  padding: 0.25rem 0;
+  padding-right: 5.5rem;
+  margin-bottom: 0.25rem;
+  position: relative;
+  border-bottom: 1px #EEEEEE solid;}
+.article-list .article-item .title{text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; font-size: 1rem; overflow: hidden }
+.article-list .article-item .spot{color : #E25029; margin: 0 0.5rem;}
+.article-list .article-item .cover{position: absolute; right: 0.5rem;
+  top: 0rem; width: 5rem; height: 4.2rem;}
+.article-list .article-item .cover img{width: 100% !important; height: 100% !important;}
+.article-list .article-item .date{position: absolute; left:0; bottom: 0rem;}
+/*文章管理*/
