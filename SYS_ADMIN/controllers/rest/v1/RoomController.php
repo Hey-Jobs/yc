@@ -479,7 +479,7 @@ class RoomController extends CommonController
                 $pic_list = Pictrue::getPictrueList($pic_id);
                 foreach ($lists as &$sitem) {
                     $sitem['pic_path'] = isset($pic_list[$sitem['cover']]) ? $pic_list[$sitem['cover']]['pic_path'] : '';
-                    $sitem['created_at'] = date('Y-m-d', strtotime($sitem['created_at']));
+                    $sitem['created_at'] = date('Y-m-d H:i', strtotime($sitem['created_at']));
                 }
             }
         }
@@ -526,6 +526,37 @@ class RoomController extends CommonController
         return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
 
 
+    }
+
+    /**
+     * 镜头回放
+     */
+    public function actionLensPlayBack()
+    {
+        $id = \Yii::$app->request->get('id');
+        $lens = [];
+        $lens_list = Lens::find()
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['room_id' => $id])
+            ->asArray()
+            ->orderBy('sort_num asc, id desc')
+            ->all();
+
+        if (count($lens_list)) {
+            foreach ($lens_list as $v) {
+                $cover_img = $v['online_cover_url'];
+
+                $lens[] = [
+                    'aid' => $v['id'],
+                    'name' => $v['lens_name'],
+                    'video' => $v['playback_url'],
+                    'cover' => $cover_img,
+                ];
+            }
+        }
+
+
+        return $this->successInfo($lens);
     }
 
 }
