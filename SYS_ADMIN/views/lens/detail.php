@@ -395,7 +395,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
       var stream_name = $("input[name='stream_name']").val();
       if (stream_name && app_name && stream_addr && oss_addr) {
         $("input[name='online_cover_url']").val(oss_addr+"/"+app_name+"/"+stream_name+".jpg");
+        $("input[name='marvellous_url']").val(oss_addr+"/"+app_name+"/"+stream_name+".jpg");
         $("input[name='online_url']").val(stream_addr+"/"+app_name+"/"+stream_name+".m3u8");
+        $("input[name='playback_url']").val(stream_addr+"/"+app_name+"/"+stream_name+".m3u8");
       }
     }
 

@@ -46,7 +46,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                             <th>编号</th>
                             <th>直播间</th>
                             <th>镜头名称</th>
-                            <th>镜头缩略图</th>
+                            <!--<th>镜头缩略图</th>-->
                             <th>点击量</th>
                             <th>排序</th>
                             <th>状态</th>
@@ -78,7 +78,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {"data": "id"},
                 {"data": "room_name"},
                 {"data": "lens_name"},
-                {"data": "pic_path"},
+                /*{"data": "pic_path"},*/
                 {"data": "click_num"},
                 {"data": "sort_num"},
                 {"data": "status"},
@@ -86,7 +86,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             order: [[ 0, "desc" ]],
             aoColumnDefs: [
                 {
-                    "targets": 7,
+                    "targets": 6,
                     "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 编辑 </a>";
@@ -94,12 +94,12 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                         return html;
                     }
                 },
-                {
+                /*{
                     "render":function(data,type,row){
                         return showPic(data);
                     },
                     "targets":3,
-                }
+                }*/
             ],
         });
     });

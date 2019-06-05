@@ -139,7 +139,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
             html+= "<a href=\"javascript:void(0);\"  class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"TaskDevice('"+ row.id +"')\"> 定时推断流 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDevice('"+ row.id +"')\"> 编辑 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDevice('"+ row.id +"')\"> API回调 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
             return html;
           }
