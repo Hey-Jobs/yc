@@ -2,12 +2,14 @@
 
 namespace SYS_ADMIN\controllers;
 
+use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Equipment;
 use SYS_ADMIN\models\EquipmentBack;
 use SYS_ADMIN\models\EquipmentCount;
 use SYS_ADMIN\models\EquipmentCutout;
 use SYS_ADMIN\models\Lens;
+use yii\web\Request;
 
 class ApiController extends CommonApiController
 {
@@ -45,7 +47,11 @@ class ApiController extends CommonApiController
                 ['stream_name' => $info['stream'], 'status' => ConStatus::$STATUS_ENABLE]);
         }
 
-
+        // post 回调
+        $equipModel = Equipment::findOne(['appname' => $info['app'], 'stream' => $info['stream']]);
+        if ($equipModel->replay_callback) {
+            CommonHelper::curl($equipModel->replay_callback, $content, true);
+        }
         return $this->successInfo(true);
     }
 
@@ -118,6 +124,11 @@ class ApiController extends CommonApiController
                 ['stream_name' => $stream, 'status' => ConStatus::$STATUS_ENABLE]);
         }
 
+        // 回调
+        if ($equipModel->live_callback) {
+            CommonHelper::curl($equipModel->live_callback, $content, true);
+        }
         return $this->successInfo(true);
     }
+
 }

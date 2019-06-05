@@ -178,7 +178,7 @@ class LiveController extends CommonController
         }
 
         $model->addr = $addr;
-        $model->online_url = $online_url;
+        //$model->online_url = $online_url;
         $model->online_cover = $online_cover;
         $model->addr_url = $addr_url;
         $model->logo_img = $logo_img;

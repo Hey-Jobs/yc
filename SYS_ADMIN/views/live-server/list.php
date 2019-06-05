@@ -1,8 +1,13 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2019/6/4
+ * Time: 0:04
+ */
 
 use SYS_ADMIN\assets\AppAsset;
-
-$this->title = "设备管理";
+$this->title = "服务器管理";
 
 AppAsset::addScript($this, '/vendor/data-tables/js/jquery.dataTables.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' . Yii::$app->params['versionJS']);
@@ -13,13 +18,19 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 AppAsset::addScript($this, '/vendor/jquery-validation/jquery.validate.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Yii::$app->params['versionJS']);
 
+AppAsset::addCss($this, '/vendor/bootstrap-fileinput/css/fileinput.min.css?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/fileinput.min.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app->params['versionJS']);
+
 ?>
 
-<style>
-    .push_status{display: inline-block; width: 10px; height: 10px; border-radius: 10px;
-        margin-right: 5px}
-    .push_online{background: green; }
-    .push_offline{background: red}
+
+<style type="text/css">
+    .position {
+        padding-top: 7px;
+        margin-bottom: 0;
+    }
+    .server_url{width: 300px; word-break:break-all;}
 </style>
 
 <div class="content animate-panel">
@@ -34,33 +45,57 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                     Standard table
                 </div>
                 <div class="panel-body">
+                    <p>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateserver()">添加信息</button>
+                    </p>
 
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form id="device-form" method="post" action="<?php echo yii\helpers\Url::to("/equipment/save"); ?>">
+                                <form id="server-form" method="post" action="<?php echo yii\helpers\Url::to("/server/save"); ?>">
                                     <div class="color-line"></div>
                                     <div class="modal-header text-center">
-                                        <h4 class="modal-title"><span id="btnText">添加回调信息</span></h4>
+                                        <h4 class="modal-title"><span id="btnText">添加服务器</span></h4>
                                     </div>
                                     <div class="modal-body" style="300px;">
-                                        <form id="device_form" method="post" >
+                                        <form id="server_form" method="post" >
                                             <div class="form-group row text-left" style="display: none;">
                                                 <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                             </div>
 
 
                                             <div class="form-group row text-left">
-                                                <label class="col-sm-3 control-label position">直播状态回调：</label>
+                                                <label class="col-sm-3 control-label position">服务器名称：</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="live_callback"  placeholder="直播状态回调地址"/>
+                                                    <input type="text" class="form-control" name="title"  placeholder="服务器名称"/>
                                                 </div>
                                             </div>
 
                                             <div class="form-group row text-left">
-                                                <label class="col-sm-3 control-label position">回放回调：</label>
+                                                <label class="col-sm-3 control-label position">直播流地址：</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="replay_callback" placeholder="回放回调地址"/>
+                                                    <input type="text" class="form-control" name="stream_addr" placeholder="直播流地址前缀"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">OSS截图地址：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="oss_addr" id="oss_addr" placeholder="OSS截图地址前缀">
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">状态：</label>
+                                                <div class="col-sm-9">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="status" id="status1" value="1" checked> 显示
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="status" id="status2"  value="2" > 不显示
+                                                    </label>
                                                 </div>
                                             </div>
                                         </form>
@@ -69,22 +104,23 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                        <button type="button" class="btn btn-primary" onclick="saveDevice()">保存截图</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveServer()">保存截图</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
 
-                    <table id="equipment_table"  class="table table-striped table-bordered table-hover" width="100%">
+                    <table id="server_table"  class="table table-striped table-bordered table-hover" width="100%">
                         <thead>
                         <tr>
                             <th>编号</th>
-                            <th>AppName</th>
-                            <th>StreamName</th>
-                            <th>推流时间</th>
-                            <th>设备状态</th>
-                            <th>操作</th>
+                            <th>服务器名称</th>
+                            <th>直播流地址前缀</th>
+                            <th>OSS截图地址前缀</th>
+                            <th>状态</th>
+                            <th width="85">添加时间</th>
+                            <th width="50">操作</th>
                         </tr>
                         </thead>
                     </table>
@@ -94,15 +130,14 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     </div>
 </div>
 
-
 <script type="application/javascript">
   $(function () {
 
-    $("#equipment_table").DataTable({
-      ajax: '<?php echo \yii\helpers\Url::to('/equipment/index?api=true')?>',
+    $("#server_table").DataTable({
+      ajax: '<?php echo \yii\helpers\Url::to('/live-server/list?api=true')?>',
       bAutoWidth: false,
       ordering: true,
-      aLengthMenu:[30,40,50,100],
+      /*aLengthMenu:[1,2,3,5,10],*/
       oLanguage: {
         oPaginate: {
           sPrevious: "上一页",
@@ -111,60 +146,28 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
       },
       columns: [
         {"data": "id"},
-        {"data": "appname"},
-        {"data": "stream"},
-        {"data": "push_time"},
-        {"data": "push_type"},
+        {"data": "title"},
+        {"data": "stream_addr"},
+        {"data": "oss_addr"},
+        {"data": "status"},
+        {"data": "created_at"},
       ],
       order: [[ 0, "desc" ]],
       aoColumnDefs: [
         {
-          "targets": 4,
+          "targets": 6,
           "render" : function(data, type, row) {
             var html = '';
-            if(data == 1) {
-              html = "<span class='push_status push_online'></span>在线";
-            } else {
-              html = "<span class='push_status push_offline'></span>下线";
-            }
-            return html;
-          },
-        },
-        {
-          "targets": 5,
-          "render" : function(data, type, row) {
-            var html = '';
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish')\"> 推流 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish_done')\"> 断流 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
-            html+= "<a href=\"javascript:void(0);\"  class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"TaskDevice('"+ row.id +"')\"> 定时推断流 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDevice('"+ row.id +"')\"> 编辑 </a>";
-            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateServer('"+ row.id +"')\"> 编辑 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteServer('"+ row.id +"')\"> 删除 </a>";
             return html;
           }
-        },
+        }
       ],
     });
-
-    $("#device_form").validate({
-      rules: {
-        live_callback:{
-          url: true,
-        },
-        replay_callback:{
-          url: true,
-        },
-      },
-
-    });
-
-
   });
 
-
-
-  function deleteDevice(autoId)
+  function deleteServer(autoId)
   {
     swal({
         title: "你确认删除这条信息吗?",
@@ -179,7 +182,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
       function (isConfirm) {
         if (isConfirm) {
           $.ajax({
-            url: '<?php echo \yii\helpers\Url::to('/equipment/del')?>',
+            url: '<?php echo \yii\helpers\Url::to('/live-server/del')?>',
             dataType: 'json',
             type: "POST",
             data: {'id' : autoId},
@@ -196,50 +199,14 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     );
   }
 
-
-  function updateDevice(appname, stream, type) {
-    $.ajax({
-      url: '<?php echo \yii\helpers\Url::to('/equipment/push')?>',
-      dataType: 'json',
-      type: "POST",
-      data: {'appname' : appname, 'stream':stream, 'type': type},
-      success: function (result) {
-        if (result.status == 200) {
-          affirmSwals('Sucess!', '操作成功！', 'success', confirmFunc);
-        } else {
-          affirmSwals('Error!', result.message, 'error', confirmFunc);
-        }
-      }
-    });
-  }
-
-  function videoDevice(appname, stream) {
-    var url = "/equipment/video?appname="+appname+"&stream="+stream;
-    //window.location.href = url;
-    window.open(url);
-  }
-
-  function countDevice(appname, stream) {
-    var url = "/equipment/statistics?appname="+appname+"&stream="+stream;
-    //window.location.href = url;
-    window.open(url);
-  }
-
-  function TaskDevice(id) {
-    var url = "/equipment/task?id="+id;
-    //window.location.href = url;
-    window.open(url);
-  }
-
-
-  function EditDevice(autoId = '')
+  function updateServer(autoId = '')
   {
     if (autoId.length != 0) {
       // 初始化选中 所属直播间
       var data;
-      $("#btnText").html('修改回调信息');
+      $("#btnText").html('修改服务器信息');
       $.ajax({
-        url: '<?php echo \yii\helpers\Url::to('/equipment/info')?>',
+        url: '<?php echo \yii\helpers\Url::to('/live-server/info')?>',
         dataType: 'json',
         type: "POST",
         async : false,
@@ -249,8 +216,18 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
             data = result.data;
 
             $("[name='id']").val(data.id);
-            $("[name='replay_callback']").val(data.replay_callback);
-            $("[name='live_callback']").val(data.live_callback);
+            $("[name='title']").val(data.title);
+            $("[name='stream_addr']").val(data.stream_addr);
+            $("[name='oss_addr']").val(data.oss_addr);
+            if(data.status == 1){
+              $("#status1").attr("checked","checked");
+              $("#status2").removeAttr("checked");
+            }
+
+            if(data.status == 2){
+              $("#status2").attr("checked","checked");
+              $("#status1").removeAttr("checked");
+            }
           }
         }
       });
@@ -258,22 +235,21 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
       $('#myModal').modal('show');
 
     } else {
-      $("#btnText").html('添加回调信息');
+      $("#btnText").html('添加服务器信息');
     }
   }
 
-
-  function saveDevice()
+  function saveServer()
   {
-    if(!$("#device-form").valid()){
+    if(!$("#server-form").valid()){
       return false;
     }
 
     $.ajax({
       type:'POST',
       dataType: 'json',
-      url : '<?php echo yii\helpers\Url::to('/equipment/save')?>',
-      data : $("#device-form").serialize(),
+      url : '<?php echo yii\helpers\Url::to('/live-server/save')?>',
+      data : $("#server-form").serialize(),
       success: function(result) {
         if ('200' == result.status) {
           affirmSwals('成功', '成功', 'success', confirmFunc);
@@ -284,4 +260,6 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     });
   }
 
+
 </script>
+

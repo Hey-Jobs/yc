@@ -103,11 +103,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-sm-2 control-label">直播url</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="online_url" id="online_url" value="<?= $info['online_url'] ?? "" ?>"></div>
-                    </div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="online_url" id="online_url" value="<?/*= $info['online_url'] ?? "" */?>"></div>
+                    </div>-->
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">

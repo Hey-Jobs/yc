@@ -145,7 +145,8 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
     {
         var url = "<?php echo yii\helpers\Url::to('/lens/info'); ?>";
         url += "?id="+autoId;
-        window.location.href = url;
+        //window.location.href = url;
+        window.open(url);
     }
 
 

@@ -30,6 +30,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         padding-top: 7px;
         margin-bottom: 0;
     }
+    .tip-require{color: red; margin-left: 5px;}
 </style>
 
 <div class="content animate-panel">
@@ -74,7 +75,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     ]) ?>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">所属直播间</label>
+                        <label class="col-sm-2 control-label">所属直播间<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10">
                             <?= $room_html ?>
@@ -83,7 +84,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">镜头名称</label>
+                        <label class="col-sm-2 control-label">镜头名称<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="lens_name"
                                                       value="<?= $info['lens_name'] ?? "" ?>"></div>
@@ -91,7 +92,21 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">设备app name</label>
+                        <label class="col-sm-2 control-label">服务器管理<span class="tip-require">*</span></label>
+
+                        <div class="col-sm-10">
+                            <select class="form-control" id="server_item">
+                                <option>请选择服务器</option>
+                                <?php foreach ($server_list as $item) :?>
+                                    <option data-stream="<?= $item['stream_addr']?>" data-oss="<?= $item['oss_addr']?>"><?= $item['title']?></option>
+                                <?php endforeach;?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">设备app name<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="app_name"
                                                       value="<?= $info['app_name'] ?? "" ?>"></div>
@@ -99,32 +114,32 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">设备stream name</label>
+                        <label class="col-sm-2 control-label">设备stream name<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="stream_name"
                                                       value="<?= $info['stream_name'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-sm-2 control-label">镜头缩略图</label>
 
                         <div class="col-sm-10">
                             <input type="file" class="form-control" name="pcover_img" id="pcover_img"
-                                                      value="<?= $info['cover_img'] ?? "" ?>">
+                                                      value="<?/*= $info['cover_img'] ?? "" */?>">
                         </div>
                     </div>
-                    <div class="hr-line-dashed"></div>
+                    <div class="hr-line-dashed"></div>-->
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播流地址</label>
+                        <label class="col-sm-2 control-label">直播流地址<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="online_url"
                                                       value="<?= $info['online_url'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">直播流封面地址</label>
+                        <label class="col-sm-2 control-label">直播流封面地址<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="online_cover_url"
                                                       value="<?= $info['online_cover_url'] ?? "" ?>"></div>
@@ -132,10 +147,18 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">回放地址</label>
+                        <label class="col-sm-2 control-label">回放地址<span class="tip-require">*</span></label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" name="playback_url"
                                                       value="<?= $info['playback_url'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">回放封面图<span class="tip-require">*</span></label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="marvellous_url"
+                                                      value="<?= $info['marvellous_url'] ?? "" ?>"></div>
                     </div>
                     <div class="hr-line-dashed"></div>
 
@@ -172,12 +195,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">回放封面图</label>
 
-                        <div class="col-sm-10"><input type="text" class="form-control" name="marvellous_url"
-                                                      value="<?= $info['marvellous_url'] ?? "" ?>"></div>
-                    </div>
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
@@ -228,6 +246,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 </div>
 
 <script type="application/javascript">
+  var stream_addr = "";
+  var oss_addr = "";
     $(function () {
         $("#pcover_img").fileinput({
             language: 'zh', //设置语言
@@ -285,6 +305,12 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
         $("#lens_form").validate({
             rules: {
+              stream_name: {
+                required: true,
+              },
+              app_name: {
+                required: true,
+              },
                 lens_name: {
                     required: true,
                 },
@@ -349,6 +375,28 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
         });
 
+        $("#server_item").on("change", function () {
+          stream_addr = $(this).find("option:selected").data("stream");
+          oss_addr = $(this).find("option:selected").data("oss");
+          changeServerVa();
+        });
+
+      $("input[name='app_name']").change(function () {
+        changeServerVa();
+      });
+
+      $("input[name='stream_name']").change(function () {
+        changeServerVa();
+      });
     });
+    
+    function changeServerVa() {
+      var app_name = $("input[name='app_name']").val();
+      var stream_name = $("input[name='stream_name']").val();
+      if (stream_name && app_name && stream_addr && oss_addr) {
+        $("input[name='online_cover_url']").val(oss_addr+"/"+app_name+"/"+stream_name+".jpg");
+        $("input[name='online_url']").val(stream_addr+"/"+app_name+"/"+stream_name+".m3u8");
+      }
+    }
 
 </script>

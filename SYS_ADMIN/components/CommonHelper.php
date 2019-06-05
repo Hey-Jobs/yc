@@ -318,7 +318,7 @@ class CommonHelper
      * @param  array|null $postFields 请求参数
      * @return [type]             [description]
      */
-    public static function curl($url, $postFields = null)
+    public static function curl($url, $postFields = null, $json = false)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -329,7 +329,20 @@ class CommonHelper
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
-        if (is_array($postFields) && 0 < count($postFields)) {
+        if ($json) {
+
+            if (is_array($postFields)) {
+                $postFields = json_encode($postFields);
+            }
+
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+            $header = array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($postFields)
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        } else if (is_array($postFields) && 0 < count($postFields)) {
             $postBodyString = "";
             foreach ($postFields as $k => $v) {
                 $postBodyString .= "$k=" . urlencode($v) . "&";
@@ -337,6 +350,7 @@ class CommonHelper
             unset($k, $v);
             curl_setopt($ch, CURLOPT_POST, true);
             $header = array("content-type: application/x-www-form-urlencoded; charset=UTF-8");
+
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
             curl_setopt($ch, CURLOPT_POSTFIELDS, substr($postBodyString, 0, -1));
         }
@@ -376,7 +390,7 @@ class CommonHelper
         $sign = CommonHelper::getAliSign($params, $liveConfig['accessKeySecret']);
         $params['Signature'] = $sign;
         $res = CommonHelper::curl($liveConfig['url'], $params);
-        CommonHelper::writeLog('rest:'.$res, 'push.log');
+        CommonHelper::writeLog('rest:' . $res, 'push.log');
         return json_decode($res, true);
     }
 

@@ -154,6 +154,56 @@ class EquipmentController extends CommonController
     }
 
     /**
+     * 获取信息
+     */
+    public function actionInfo()
+    {
+        $id = \Yii::$app->request->post('id');
+        $id = intval($id);
+        if (empty($id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, "参数错误");
+        }
+
+        $info = Equipment::findOne($id)->toArray();
+
+        if (!empty($info)) {
+            return $this->successInfo($info);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, "参数错误");
+        }
+    }
+
+    /**
+     * 回调地址管理
+     */
+    public function actionSave()
+    {
+        $id = \Yii::$app->request->post('id');
+        $replay_callback = \Yii::$app->request->post('replay_callback');
+        $live_callback = \Yii::$app->request->post('live_callback');
+
+        $model = Equipment::findOne($id);
+        if (empty($model)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, '参数错误');
+        }
+
+        if (!$this->isAdmin) {
+            // 检测镜头直播流
+            if (!$this->checkEquipement($model->appname, $model->stream)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
+            }
+        }
+
+        $model->replay_callback = $replay_callback;
+        $model->live_callback = $live_callback;
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(400, '操作失败，请稍后重试');
+        }
+    }
+
+    /**
      * 删除设备
      */
     public function actionDel()

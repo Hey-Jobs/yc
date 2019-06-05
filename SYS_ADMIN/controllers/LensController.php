@@ -12,6 +12,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\Lens;
+use SYS_ADMIN\models\LiveServer;
 use SYS_ADMIN\models\Pictrue;
 use yii\web\UploadedFile;
 
@@ -74,6 +75,10 @@ class LensController extends CommonController
         }
 
         $room_html = SearchWidget::instance()->liveRoom('room_id', $room_id);
+        $server_list = LiveServer::find()
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->asArray()
+            ->all();
 
         return $this->render('detail', [
             'info' => $lens_info,
@@ -81,6 +86,7 @@ class LensController extends CommonController
             'pic_info' => $pic_info,
             'name' => $title,
             'room_html' => $room_html,
+            'server_list' => $server_list,
         ]);
     }
 
