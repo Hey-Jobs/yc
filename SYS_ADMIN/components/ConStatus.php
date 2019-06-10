@@ -115,6 +115,7 @@ class ConStatus
     public static $STORAGE_DOMAIN = [
         'live' => 'https://ycycc.yunchuanglive.com/',
         'live-hb' => 'https://ycycc-hb.yunchuanglive.com/',
+        'kr' => 'https://krzhibo.oss-cn-shanghai.aliyuncs.com/',
     ];
 
     public static $DEFAULT_STORAGE = 3;
