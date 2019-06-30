@@ -550,7 +550,8 @@ class ClientController extends CommonController
         CommonHelper::smsLog($mobile, $sendSms['message'], $sendSms['bizId'], ['code' => $code], $this->user_info['uid']);
         if ($sendSms['code'] == 'OK') {
             $redis = \Yii::$app->redis;
-            $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+            $uid = !empty($this->user_info) ? $this->user_info['uid'] :0;
+            $key = ConStatus::$RECEIVER.$uid.':'.$mobile.':'.$code;
             $redis->set($key, $code);
             $redis->expire($key, ConStatus::$SMS_EXPIRE); // 缓存5分钟
             return $this->successInfo(['status' => 1]);

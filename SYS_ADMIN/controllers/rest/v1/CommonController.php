@@ -62,7 +62,7 @@ class CommonController extends \yii\rest\Controller
             ];
             $this->user_info = $user_detail;
         } else {
-            if (strpos($base_url, 'client') != false) {
+            if (strpos($base_url, 'client') != false && strpos($base_url, 'sms') === false) {
                 $open_id = \Yii::$app->request->post('openid');
                 if (empty($open_id) && !in_array($action_name, $no_auth)) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
