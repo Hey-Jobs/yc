@@ -59,6 +59,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </li>
                     <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>">扩展信息</a></li>
                     <li class="active"><a href="#home">广告栏</a></li>
+                    <li class="">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/authorize?id='.$room_id)?>">
+                            手机授权访问
+                        </a>
+                    </li>
                 </ul>
 
                 <div class="panel-body">

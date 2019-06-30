@@ -111,6 +111,11 @@ class ConStatus
         2 => '断流',
     ];
 
+    // 授权模板
+    public static $AUTH_TEMPLATE = [
+        1 => '教育版本'
+    ];
+
     // 存储域名
     public static $STORAGE_DOMAIN = [
         'live' => 'https://ycycc.yunchuanglive.com/',

@@ -44,7 +44,6 @@ class LensController extends CommonController
         $pic_info = [];
         $room_id = 0;
         $id = \Yii::$app->request->get('id');
-        $id = intval($id);
 
         $model = new Lens();
         $title = $id ? '编辑镜头' : '新增镜头';

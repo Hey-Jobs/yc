@@ -58,6 +58,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             广告栏
                         </a>
                     </li>
+                    <li class="">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/authorize?id='.$info['id'])?>">
+                            手机授权访问
+                        </a>
+                    </li>
                     <?php endif; ?>
                 </ul>
 

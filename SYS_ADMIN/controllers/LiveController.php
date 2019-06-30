@@ -254,8 +254,8 @@ class LiveController extends CommonController
         $cover_img = \Yii::$app->request->post('cover_img');
         $introduce = \Yii::$app->request->post('introduce');
         $content = \Yii::$app->request->post('content');
-        $secret_key = \Yii::$app->request->post('secret_key'); //秘钥
-        $secret_key = trim($secret_key);
+        //$secret_key = \Yii::$app->request->post('secret_key'); //秘钥
+        //$secret_key = trim($secret_key);
         if (!CommonHelper::checkRoomId($id)) { // 普通人编辑直播间不一致
             return $this->errorInfo(400, '参数错误');
         }
@@ -270,7 +270,7 @@ class LiveController extends CommonController
         $model->content = $content;
         $model->introduce = $introduce;
         $model->cover_img = $cover_img;
-        $model->secret_key = $secret_key;
+        //$model->secret_key = $secret_key;
         $model->updated_at = time();
 
         if (isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])) { // 新上传图片
@@ -338,5 +338,67 @@ class LiveController extends CommonController
         return $this->render('banner', ['room_id' => $id, 'title' => $title]);
     }
 
+    /**
+     * 授权访问
+     */
+    public function actionAuthorize()
+    {
+
+        $id = \Yii::$app->request->isPost ? \Yii::$app->request->post('id', 0) : \Yii::$app->request->get('id', 0);
+        $model = LiveRoomExtend::findOne(['room_id' => $id]);
+        if (empty($model) || !CommonHelper::checkRoomId($model->id)) {
+            if (\Yii::$app->request->isPost) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            } else {
+                return $this->render('/site/error', [
+                    'message' => ConStatus::$ERROR_PARAMS_MSG,
+                    'name' => '编辑直播间',
+                ]);
+            }
+        }
+
+        if (\Yii::$app->request->isPost) {
+
+            $model = LiveRoomExtend::findOne(['room_id' => $id]);
+            if (empty($model)) {
+                $model = new LiveRoomExtend();
+                $model->created_at = time();
+            }
+
+            $auth_template = \Yii::$app->request->post('auth_template'); // 教育版本
+            $secret_key = \Yii::$app->request->post('secret_key'); //秘钥
+            $secret_key = trim($secret_key);
+
+            $model->room_id = $id;
+            $model->secret_key = $secret_key;
+            $model->auth_template = $auth_template;
+            $model->updated_at = time();
+
+            if ($model->save()) {
+                return $this->successInfo(true);
+            } else {
+                return $this->errorInfo(400);
+            }
+
+        } else {
+            $title = '手机授权访问';
+            $room_info = $model->toArray();
+            $auth_info = LiveRoomExtend::find()
+                ->select(['auth_template', 'secret_key', 'room_id'])
+                ->where(['room_id' => $id])
+                ->asArray()
+                ->one();
+
+            return $this->render('authorize', [
+                'info' => $room_info,
+                'auth_info' => $auth_info,
+                'is_admin' => $this->isAdmin,
+                'title' => $title,
+                'room_id' => $id,
+                'auth_template' => ConStatus::$AUTH_TEMPLATE,
+            ]);
+        }
+
+    }
 
 }

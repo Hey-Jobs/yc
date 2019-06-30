@@ -363,13 +363,19 @@ class RoomController extends CommonController
         $room = LiveRoom::findOne($id);
         $template = 1;
         $secret = 0;
+        $auth_template = 0;
         if (!empty($room)) {
             $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
             $template = $room->templet_id ?? 1;
             $secret = !empty($room_info->secret_key) ? 1 : 0;
+            $auth_template = !empty($room_info->secret_key) ? $room_info->auth_template : 0;
         }
 
-        return $this->successInfo(['template' => $template, 'secret' => $secret]);
+        return $this->successInfo([
+            'template' => $template,
+            'secret' => $secret,
+            'auth_template' => $auth_template,
+            ]);
     }
 
     /**
@@ -381,6 +387,7 @@ class RoomController extends CommonController
         $secret_key = \Yii::$app->request->post('secretKey', 0);
 
         $check = false;
+        $auth_template = 0;
         $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
         if (!empty($room_info)) {
             if (strpos($room_info->secret_key, $secret_key) !== false) {
@@ -390,6 +397,35 @@ class RoomController extends CommonController
 
         return $this->successInfo(['check' => $check]);
     }
+
+    public function actionAuthRoom()
+    {
+        $id = \Yii::$app->request->post('id', 0);
+        $mobile= \Yii::$app->request->post('mobile', 0);
+        $code = \Yii::$app->request->post('sms', 0);
+
+        if (empty($id) || empty($mobile) || empty($code)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
+        }
+
+        $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
+        if (empty($room_info)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        if (strpos($room_info->secret_key, $mobile) === false) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_MOBILE, ConStatus::$ERROR_MOBILE_MSG);
+        }
+
+        $redis = \Yii::$app->redis;
+        $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+        if (!$redis->get($key)) { // 无效验证码
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
+        }
+
+        return $this->successInfo(['check' => true]);
+    }
+
 
     /**
      * 溯源视频
