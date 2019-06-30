@@ -418,7 +418,8 @@ class RoomController extends CommonController
         }
 
         $redis = \Yii::$app->redis;
-        $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+        $uid = !empty($this->user_info) ? $this->user_info['uid'] : 0;
+        $key = ConStatus::$RECEIVER.$uid.':'.$mobile.':'.$code;
         if (!$redis->get($key)) { // 无效验证码
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
         }
