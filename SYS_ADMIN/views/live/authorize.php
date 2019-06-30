@@ -50,13 +50,13 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                 <ul id="myTab" class="nav nav-tabs">
                     <li class="">
-                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info?id='.$info['id'])?>">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/base-info?id='.$room_id)?>">
                             基础信息
                         </a>
                     </li>
-                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$info['id'])?>">扩展信息</a></li>
+                    <li><a href="<?php echo \yii\helpers\Url::to('/live/ext-info?id='.$room_id)?>">扩展信息</a></li>
                     <li class="">
-                        <a href="<?php echo \yii\helpers\Url::to('/live/banner?id='.$info['id'])?>">
+                        <a href="<?php echo \yii\helpers\Url::to('/live/banner?id='.$room_id)?>">
                             广告栏
                         </a>
                     </li>
