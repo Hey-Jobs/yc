@@ -108,7 +108,7 @@ class LiveController extends CommonController
             //小程序码
             $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
-            $path = "/pages/index/index?roomId=" . $room_info['id'] . "&title= " . $room_info['room_name'];
+            $path = "/pages/index/index?roomId=". $room_info['id'] . "&title= " . $room_info['room_name'];
 
             $data = $qrcode->forever($path);
             $base_path = 'uploads/img/' . date('Ymd') . '/';
@@ -346,7 +346,7 @@ class LiveController extends CommonController
 
         $id = \Yii::$app->request->isPost ? \Yii::$app->request->post('id', 0) : \Yii::$app->request->get('id', 0);
         $model = LiveRoomExtend::findOne(['room_id' => $id]);
-        if (empty($model) || !CommonHelper::checkRoomId($model->id)) {
+        if (empty($model) && !CommonHelper::checkRoomId($model->id)) {
             if (\Yii::$app->request->isPost) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
             } else {
