@@ -345,8 +345,8 @@ class LiveController extends CommonController
     {
 
         $id = \Yii::$app->request->isPost ? \Yii::$app->request->post('id', 0) : \Yii::$app->request->get('id', 0);
-        $model = LiveRoomExtend::findOne(['room_id' => $id]);
-        if (empty($model) && !CommonHelper::checkRoomId($model->id)) {
+        $model = LiveRoom::findOne($id);
+        if (empty($model) || !CommonHelper::checkRoomId($id)) {
             if (\Yii::$app->request->isPost) {
                 return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
             } else {
