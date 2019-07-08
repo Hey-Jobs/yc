@@ -2,7 +2,7 @@
 
 use SYS_ADMIN\assets\AppAsset;
 
-$this->title = "商城管理";
+$this->title = "管理";
 
 AppAsset::addScript($this, '/vendor/data-tables/js/jquery.dataTables.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' . Yii::$app->params['versionJS']);
@@ -60,29 +60,29 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                                                          class="form-control params"></div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城直播间：</label>
+                                            <label class="col-sm-3 control-label position">直播间：</label>
                                             <div class="col-sm-9">
                                                 <?= \SYS_ADMIN\components\SearchWidget::instance()->liveRoom('room_id') ?>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城标题：</label>
+                                            <label class="col-sm-3 control-label position">标题：</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="title"
-                                                       placeholder="商城标题"/>
+                                                       placeholder="标题"/>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城子标题：</label>
+                                            <label class="col-sm-3 control-label position">子标题：</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="sub_title"
-                                                       placeholder="商城子标题"/>
+                                                       placeholder="子标题"/>
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城特色：</label>
+                                            <label class="col-sm-3 control-label position">特色：</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="introduction" name="introduction"   placeholder="商城特色" />
+                                                <input type="text" class="form-control" id="introduction" name="introduction"   placeholder="特色" />
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
@@ -92,10 +92,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                             </div>
                                         </div>
                                         <div class="form-group row text-left">
-                                            <label class="col-sm-3 control-label position">商城商标：</label>
+                                            <label class="col-sm-3 control-label position">商标：</label>
                                             <div class="col-sm-9">
-                                                <input type="file" class="form-control" name="img" id="img" multiple="multiple" data-show-preview="true" placeholder="商城商标" ">
-                                                <input type="hidden" class="form-control" name="image_src" id="image_src" placeholder="商城商标" ">
+                                                <input type="file" class="form-control" name="img" id="img" multiple="multiple" data-show-preview="true" placeholder="商标" ">
+                                                <input type="hidden" class="form-control" name="image_src" id="image_src" placeholder="商标" ">
                                             </div>
                                         </div>
 
@@ -116,9 +116,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <tr>
                             <th>编号</th>
                             <th>归属直播间</th>
-                            <th>商城名称</th>
-                            <th>商城子标题</th>
-                            <th>商城特色</th>
+                            <th>名称</th>
+                            <th>子标题</th>
+                            <th>特色</th>
                             <th>添加时间</th>
                             <th>状态</th>
                             <th>操作</th>
