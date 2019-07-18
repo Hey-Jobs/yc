@@ -141,7 +141,7 @@ class ApiController extends CommonApiController
     public function actionTencentScreenshot()
     {
         $content = file_get_contents('php://input');
-
+        file_put_contents("aa.log", $content, FILE_APPEND);
         if (empty($content)) {
             return false;
         }
