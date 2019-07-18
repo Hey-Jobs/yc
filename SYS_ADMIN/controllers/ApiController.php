@@ -2,6 +2,7 @@
 
 namespace SYS_ADMIN\controllers;
 
+use app\models\EquipmentBackTencent;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Equipment;
@@ -13,6 +14,8 @@ use yii\web\Request;
 
 class ApiController extends CommonApiController
 {
+
+    private $TencentKey = "";
     /**
      * 回放回写.
      */
@@ -131,4 +134,83 @@ class ApiController extends CommonApiController
         return $this->successInfo(true);
     }
 
+
+    /**
+     * 腾讯截图回调
+     */
+    public function actionTencentScreenshot()
+    {
+        $content = file_get_contents('php://input');
+
+        if (empty($content)) {
+            return false;
+        }
+
+        $data = json_decode($content, true);
+
+        if (isset($data['event_type']) && $data['event_type'] == 200) {
+            if (md5($this->TencentKey.$data['t']) === $data['sign'] && (time() - $data['t'] ) < 60) {
+                $pic_url = $data['pic_full_url'];
+                $stream_name = $data['stream_id'];
+                $app_name = 'live';
+
+                $model = Lens::find()
+                    ->where(['app_name' => $app_name, 'stream_name' => $stream_name])
+                    ->one();
+                if ($model != null) {
+                    $model->online_cover_url = $pic_url;
+                    $model->save();
+                }
+
+                echo json_encode(['code' => 0]);
+                exit;
+            }
+        }
+
+        return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+    }
+
+
+    /**
+     * 腾讯回放回写
+     */
+    public function actionTencentStream()
+    {
+        $content = file_get_contents('php://input');
+
+        if (empty($content)) {
+            return false;
+        }
+
+        $info = json_decode($content, true);
+        if (isset($info['event_type']) && $info['event_type'] == 100) {
+            if (md5($this->TencentKey.$info['t']) === $info['sign'] && (time() - $info['t'] ) < 60) {
+                $equipM = new EquipmentBackTencent();
+                $equipM->content = $content;
+                $info['app'] = 'live';
+
+                $equipM->stream = $info['stream_id'];
+                $equipM->app = $info['app'];
+                $equipM->uri = $info['video_url'];
+                $equipM->duration = $info['duration'];
+                $equipM->stop_time = date('Y-m-d H:i:s', $info['end_time']);
+                $equipM->start_time = date('Y-m-d H:i:s', $info['start_time']);
+
+                $res = $equipM->save();
+                if ($info['duration'] > 60) {  // 大于60秒才更新
+                    Lens::updateAll(['playback_url' => $info['video_url']],
+                        [
+                            'app_name' => $info['app'],
+                            'stream_name' => $info['stream_id'],
+                            'status' => ConStatus::$STATUS_ENABLE
+                        ]);
+                }
+                echo json_encode(['code' => 0]);
+                exit;
+
+            }
+        }
+
+        return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+    }
 }
