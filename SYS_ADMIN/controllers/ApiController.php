@@ -15,7 +15,7 @@ use yii\web\Request;
 class ApiController extends CommonApiController
 {
 
-    private $TencentKey = "";
+    private $TencentKey = "7100e82a874a06ffcbf3c9ead04cdc89";
     /**
      * 回放回写.
      */
