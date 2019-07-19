@@ -99,7 +99,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
   $(function () {
 
     $("#equipment_table").DataTable({
-      ajax: '<?php echo \yii\helpers\Url::to('/equipment/index?api=true')?>',
+      ajax: '<?php echo \yii\helpers\Url::to('/equipment/index?api=true&stream_type='.$stream_type)?>',
       bAutoWidth: false,
       ordering: true,
       aLengthMenu:[30,40,50,100],
@@ -134,6 +134,10 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
           "targets": 5,
           "render" : function(data, type, row) {
             var html = '';
+            <?php if($stream_type == 2) :?>
+              html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
+              html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
+           <?php else: ?>
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish')\"> 推流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateDevice('"+ row.appname +"','"+row.stream+"', 'publish_done')\"> 断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"countDevice('"+ row.appname +"','"+row.stream+"')\"> 统计 </a>";
@@ -141,6 +145,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"TaskDevice('"+ row.id +"')\"> 定时推断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDevice('"+ row.id +"')\"> API回调 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
+            <?php endif;?>
             return html;
           }
         },
@@ -220,7 +225,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
   }
 
   function countDevice(appname, stream) {
-    var url = "/equipment/statistics?appname="+appname+"&stream="+stream;
+    var url = "/equipment/statistics?appname="+appname+"&stream="+stream+"&stream_type="+<?php echo $stream_type?>;
     //window.location.href = url;
     window.open(url);
   }

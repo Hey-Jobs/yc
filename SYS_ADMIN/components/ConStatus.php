@@ -111,6 +111,15 @@ class ConStatus
         2 => '断流',
     ];
 
+
+    // 直播流运营商
+    public static $STEARM_TYPE_ALIYUN = 1;
+    public static $STEARM_TYPE_TENCENT = 2;
+    public static $STEARM_TYPE = [
+        1 => '阿里云',
+        2 => '腾讯云',
+    ];
+
     // 授权模板
     public static $AUTH_TEMPLATE = [
         1 => '教育版本'

@@ -2,6 +2,7 @@
 
 namespace SYS_ADMIN\controllers;
 
+use app\models\EquipmentTencent;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
@@ -19,10 +20,17 @@ class EquipmentController extends CommonController
      */
     public function actionIndex()
     {
+        $stream_type = \Yii::$app->request->get('stream_type');
+        $stream_type = array_key_exists($stream_type, ConStatus::$STEARM_TYPE) ? $stream_type : 1;
         if (\Yii::$app->request->get('api')) {
             $list = [];
-            $model = Equipment::find()
-                ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+            if ($stream_type == ConStatus::$STEARM_TYPE_TENCENT) {
+                $model = EquipmentTencent::find()
+                    ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+            } else {
+                $model = Equipment::find()
+                    ->where(['<>', 'status', ConStatus::$STATUS_DELETED]);
+            }
 
             if (!$this->isAdmin) { // 非超级管理员
                 $lens = Lens::getLensList();
@@ -39,7 +47,7 @@ class EquipmentController extends CommonController
             $list = $model->asArray()->all();
             return $this->successInfo($list);
         } else {
-            return $this->render('list');
+            return $this->render('list', ['stream_type' => $stream_type]);
         }
     }
 
@@ -124,6 +132,8 @@ class EquipmentController extends CommonController
     {
         $appname = \Yii::$app->request->get('appname');
         $stream = \Yii::$app->request->get('stream');
+        $stream_type = \Yii::$app->request->get('stream_type');
+        $stream_type = array_key_exists($stream_type, ConStatus::$STEARM_TYPE) ? $stream_type : 1;
         if (\Yii::$app->request->get('api')) {
 
             $list = [];
@@ -148,7 +158,11 @@ class EquipmentController extends CommonController
 
             return $this->successInfo($list);
         } else {
-            return $this->render('statistics', ['appname' => $appname, 'stream' => $stream]);
+            return $this->render('statistics', [
+                'appname' => $appname,
+                'stream' => $stream,
+                'stream_type' => $stream_type
+            ]);
         }
 
     }

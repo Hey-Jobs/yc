@@ -29,7 +29,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    <a href="<?php echo yii\helpers\Url::to('/equipment/index') ?>" class="btn btn-primary">返回列表</a>
+                    <a href="<?php echo yii\helpers\Url::to('/equipment/index?stream_type='.$stream_type) ?>" class="btn btn-primary">返回列表</a>
                 </div>
                 <div class="panel-body">
                     <table id="equipment_count_table"  class="table table-striped table-bordered table-hover" width="100%">
