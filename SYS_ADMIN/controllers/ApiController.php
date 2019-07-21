@@ -151,7 +151,7 @@ class ApiController extends CommonApiController
 
         if (isset($data['event_type']) && $data['event_type'] == 200) {
             if (md5($this->TencentKey . $data['t']) === $data['sign'] && (time() - $data['t']) < 60) {
-                $pic_url = $data['pic_full_url'];
+                $pic_url = str_replace('http', 'https', $data['pic_full_url']);
                 $stream_name = $data['stream_id'];
                 $app_name = 'live';
 
