@@ -60,7 +60,6 @@ class BaseDataBuilder
         if (true === $column) {
             $list = array_column($list, 'text', 'id');
         }
-
         return $list;
     }
 
@@ -69,6 +68,7 @@ class BaseDataBuilder
         $list = \SYS_ADMIN\models\LiveRoom::find()
             ->select(['id', 'user_id as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->orderBy("id desc")
             ->asArray()
             ->all();
         return $list;
@@ -81,6 +81,7 @@ class BaseDataBuilder
             ->select(['id', 'room_name as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->filterWhere(['in',  'id', $room_id ])
+            ->orderBy("id desc")
             ->asArray()
             ->all();
         return $list;
@@ -91,6 +92,7 @@ class BaseDataBuilder
         $list = \SYS_ADMIN\models\User::find()
             ->select(['id', 'name as text'])
             ->where(['status' => ConStatus::$USER_ENABLE])
+            ->orderBy("id desc")
             ->asArray()
             ->all();
         return $list;
@@ -103,6 +105,7 @@ class BaseDataBuilder
             ->select(['id', 'title as text'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->filterWhere(['in',  'room_id', $room_id ])
+            ->orderBy("id desc")
             ->asArray()
             ->all();
         return $list;

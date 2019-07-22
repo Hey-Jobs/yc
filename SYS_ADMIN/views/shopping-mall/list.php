@@ -138,7 +138,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
         var initialPreviewConfig = [];
         editImage(initialPreview, initialPreviewConfig);
 
-
+        $("[name='room_id']").on("change",function () {
+            $("[name='title']").val($(this).find("option:selected").text())
+        })
         $("#data_table").DataTable({
             ajax: '<?php echo \yii\helpers\Url::to('/shopping-mall/index?api=true')?>',
             bAutoWidth: false,
@@ -158,6 +160,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                 {"data": "created_at"},
                 {"data": "status_name"},
             ],
+            order: [[ 0, "desc" ]],
             aoColumnDefs: [
                 {
                     "targets": 7,

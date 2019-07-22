@@ -56,7 +56,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
                             <input type="radio" id="storage1" value="0" class="storage-type" >
                                 不启用
                             <input type="radio" id="storage2" value="2"  class="storage-type" >启用
-                            <div class="storage-num">&nbsp;&nbsp;<span>循环存储  <input type="text" id="storageDay" class="storageDay" value="<?= $info['storage'] > 0 ? $info['storage'] : '' ?>"/>  天数</span><div>
+                            <div class="storage-num">&nbsp;&nbsp;<span>循环存储  <input type="text" id="storageDay" class="storageDay" value="<?= $info['storage'] > 0 ? $info['storage'] : '1' ?>"/>  天数</span><div>
 
                         </div>
                     </div>
@@ -83,7 +83,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
   $(function () {
 
     //初始化
-    var storageType = '<?php echo $info['storage'] > 0 ? $info['storage'] : 0?>';
+    var storageType = '<?php echo $info['storage'] > 0 ? $info['storage'] : 2?>';
     if(parseInt(storageType) > 0) {
         $("#storage2").attr("checked",'checked');
         $("#storage1").removeAttr("checked");

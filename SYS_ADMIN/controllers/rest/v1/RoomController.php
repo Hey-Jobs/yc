@@ -442,9 +442,11 @@ class RoomController extends CommonController
         $lens_info = Lens::findOne($sid);
         if (!empty($lens_info)) {
             $offset = ($page - 1) * ConStatus::$INDEX_SNAPSHOT_PAGE_SIZE;
+            $storage = $lens_info->storage ? $lens_info->storage : ConStatus::$DEFAULT_STORAGE;
             $lists = EquipmentBack::find()
                 ->select(['uri', 'duration', 'start_time'])
                 ->where(['stream' => $lens_info->stream_name])
+                ->andWhere(['>', 'start_time', date('Y-m-d', strtotime("-{$storage} day"))])
                 ->offset($offset)
                 ->limit(ConStatus::$INDEX_SNAPSHOT_PAGE_SIZE)
                 ->orderBy('id desc')
