@@ -257,4 +257,10 @@ class ApiController extends CommonApiController
 
         return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
     }
+
+
+    public function actionDevice(){
+        $content = file_get_contents('php://input');
+        file_put_contents("apiDevice.log", $content, FILE_APPEND);
+    }
 }
