@@ -88,6 +88,7 @@ return [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
             'rest/v1/*',
+            'rest/v2/*',
             'login/login',
             'login/logout',
             'login/captcha',

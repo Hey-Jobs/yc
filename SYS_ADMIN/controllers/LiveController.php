@@ -155,6 +155,9 @@ class LiveController extends CommonController
         $templet_id = \Yii::$app->request->post('templet_id');
         $category_id = \Yii::$app->request->post('category_id');
 
+        $lens_auth = \Yii::$app->request->post('lens_auth');
+        $live_music = \Yii::$app->request->post('live_music');
+
         $model = new LiveRoom();
         $model->attributes = \Yii::$app->request->post();
         if (!$model->validate()) {
@@ -186,6 +189,8 @@ class LiveController extends CommonController
         $model->updated_at = time();
         $model->templet_id = $templet_id;
         $model->category_id = $category_id;
+        $model->lens_auth = $lens_auth;
+        $model->live_music = $live_music;
 
         if ($this->isAdmin) {
             $model->sort_num = $sort_num;

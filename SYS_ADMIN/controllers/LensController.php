@@ -110,6 +110,7 @@ class LensController extends CommonController
         $live_music = \Yii::$app->request->post('live_music');
         $spare_url = \Yii::$app->request->post('spare_url');
         $spare_cover_url = \Yii::$app->request->post('spare_cover_url');
+        $mac_address= \Yii::$app->request->post('mac_address');
 
 
         $model = new Lens();
@@ -156,6 +157,7 @@ class LensController extends CommonController
         $model->live_music = $live_music;
         $model->spare_url = $spare_url;
         $model->spare_cover_url = $spare_cover_url;
+        $model->mac_address = $mac_address;
 
         if (isset($_FILES['pcover_img']) && !empty($_FILES['pcover_img']['name'])) {
             $picModel = new Pictrue();

@@ -82,6 +82,11 @@ class ConStatus
     public static $COMMENT_TYPE_PROD = 2;
 
 
+    // 流状态
+    // 在线
+    public static $STREAM_STAUS_ONLINE = 1;
+    // 离线
+    public static $STREAM_STAUS_OFFLINE = 2;
 
     // 点赞
     public static $CLIENT_START = [
@@ -138,6 +143,8 @@ class ConStatus
     public static $NUM_FORMAT_CLIK = 1; // 点击数
     public static $NUM_FORMAT_TIME = 2; // 时长
     public static $NUM_FORMAT_DURATION = 3; // 天 时 分
+    //摄像头操作方向
+    public static $LENS_OPERATE_TYPE = [ 1=>'up', 2=>'down', 3 => 'left', 4 => 'right', 5 => 'zoomin', 6 => 'zoomout'];
 
     public static $SMS_EXPIRE = 300;
     public static $RECEIVER = 'receiver';
@@ -152,6 +159,8 @@ class ConStatus
     public static $ERROR_BANNER_IMG = '请上传轮播图';
     public static $ERROR_MOBILE_MSG = '无效手机号码';
     public static $ERROR_MOBILE_CODE_MSG = '无效验证码';
+    public static $ERROR_AUTH_CODE_MSG = '授权码错误'; // 授权码错误
+    public static $ERROR_LENS_USED_MSG = '设备占用中'; // 授权码错误
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -168,4 +177,6 @@ class ConStatus
     public static $STATUS_ERROR_BANNER_IMG = 4011; // 缺少轮播图
     public static $STATUS_ERROR_MOBILE = 4012; // 手机号码无效
     public static $STATUS_ERROR_SMS = 4013; // 手机号码无效
+    public static $STATUS_ERROR_AUTH_CODE = 4014; // 授权码错误
+    public static $STATUS_ERROR_LENS_USED = 4015; // 镜头正在被操作
 }

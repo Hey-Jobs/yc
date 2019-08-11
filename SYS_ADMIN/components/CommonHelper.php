@@ -63,6 +63,7 @@ class CommonHelper
     {
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
         $url = $http_type . $_SERVER['HTTP_HOST'];
+        return "https://yc.adaxiang.com";
         return $url;
     }
 
@@ -392,6 +393,69 @@ class CommonHelper
         $res = CommonHelper::curl($liveConfig['url'], $params);
         CommonHelper::writeLog('rest:' . $res, 'push.log');
         return json_decode($res, true);
+    }
+
+    /**
+     * 获取近24小时天气预报信息
+     * @param $address
+     */
+    public static function getWeatherInfo($address) {
+        if (empty($address)) {
+            return null;
+        }
+        //date_default_timezone_set("PRC");
+        $host = "https://weather01.market.alicloudapi.com/area-to-weather";  //通过地区名字查询天气
+        $method = "GET";
+        $appcode = getenv('WEATHER_CONFIG_APP_CODE');
+        $headers = array();
+        array_push($headers, "Authorization: APPCODE " . $appcode);
+
+        $querys="area=".$address;//获取html页面传递过来的地区名字
+        $bodys = "";
+        $url = $host . "?" . $querys;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HEADER, true);
+        if (1 == strpos("$".$host, "https://"))
+        {
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        }
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $bodys);
+
+        $response = curl_exec($curl);
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+        $data = json_decode($body, true);
+        if (empty($data) || empty($data['showapi_res_body']) || empty($data['showapi_res_body']['now'])) {
+            return null;
+        }
+
+        $currentWeather = $data['showapi_res_body']['now'];
+        $weatherInfo = [];
+        $weatherInfo['weather'] = $currentWeather['weather'];
+        $weatherInfo['humidity'] = $currentWeather['sd'];
+        $weatherInfo['temperature'] = $currentWeather['temperature'];
+        $weatherInfo['pm2_5'] = $currentWeather['aqiDetail']['pm2_5'];
+        $weatherInfo['quality'] = $currentWeather['aqiDetail']['quality'];
+        $weatherInfo['weather_pic'] = $currentWeather['weather_pic'];
+        $weatherInfo['temperature_time'] = date('Y-m-d').' '.$currentWeather['temperature_time'];
+        return $weatherInfo;
+    }
+
+    /**
+     * 操控设备
+     * @param $macAddress  设备mac
+     * @param $operate 操作方向
+     */
+    public static function lensControl($macAddress, $operate){
+        $url = "http://www.setrtmp.com/ptz.php?mac={$macAddress}&op={$operate}";
+
     }
 
 

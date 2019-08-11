@@ -137,6 +137,20 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">镜头控制授权码</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" name="lens_auth" id="lens_auth" value="<?= $info['lens_auth'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">背景音乐地址</label>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="live_music" id="live_music" value="<?= $info['live_music'] ?? "" ?>"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">所属行业</label>
 
                         <div class="col-sm-10">

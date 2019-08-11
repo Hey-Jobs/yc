@@ -1,0 +1,628 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2018/11/19
+ * Time: 19:50.
+ */
+
+namespace SYS_ADMIN\controllers\rest\v2;
+
+use abei2017\wx\Application;
+use app\models\Comment;
+use SYS_ADMIN\components\BaseDataBuilder;
+use SYS_ADMIN\components\CommonHelper;
+use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\components\Express;
+use SYS_ADMIN\models\ClientAddr;
+use SYS_ADMIN\models\ClientStart;
+use SYS_ADMIN\models\Lens;
+use SYS_ADMIN\models\LiveRoom;
+use SYS_ADMIN\models\Log;
+use SYS_ADMIN\models\Order;
+use SYS_ADMIN\models\OrderDetail;
+use SYS_ADMIN\models\Pictrue;
+use SYS_ADMIN\models\Product;
+use SYS_ADMIN\models\ShoppingMall;
+use SYS_ADMIN\models\SmsLog;
+use SYS_ADMIN\models\User;
+use SYS_ADMIN\models\Video;
+
+/**
+ * Class ClientController.
+ */
+class ClientController extends BaseController
+{
+    /**
+     *  用户地址管理.
+     */
+    public function actionAddrList()
+    {
+        $uid = $this->user_info['uid'];
+        $addr_list = [];
+        $addr = ClientAddr::find()
+            ->where(['user_id' => $uid])
+            ->asArray()
+            ->all();
+
+        if (count($addr)) {
+            foreach ($addr as $v) {
+                $addr_list[] = [
+                    'aid' => $v['id'],
+                    'sex' => $v['client_sex'],
+                    'name' => $v['client_name'],
+                    'mobile' => $v['mobile'],
+                    'addr' => $v['addr'],
+                    'detail' => $v['detail'],
+                    'common' => $v['common'],
+                ];
+            }
+        }
+
+        return $this->successInfo($addr_list);
+    }
+
+    /**
+     * 设置默认地址
+     */
+    public function actionAddrDefault()
+    {
+        $user_id = $this->user_info['uid'];
+        $aid = \Yii::$app->request->post('aid');
+
+        $model = ClientAddr::find()
+            ->where(['id' => $aid, 'user_id' => $user_id])
+            ->one();
+
+        if (empty($model)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        ClientAddr::updateAll(['common' => 0], ['user_id' => $user_id]);
+        $model->common = ConStatus::$ADDR_COMMON;
+        $model->save();
+
+        $this->successInfo(true);
+    }
+
+    /**
+     * 获取当前收货地址
+     */
+    public function actionAddr()
+    {
+        $user_id = $this->user_info['uid'];
+        $add_info = [];
+        $add_info = ClientAddr::find()
+            ->where(['user_id' => $user_id])
+            ->orderBy('id desc')
+            ->asArray()
+            ->one();
+
+        if ($add_info) {
+            $common_addr = ClientAddr::find()
+                ->where(['user_id' => $user_id])
+                ->andWhere(['common' => 1])
+                ->asArray()
+                ->one();
+
+            if ($common_addr) {
+                $add_info = $common_addr;
+            }
+        }
+
+        if ($add_info) {
+            $add_info['sex'] = ConStatus::$SEX[$add_info['client_sex']];
+        }
+
+        return $this->successInfo($add_info);
+    }
+
+    /**
+     * 新增 | 编辑地址
+     */
+    public function actionAddrSave()
+    {
+        $uid = $this->user_info['uid'];
+        $aid = \Yii::$app->request->post('aid');
+        $name = \Yii::$app->request->post('client_name');
+        $mobile = \Yii::$app->request->post('mobile');
+        $sex = \Yii::$app->request->post('client_sex');
+        $addr = \Yii::$app->request->post('addr');
+        $detail = \Yii::$app->request->post('detail');
+        $common = \Yii::$app->request->post('common', 0);
+        $code = \Yii::$app->request->post('code'); // 验证码
+
+        $model = new ClientAddr();
+        $model->attributes = \Yii::$app->request->post();
+        if (!$model->validate()) {
+            $errors = implode($model->getFirstErrors(), "\r\n");
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
+        }
+
+        if (!empty($aid)) {
+            $model = ClientAddr::findOne($aid);
+            if ($model->user_id != $uid || empty($model)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+            }
+        } else { // 新增校验手机号
+            $redis = \Yii::$app->redis;
+            $key = ConStatus::$RECEIVER.$this->user_info['uid'].':'.$mobile.':'.$code;
+            if (!$redis->get($key)) { // 无效验证码
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
+            }
+        }
+
+        $model->client_name = $name;
+        $model->client_sex = $sex;
+        $model->user_id = $uid;
+        $model->mobile = $mobile;
+        $model->addr = $addr;
+        $model->detail = $detail;
+        $model->common = $common;
+
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS);
+        }
+    }
+
+    /**
+     * 订单列表.
+     */
+    public function actionOrders()
+    {
+        $last = \Yii::$app->request->get('last');
+        $order_id = \Yii::$app->request->post('order_id');
+        $clientId = $this->user_info['uid'];
+
+        $query = Order::find()
+            ->select([
+                'id',
+                'order_id',
+                'room_id',
+                'client_id',
+                'order_status',
+                'real_total_money',
+                'total_money',
+                'user_name',
+                'user_address',
+                'user_phone',
+                'express_id',
+                'express_no',
+                'deliver_money',
+                'create_time',
+            ])
+            ->where(['in', 'order_status', [
+                ConStatus::$ORDER_PENDING,
+                ConStatus::$ORDER_SENDED,
+                ConStatus::$ORDER_DELIVERY,
+                ConStatus::$ORDER_USER_WAIT_DELIVERY,
+                ConStatus::$ORDER_USER_DELIVERIED,
+                ConStatus::$ORDER_USER_REJECT,
+                ConStatus::$ORDER_PAY_FINISH,
+                ]])
+            ->andWhere(['client_id' => $clientId])
+            ->orderBy('create_time desc');
+
+        if ($last) {
+            $query->limit(1);
+        }
+
+        if ($order_id) { // 查看订单详情
+            $query->andWhere(['order_id' => $order_id]);
+        }
+
+        $orderList = $query->asArray()->all();
+        if (empty($orderList)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $orderDetails = OrderDetail::find()
+            ->select(['order_id', 'title', 'price', 'num', 'cover_img'])
+            ->where(['order_id' => array_column($orderList, 'id')])
+            ->asArray()
+            ->all();
+
+        $pic_list = Pictrue::getPictrueList(array_column($orderDetails, 'cover_img'));
+        if (count($pic_list)) {
+            foreach ($orderDetails as &$od) {
+                $pic_path = isset($pic_list[$od['cover_img']]) ? $pic_list[$od['cover_img']]['pic_path'] : '';
+                $od['cover_img'] = $pic_path;
+            }
+        }
+        $orderDetails = CommonHelper::array_group_by($orderDetails, 'order_id');
+
+//        $roomPairs = BaseDataBuilder::instance('LiveRoom');
+
+        $data = [];
+        $room_list = LiveRoom::find()
+            ->where(['in', 'id', array_column($orderList, 'room_id')])
+            ->select(['id', 'room_name', 'logo_img', 'user_id'])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+        //$room_list = CommonHelper::array_group_by($room_info, 'id');
+        $logo_pic = Pictrue::getPictrueList(array_column($room_list, 'logo_img'));
+        $user_info = User::find()
+            ->where(['in', 'id', array_column($room_list, 'user_id')])
+            ->select(['id', 'phone'])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+        foreach ($orderList as $key => $row) {
+            $logo_pic_tmp = isset($room_list[$row['room_id']]) ? $logo_pic[$room_list[$row['room_id']]['logo_img']]['pic_path'] : '';
+            $data[$key]['order_id'] = $row['order_id'] ?? '';
+            $data[$key]['room_name'] = isset($room_list[$row['room_id']]) ? $room_list[$row['room_id']]['room_name'] : '';
+            $data[$key]['logo_img'] = $logo_pic_tmp;
+            $data[$key]['mobile'] = isset($room_list[$row['room_id']]) ? $user_info[$room_list[$row['room_id']]['user_id']]['phone'] : '';
+            $data[$key]['order_status'] = ConStatus::$ORDER_LIST[$row['order_status']] ?? '';
+            $data[$key]['total_money'] = $row['real_total_money'] ?? '';
+            $data[$key]['deliver_money'] = $row['deliver_money'] ?? '';
+            $data[$key]['discount_money'] = round(($row['deliver_money'] + $row['total_money']) - $row['real_total_money'], 2);
+            $data[$key]['user_name'] = $row['user_name'] ?? '';
+            $data[$key]['user_address'] = $row['user_address'] ?? '';
+            $data[$key]['user_phone'] = $row['user_phone'] ?? '';
+            $data[$key]['create_time'] = $row['create_time'] ?? '';
+            $data[$key]['express_no'] = $row['express_no'] ?? '';
+            $data[$key]['express_name'] = Express::$EXPRESS[$row['express_id']] ?? '';
+            $data[$key]['list'] = $orderDetails[$row['id']] ?? '';
+        }
+
+        return $this->successInfo($data);
+    }
+
+    /**
+     * 提交订单.
+     */
+    public function actionOrderSub()
+    {
+        $user_id = $this->user_info['uid'];
+        $room_id = 0;
+
+        $products_id = [];
+        $product_num = [];
+        $products_list = [];
+        $check_product = [];
+
+        $room_id = \Yii::$app->request->post('room_id');
+        $products = \Yii::$app->request->post('products');
+        $user_name = \Yii::$app->request->post('user_name');
+        $user_sex = \Yii::$app->request->post('user_sex');
+        $user_address = \Yii::$app->request->post('address');
+        $user_phone = \Yii::$app->request->post('user_phone');
+
+        if (empty($products)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $products = json_decode($products, true);
+        if (empty($products)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        foreach ($products as $item) {
+            $products_id[] = $item['product_id'];
+            $product_num[$item['product_id']] = $item['num'];
+        }
+
+        $products_list = Product::find()
+            ->where(['in', 'id', $products_id])
+            ->andWhere(['room_id' => $room_id])
+            ->andWhere(['>', 'stock', 0])
+            ->asArray()
+            ->all();
+
+        $order_status = ConStatus::$ORDER_NO_PAY;
+        $order_id = date('Ymd').str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+        $total_money = 0; //总价格
+        $real_total_money = 0; // 实际付款
+        foreach ($products_list as &$pro) {
+            $pro['num'] = $product_num[$pro['id']];
+            $total_money += round($pro['price'] * $product_num[$pro['id']], 2);
+        }
+
+        $connection = \Yii::$app->db->beginTransaction();
+        $model = new Order();
+        $model->order_id = $order_id;
+        $model->room_id = $room_id;
+        $model->client_id = $this->user_info['uid'];
+        $model->order_status = ConStatus::$ORDER_NO_PAY;
+        $model->deliver_money = 0; //运费
+        $model->total_money = $total_money;
+        $model->real_total_money = $model->deliver_money + $total_money;
+        $model->pay_type = ConStatus::$PAY_ONLINE; //线上支付
+        $model->pay_from = ConStatus::$PAY_WAY_WECHAT;
+        $model->is_pay = 2;
+
+        // 收件人
+        $model->user_name = $user_name;
+        $model->user_sex = $user_sex;
+        $model->user_address = $user_address;
+        $model->user_phone = $user_phone;
+
+        // 订单详情
+        if ($model->save()) {
+            $product_detail = '';
+            $detail_data = [];
+            foreach ($products_list as $item) {
+                $product_detail .= $item['title'].'×'.$item['num'].'#';
+                $detail_data[] = [
+                    'order_id' => $model->id,
+                    'client_id' => $this->user_info['uid'],
+                    'product_id' => $item['id'],
+                    'title' => $item['title'],
+                    'price' => $item['price'],
+                    'cover_img' => $item['cover_img'],
+                    'num' => $item['num'],
+                ];
+            }
+
+            $res = \Yii::$app->db->createCommand()
+                ->batchInsert(
+                    OrderDetail::tableName(),
+                    ['order_id', 'client_id', 'product_id', 'title', 'price', 'cover_img', 'num'],
+                    $detail_data)
+                ->execute();
+            if ($res) {
+                $connection->commit();
+
+                $conf = \Yii::$app->params['wx']['mp'];
+                $wechat = new Application(['conf' => $conf]);
+                $payment = $wechat->driver('mp.pay');
+
+                $attributes = [
+                    'body' => "商品购买#{$order_id}",
+                    'detail' => "商品购买#{$order_id}",
+                    'out_trade_no' => $order_id,
+                    'total_fee' => $model->real_total_money * 100,
+                    'notify_url' => \Yii::$app->urlManager->createAbsoluteUrl(['/rest/v1/wechat/notify']),
+                    'openid' => $this->user_info['open_id'],
+                ];
+
+                $jsApi = $payment->js($attributes);
+                if ('SUCCESS' == $jsApi['return_code'] && 'SUCCESS' == $jsApi['result_code']) {
+                    $prepayId = $jsApi['prepay_id'];
+                    $arr = $payment->configForPayment($prepayId);
+
+                    return $this->successInfo(['pay' => $arr, 'order_no' => $order_id, 'subscribe' => $this->user_info['subscribe']]);
+                } else {
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, $jsApi['return_msg']);
+                }
+            } else {
+                $connection->rollBack();
+                CommonHelper::writeOrderLog($detail_data);
+                CommonHelper::writeOrderLog($res);
+
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_DETAIL, ConStatus::$ERROR_SYS_MSG);
+            }
+        } else {
+            $connection->rollBack();
+            CommonHelper::writeOrderLog($model->toArray());
+            CommonHelper::writeOrderLog($model->getErrors());
+
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_ORDER_CREATE, ConStatus::$ERROR_SYS_MSG);
+        }
+    }
+
+    /**
+     * 点赞./ 收藏
+     * @param integer uid 用户id
+     * @param integer id 对应id
+     * @param integer stype 类型  1 视频  2 评论 3直播间
+     */
+    public function actionUserStart()
+    {
+        $user_id = $this->user_info['uid'];
+        $id = \Yii::$app->request->post('id', 0);
+        $stype = \Yii::$app->request->post('stype', 0);
+
+        if (!array_key_exists($stype, ConStatus::$CLIENT_START)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        switch ($stype) {
+            case ConStatus::$CLIENT_START_VIDEO: // 视频
+                $info = Video::findOne($id);
+                break;
+            case ConStatus::$CLIENT_START_COMMENT: // 评论
+                $info = Comment::findOne($id);
+                break;
+
+            case ConStatus::$CLIENT_START_ROOM: // 直播间
+                $info = LiveRoom::findOne($id);
+                break;
+        }
+
+        if (empty($info)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $model = ClientStart::find()
+            ->where(['target_id' => $id, 'client_id' => $user_id, 'stype' => $stype])
+            ->one();
+
+        if (empty($model)) { // 收藏
+            $model = new ClientStart();
+            $model->target_id = $id;
+            $model->client_id = $user_id;
+            $model->stype = $stype;
+            $model->save();
+        } else { // 取消收藏
+            $model->delete();
+        }
+
+        $this->successInfo(true);
+    }
+
+    /**
+     * 直播间收藏列表
+     */
+    public function actionRoomStart()
+    {
+        $user_id = $this->user_info['uid'];
+
+        $lists = ClientStart::find()
+            ->select(['target_id as room_id'])
+            ->where(['client_id' => $user_id])
+            ->andWhere(['stype' => ConStatus::$CLIENT_START_ROOM])
+            ->orderBy('id desc')
+            ->asArray()
+            ->all();
+
+        if (count($lists)) {
+            $roomIds = array_column($lists, 'room_id');
+            $roomList = LiveRoom::find()
+                ->select(['id as room_id',  'click_num', 'online_cover', 'logo_img'])
+                ->where(['in', 'id', $roomIds])
+                ->indexBy('room_id')
+                ->asArray()
+                ->all();
+
+            $malls = ShoppingMall::find()
+                ->select(['title', 'introduction', 'room_id'])
+                ->where(['status' => ConStatus::$STATUS_ENABLE])
+                ->andWhere(['in', 'room_id', $roomIds])
+                ->indexBy('room_id')
+                ->asArray()
+                ->all();
+
+            $picIds = array_column($roomList, 'logo_img');
+            $picList = Pictrue::getPictrueList($picIds);
+
+            foreach ($lists as &$item) {
+                $logo_img = $roomList[$item['room_id']]['logo_img'];
+                $item['title'] = $malls[$item['room_id']]['title'] ?? $item['room_name'];
+                $item['logo_img'] = $picList[$logo_img] ? $picList[$logo_img]['pic_path'] : CommonHelper::getDefaultLogo();
+                $item['online_cover'] = $roomList[$item['room_id']]['online_cover'] ?? '';
+                $item['click_num'] = CommonHelper::numberFormat($roomList[$item['room_id']]['click_num']);
+            }
+        }
+        return $this->successInfo($lists);
+    }
+
+    /**
+     * 用户评论
+     * 商品
+     */
+    public function actionComment()
+    {
+        $room_id = \Yii::$app->request->post('id');
+        $content = \Yii::$app->request->post('content');
+
+        $log['from_id'] = $room_id;
+        $logM = new Log();
+        $logM->content = json_encode($log);
+        $logM->url = $this->action->controller->module->requestedRoute ?? '';
+        $logM->save();
+
+        $model = new Comment();
+        $model->type = ConStatus::$COMMENT_TYPE_ROOM; // 评论直播间
+        $model->from_id = $room_id;
+        $model->client_id = $this->user_info['uid'];
+        $model->nickname = $this->user_info['user_name'];
+        $model->thumb_img = $this->user_info['user_img'];
+        $model->content = $content;
+
+        if ($model->save()) {
+            $data = $model->toArray();
+
+            return $this->successInfo($data);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_SYS_MSG);
+        }
+    }
+
+    /**
+     * 发送短信验证码
+     */
+    public function actionSms()
+    {
+        $mobile = \Yii::$app->request->post('mobile');
+        if (!CommonHelper::checkMobile($mobile)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_MOBILE, ConStatus::$ERROR_MOBILE_MSG);
+        }
+
+        $code = rand(1000, 9999);
+        $sendSms = CommonHelper::sendSms($mobile, 'verify', ['code' => $code]);
+
+        CommonHelper::smsLog($mobile, $sendSms['message'], $sendSms['bizId'], ['code' => $code], $this->user_info['uid']);
+        if ($sendSms['code'] == 'OK') {
+            $redis = \Yii::$app->redis;
+            $uid = !empty($this->user_info) ? $this->user_info['uid'] :0;
+            $key = ConStatus::$RECEIVER.$uid.':'.$mobile.':'.$code;
+            $redis->set($key, $code);
+            $redis->expire($key, ConStatus::$SMS_EXPIRE); // 缓存5分钟
+            return $this->successInfo(['status' => 1]);
+        } else {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_SMS, $sendSms['message']);
+        }
+    }
+
+
+    /**
+     * 控制镜头
+     */
+    public function actionLensControl(){
+        $sid = \Yii::$app->request->post('sid'); // 镜头id
+        $op = \Yii::$app->request->post('op');
+
+        if (empty($sid) || !array_key_exists($op, ConStatus::$LENS_OPERATE_TYPE)){
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $lensInfo = Lens::findOne($sid);
+        if (empty($lensInfo) || empty($lensInfo->room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $redis = \Yii::$app->redis;
+        $redisKey = "lensControlStatus:".$sid;
+        // 2、检测是否设备正在被操作
+        $userControl = $redis->get($redisKey);
+        if ($userControl && $userControl == 1) {
+            $second = $redis->TTL($redisKey);
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_LENS_USED, "设备占用中，请在：{$second}秒后申请");
+        }
+
+        // 3、操控设备
+        CommonHelper::lensControl($lensInfo->mac_address, ConStatus::$LENS_OPERATE_TYPE[$op]);
+        return $this->successInfo(true);
+    }
+
+    /**
+     * 控制镜头
+     */
+    public function actionLensApply(){
+        $sid = \Yii::$app->request->post('sid'); // 镜头id
+        $authCode = \Yii::$app->request->post('authCode');
+        $lensInfo = Lens::findOne($sid);
+
+        if (empty($lensInfo) || empty($lensInfo->room_id)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        // 1、 检测输入密码
+        $roomInfo = LiveRoom::findOne($lensInfo->room_id);
+        if (empty($roomInfo) ||  ($roomInfo->lens_auth && $roomInfo->lens_auth != $authCode)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_AUTH_CODE, ConStatus::$ERROR_AUTH_CODE_MSG);
+        }
+
+        $redis = \Yii::$app->redis;
+        $redisKey = "lensControlStatus:".$sid;
+        // 2、检测是否设备正在被操作
+        $userControl = $redis->get($redisKey);
+        if ($userControl) {
+            $second = $redis->TTL($redisKey);
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_LENS_USED, "设备占用中，请在：{$second}秒后申请");
+        }
+
+        // 3、操控设备
+        //设置120 s
+        $redis->set($redisKey, 2);
+        $redis->expire($redisKey, 120);
+        return $this->successInfo(true);
+    }
+}
