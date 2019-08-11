@@ -10,6 +10,7 @@ namespace SYS_ADMIN\controllers\rest\v2;
 
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
+use SYS_ADMIN\models\Client;
 use yii\rest\Controller;
 
 class BaseController extends Controller
@@ -39,36 +40,35 @@ class BaseController extends Controller
                 $sign = $params['signature'];
                 unset($params['signature']);
                 ksort($params);
-                /*if ($sign !== md5(ConStatus::$APP_KEY . implode($params)) || ($params['timestamp'] + 120) < time()) {
+                if ($sign !== md5(ConStatus::$APP_KEY.implode($params)) || ($params['timestamp'] + 120) < time()) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
-                }*/
+                }
             }
         }
 
         if (1 == $debug) { //调式模式
-            $username = "admin";
-            $class = \Yii::$app->getUser()->identityClass ?: 'mdm\admin\models\User';
-            $userInfo = $class::findByUsername($username)->toArray();
-            unset($userInfo["auth_key"]);
-            unset($userInfo["password_hash"]);
-            unset($userInfo["password_reset_token"]);
-            unset($userInfo["phone"]);
-            unset($userInfo["email"]);
-            unset($userInfo["wechat_openid"]);
-
-            $this->user_info = $userInfo;
+            $open_id = 'o5NW-52_GfBdOhc4nm2-Ggtardkg';
+            $check_info = Client::findOne(['open_id' => $open_id]);
+            $user_detail = [
+                'user_name' => $check_info->client_name,
+                'user_img' => $check_info->client_img,
+                'open_id' => $check_info->open_id,
+                'uid' => $check_info->id,
+            ];
+            $this->user_info = $user_detail;
         } else {
-            if (strpos($base_url, 'user/login') === false) {
-                $userId = \Yii::$app->request->post('userId');
-                if (empty($userId) && !in_array($action_name, $no_auth)) {
+            if (strpos($base_url, 'client') != false) {
+                $open_id = \Yii::$app->request->post('openid');
+                if (empty($open_id) && !in_array($action_name, $no_auth)) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
                 }
 
                 $redis = \Yii::$app->redis;
-                $user_info = $redis->get(md5($userId));
+                $user_info = $redis->get($open_id);
                 if (empty($user_info) && !in_array($action_name, $no_auth)) {
                     return $this->errorInfo(ConStatus::$STATUS_ERROR_USER_EXIT, ConStatus::$ERROR_PARAMS_MSG);
                 }
+
                 $this->user_info = json_decode($user_info, true);
             }
         }
