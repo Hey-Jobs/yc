@@ -600,12 +600,13 @@ edu .image-list .image-item .image-time{position:absolute; top:0; right: 0.5rem;
 .mobile_code{background-image: url("../images/password.png");}
 .send_message{
   position: absolute;
-  top: 0.2rem;
+  top: 0.5rem;
   right: 0.5rem;
-  width: 5rem;
-  padding: 0.3rem 0.5rem;
+  width: 4.5rem;
+  padding: 0.3rem;
   display: inline-block;
   color: white;
+  font-size: 0.8rem;
 }
 .tip-message{color: #E45B39}
 /**直播间加密**/
