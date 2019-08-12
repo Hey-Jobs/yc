@@ -11,6 +11,7 @@ use abei2017\wx\Application;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\Wechat;
+use SYS_ADMIN\components\WxBizDataCrypt;
 use SYS_ADMIN\models\Client;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Order;
@@ -413,12 +414,10 @@ class WechatController extends BaseController
      */
     public function actionLogin(){
         $code = \Yii::$app->request->post('code');
-        $nickName = \Yii::$app->request->post('nickName');
-        $avatarUrl = \Yii::$app->request->post('avatarUrl');
-        $sex = \Yii::$app->request->post('sex');
-        $city = \Yii::$app->request->post('city');
-        $code = \Yii::$app->request->post('code');
-        if (empty($code) || empty($nickName) || empty($avatarUrl)) {
+        $encryptedData = \Yii::$app->request->post('encryptedData');
+        $iv = \Yii::$app->request->post('iv');
+
+        if (empty($code) || empty($encryptedData) || empty($ivd)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -431,6 +430,18 @@ class WechatController extends BaseController
         }
 
         $openId = $data['openid'];
+        $sessionKey = $data['sessionKey'];
+        $dataCryptObject = new WxBizDataCrypt($openId, $sessionKey);
+        $errCode = $dataCryptObject->decryptData($encryptedData, $iv,  $wechatInfo);
+        if ($errCode != WxBizDataCrypt::$OK) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $nickName = $wechatInfo->nickName;
+        $avatarUrl = $wechatInfo->avatarUrl;
+        $sex = $wechatInfo->sex;
+        $city = $wechatInfo->city;
+
         $user_detail = [];
         $check_info = Client::findOne(['open_id' => $openId]);
         if (empty($check_info)) {
