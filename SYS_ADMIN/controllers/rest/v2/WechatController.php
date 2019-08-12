@@ -413,8 +413,61 @@ class WechatController extends BaseController
      */
     public function actionLogin(){
         $code = \Yii::$app->request->post('code');
-        if (empty($code)) {
-            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        $nickName = \Yii::$app->request->post('nickName');
+        $avatarUrl = \Yii::$app->request->post('avatarUrl');
+        $sex = \Yii::$app->request->post('sex');
+        $city = \Yii::$app->request->post('city');
+        $code = \Yii::$app->request->post('code');
+        if (empty($code) || empty($nickName) || empty($avatarUrl)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
+
+        $config = \Yii::$app->params['wx']['mini'];
+        $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$config['app_id']}&secret={$config['secret']}&js_code={$code}&grant_type=authorization_code";
+        $response = CommonHelper::curl($url);
+        $data = json_decode($response, true);
+        if ($data['errcode'] !== 0 || empty($data['openid'])){
+            return $this->errorInfo($data['errcode'], $data['errmsg']);
+        }
+
+        $openId = $data['openid'];
+        $user_detail = [];
+        $check_info = Client::findOne(['open_id' => $openId]);
+        if (empty($check_info)) {
+
+            $model = new Client();
+            $model->client_name = $nickName;
+            $model->client_img = $avatarUrl;
+            $model->open_id = $openId;
+            $model->sex = $sex;
+            $model->city = $city;
+            $model->subscribe = 0;
+            $model->save();
+
+            $user_detail = [
+                'user_name' => $nickName,
+                'user_img' => $avatarUrl,
+                'open_id' => $openId,
+                'uid' => $check_info->id,
+                'subscribe' => 0,
+            ];
+        } else {
+            $user_detail = [
+                'user_name' => $check_info->client_name,
+                'user_img' => $check_info->client_img,
+                'open_id' => $check_info->open_id,
+                'uid' => $check_info->id,
+                'subscribe' => 0,
+            ];
+        }
+
+        $redis = \Yii::$app->redis;
+        $redis->set($openId, json_encode($user_detail));
+        $redis->expire($openId, 7200); // 缓存2小时
+        setcookie('uid', $openId, time() + 7200, '/');
+        setcookie('uname', $user_detail['user_name'], time() + 7200, '/');
+        setcookie('uimg', $user_detail['user_img'], time() + 7200, '/');
+
+        return $this->successInfo($user_detail);
     }
 }
