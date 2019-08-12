@@ -179,4 +179,5 @@ class ConStatus
     public static $STATUS_ERROR_SMS = 4013; // 手机号码无效
     public static $STATUS_ERROR_AUTH_CODE = 4014; // 授权码错误
     public static $STATUS_ERROR_LENS_USED = 4015; // 镜头正在被操作
+
 }
