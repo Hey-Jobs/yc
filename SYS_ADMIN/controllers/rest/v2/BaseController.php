@@ -74,8 +74,6 @@ class BaseController extends Controller
         }
 
         $this->isAdmin = CommonHelper::isAdmin();
-        $user_roles = array_keys(\Yii::$app->authManager->getRolesByUser($this->user_info['id']));
-        $this->isAdmin = in_array("admin", $user_roles) ? 1 : 0;
     }
     /**
      * 返回错误信息

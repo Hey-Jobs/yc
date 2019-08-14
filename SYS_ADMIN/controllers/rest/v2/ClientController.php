@@ -582,7 +582,7 @@ class ClientController extends BaseController
         $redisKey = "lensControlStatus:".$sid;
         // 2、检测是否设备正在被操作
         $userControl = $redis->get($redisKey);
-        if ($userControl && $userControl == 1) {
+        if ($userControl && $userControl != $this->user_info['open_id']) {
             $second = $redis->TTL($redisKey);
             return $this->errorInfo(ConStatus::$STATUS_ERROR_LENS_USED, "设备占用中，请在：{$second}秒后申请");
         }
@@ -600,7 +600,7 @@ class ClientController extends BaseController
         $authCode = \Yii::$app->request->post('authCode');
         $lensInfo = Lens::findOne($sid);
 
-        if (empty($lensInfo) || empty($lensInfo->room_id)) {
+        if (empty($lensInfo) || empty($lensInfo->room_id) || empty($this->user_info['open_id'])) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -621,7 +621,7 @@ class ClientController extends BaseController
 
         // 3、操控设备
         //设置120 s
-        $redis->set($redisKey, 2);
+        $redis->set($redisKey, $this->user_info['open_id']);
         $redis->expire($redisKey, 120);
         return $this->successInfo(true);
     }
