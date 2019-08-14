@@ -125,6 +125,7 @@ class RoomController extends BaseController
         $lens = Lens::find()
             ->where(['room_id' => $room_id])
             ->andWhere(['status' => ConStatus::$STATUS_ENABLE])
+            ->orderBy("sort_num asc")
             ->asArray()
             ->all();
 
