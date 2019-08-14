@@ -53,7 +53,8 @@ class Video extends ActiveRecord
             foreach ($video_list as &$video) {
                 $video['created_at'] = date('Y-m-d H:i', $video['created_at']);
                 $video['status'] = ConStatus::$STATUS_LIST[$video['status']];
-                $video['room_name'] = $user_room[$video['room_id']]['room_name'];
+
+                $video['room_name'] = $user_room[$video['room_id']] ? $user_room[$video['room_id']]['room_name'] : "";
             }
         }
 

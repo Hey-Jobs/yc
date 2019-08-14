@@ -417,7 +417,12 @@ class WechatController extends BaseController
         $encryptedData = \Yii::$app->request->post('encryptedData');
         $iv = \Yii::$app->request->post('iv');
 
-        if (empty($code) || empty($encryptedData) || empty($ivd)) {
+        $nickName = \Yii::$app->request->post('nickName');
+        $avatarUrl = \Yii::$app->request->post('avatarUrl');
+        $sex = \Yii::$app->request->post('sex');
+        $city = \Yii::$app->request->post('city');
+        $code = \Yii::$app->request->post('code');
+        if (empty($code) || empty($nickName) || empty($avatarUrl)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -425,22 +430,22 @@ class WechatController extends BaseController
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$config['app_id']}&secret={$config['secret']}&js_code={$code}&grant_type=authorization_code";
         $response = CommonHelper::curl($url);
         $data = json_decode($response, true);
-        if ($data['errcode'] !== 0 || empty($data['openid'])){
-            return $this->errorInfo($data['errcode'], $data['errmsg']);
-        }
-
-        $openId = $data['openid'];
-        $sessionKey = $data['sessionKey'];
-        $dataCryptObject = new WxBizDataCrypt($openId, $sessionKey);
-        $errCode = $dataCryptObject->decryptData($encryptedData, $iv,  $wechatInfo);
-        if ($errCode != WxBizDataCrypt::$OK) {
+        if (empty($data['session_key']) || empty($data['openid'])){
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
-        $nickName = $wechatInfo->nickName;
+        $openId = $data['openid'];
+        $sessionKey = $data['session_key'];
+        /*$dataCryptObject = new WxBizDataCrypt($openId, $sessionKey);
+        $errCode = $dataCryptObject->decryptData($encryptedData, $iv,  $wechatInfo);
+        if ($errCode != WxBizDataCrypt::$OK) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }*/
+
+        /*$nickName = $wechatInfo->nickName;
         $avatarUrl = $wechatInfo->avatarUrl;
         $sex = $wechatInfo->sex;
-        $city = $wechatInfo->city;
+        $city = $wechatInfo->city;*/
 
         $user_detail = [];
         $check_info = Client::findOne(['open_id' => $openId]);
