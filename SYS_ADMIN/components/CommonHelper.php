@@ -455,7 +455,7 @@ class CommonHelper
      */
     public static function lensControl($macAddress, $operate){
         $url = "http://www.setrtmp.com/ptz.php?mac={$macAddress}&op={$operate}";
-
+        CommonHelper::curl($url);
     }
 
 
