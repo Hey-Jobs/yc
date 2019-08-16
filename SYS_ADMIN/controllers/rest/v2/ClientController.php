@@ -582,6 +582,10 @@ class ClientController extends BaseController
         $redisKey = "lensControlStatus:".$sid;
         // 2、检测是否设备正在被操作
         $userControl = $redis->get($redisKey);
+        if (empty($userControl)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_LENS_APPLY, ConStatus::$ERROR_LENS_APPLY_MSG);
+        }
+
         if ($userControl && $userControl != $this->user_info['open_id']) {
             $second = $redis->TTL($redisKey);
             return $this->errorInfo(ConStatus::$STATUS_ERROR_LENS_USED, "设备占用中，请在：{$second}秒后申请");
