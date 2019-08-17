@@ -66,7 +66,7 @@ class BaseController extends Controller
                 $redis = \Yii::$app->redis;
                 $user_info = $redis->get($open_id);
                 if (empty($user_info) && !in_array($action_name, $no_auth)) {
-                    return $this->errorInfo(ConStatus::$STATUS_ERROR_USER_EXIT, ConStatus::$ERROR_PARAMS_MSG);
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_CHECK_LOGINOUT, ConStatus::$ERROR_CHECK_LOGINOUT_MSG);
                 }
 
                 $this->user_info = json_decode($user_info, true);
