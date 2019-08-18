@@ -163,6 +163,7 @@ class ConStatus
     public static $ERROR_LENS_USED_MSG = '设备占用中'; //
     public static $ERROR_LENS_APPLY_MSG = '请先申请控制权'; // 授权码错误
     public static $ERROR_CHECK_LOGINOUT_MSG = '登录失效，请重新登录'; // 授权码错误
+    public static $ERROR_CHECK_LOGIN_MSG = '请重新登录'; // 授权码错误
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误

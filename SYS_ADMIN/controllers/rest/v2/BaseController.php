@@ -60,7 +60,7 @@ class BaseController extends Controller
             if (strpos($base_url, 'client') != false) {
                 $open_id = \Yii::$app->request->post('openid');
                 if (empty($open_id) && !in_array($action_name, $no_auth)) {
-                    return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_PARAMS_MSG);
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_OPENID, ConStatus::$ERROR_CHECK_LOGIN_MSG);
                 }
 
                 $redis = \Yii::$app->redis;
