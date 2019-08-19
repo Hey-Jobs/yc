@@ -98,6 +98,13 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                         return html;
                     }
                 },
+
+                {
+                    "render":function(data,type,row){
+                        return "<a href=\"/front/#/room?room_id="+row.id+"\" class=\"m-l-sm\"  "+row.room_name+" </a>";
+                    },
+                    "targets":2,
+                },
                 {
                     "render":function(data,type,row){
                         return showPic(data);
