@@ -101,7 +101,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
 
                 {
                     "render":function(data,type,row){
-                        return "<a href=\"/front/#/room?room_id="+row.id+"\" class=\"m-l-sm\"  "+row.room_name+" </a>";
+                        return "<a href=\"/front/#/room?room_id="+row.id+"\" target='_blank' class=\"m-l-sm\"  >"+row.room_name+" </a>";
                     },
                     "targets":2,
                 },
