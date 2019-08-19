@@ -127,7 +127,8 @@ class ConStatus
 
     // 授权模板
     public static $AUTH_TEMPLATE = [
-        1 => '教育版本'
+        1 => '教育版本',
+        2 => '宠物版本',
     ];
 
     // 存储域名
