@@ -35,6 +35,7 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
+        $pushurl = urlencode($pushurl);
         $url = "http://www.setrtmp.com/golive.php?c={$mac}&pushurl={$pushurl}";
         CommonHelper::curl($url);
         return $this->successInfo("sucess");
