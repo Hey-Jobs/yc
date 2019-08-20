@@ -185,5 +185,6 @@ class ConStatus
     public static $STATUS_ERROR_LENS_USED = 4015; // 镜头正在被操作
     public static $STATUS_ERROR_LENS_APPLY = 4016; // 镜头正在被操作
     public static $STATUS_ERROR_CHECK_LOGINOUT = 4017; // 镜头正在被操作
+    public static $STATUS_ERROR_DEVICE_AUTH = 4018; // 镜头正在被操作
 
 }
