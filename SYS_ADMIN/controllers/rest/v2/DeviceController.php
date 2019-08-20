@@ -72,7 +72,7 @@ class DeviceController extends CommonApiController
     {
         $auth = \Yii::$app->request->get('key');
         $mac = \Yii::$app->request->get('mac');
-        $opt = \Yii::$app->request->get('opt');
+        $opt = \Yii::$app->request->get('ptz');
 
         $auth = HtmlPurifier::process($auth);
         $mac = HtmlPurifier::process($mac);
