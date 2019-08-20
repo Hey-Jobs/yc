@@ -38,7 +38,7 @@ class DeviceController extends CommonApiController
         $pushurl = urlencode($pushurl);
         $url = "http://www.setrtmp.com/golive.php?c={$mac}&pushurl={$pushurl}";
         CommonHelper::curl($url);
-        return $this->successInfo("sucess");
+        return $this->successInfo("success");
     }
 
 
@@ -64,6 +64,30 @@ class DeviceController extends CommonApiController
 
         $url = "http://www.setrtmp.com/golive.php?c={$mac}&pushurl=reset";
         CommonHelper::curl($url);
-        return $this->successInfo("sucess");
+        return $this->successInfo("success");
+    }
+
+    // 设备控制
+    public function actionControl()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $mac = \Yii::$app->request->get('mac');
+        $opt = \Yii::$app->request->get('opt');
+
+        $auth = HtmlPurifier::process($auth);
+        $mac = HtmlPurifier::process($mac);
+        $opt = HtmlPurifier::process($opt);
+
+        if (empty($auth) || empty($mac) || !array_key_exists($opt, ConStatus::$LENS_OPERATE_TYPE)){
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        CommonHelper::lensControl($mac, ConStatus::$LENS_OPERATE_TYPE[$opt]);
+        return $this->successInfo("success");
     }
 }
