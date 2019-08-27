@@ -37,8 +37,8 @@ class DeviceController extends CommonApiController
 
         $pushurl = urlencode($pushurl);
         $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl={$pushurl}";
-        $res = CommonHelper::curl($url);
-        return $this->successInfo("success");
+        echo CommonHelper::curl($url);
+        exit;
     }
 
 
@@ -63,8 +63,9 @@ class DeviceController extends CommonApiController
         }
 
         $url = "http://www.setrtmp.com/golive.php?c={$mac}&play=ON&pushurl=reset";
-        CommonHelper::curl($url);
-        return $this->successInfo("success");
+        echo CommonHelper::curl($url);
+		exit;
+		
     }
 
     // 设备控制
@@ -87,8 +88,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        CommonHelper::lensControl($mac, ConStatus::$LENS_OPERATE_TYPE[$opt]);
-        return $this->successInfo("success");
+        echo CommonHelper::lensControl($mac, ConStatus::$LENS_OPERATE_TYPE[$opt]);
+        exit;
     }
 
     // 查询设备状态
