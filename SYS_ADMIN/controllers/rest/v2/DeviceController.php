@@ -36,8 +36,8 @@ class DeviceController extends CommonApiController
         }
 
         $pushurl = urlencode($pushurl);
-        $url = "http://www.setrtmp.com/golive.php?c={$mac}&pushurl={$pushurl}";
-        CommonHelper::curl($url);
+        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl={$pushurl}";
+        $res = CommonHelper::curl($url);
         return $this->successInfo("success");
     }
 
@@ -62,7 +62,7 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "http://www.setrtmp.com/golive.php?c={$mac}&pushurl=reset";
+        $url = "http://www.setrtmp.com/golive.php?c={$mac}&play=ON&pushurl=reset";
         CommonHelper::curl($url);
         return $this->successInfo("success");
     }
@@ -89,5 +89,49 @@ class DeviceController extends CommonApiController
 
         CommonHelper::lensControl($mac, ConStatus::$LENS_OPERATE_TYPE[$opt]);
         return $this->successInfo("success");
+    }
+
+    // 查询设备状态
+    public function actionState()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $mac = \Yii::$app->request->get('mac');
+
+        $auth = HtmlPurifier::process($auth);
+        $mac = HtmlPurifier::process($mac);
+        if (empty($auth) || empty($mac)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = "https://www.setipc.com/golive.php?c={$mac}&play=HOW";
+        echo CommonHelper::curl($url);
+		exit;
+    }
+
+    // 查询推流地址
+    public function actionAddress()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $mac = \Yii::$app->request->get('mac');
+
+        $auth = HtmlPurifier::process($auth);
+        $mac = HtmlPurifier::process($mac);
+        if (empty($auth) || empty($mac)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON";
+        echo CommonHelper::curl($url);
+		exit;
     }
 }
