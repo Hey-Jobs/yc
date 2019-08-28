@@ -62,7 +62,7 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "http://www.setrtmp.com/golive.php?c={$mac}&play=ON&pushurl=reset";
+        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl=reset";
         echo CommonHelper::curl($url);
 		exit;
 		
