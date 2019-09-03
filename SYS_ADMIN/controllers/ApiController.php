@@ -273,5 +273,15 @@ class ApiController extends CommonApiController
         $content = file_get_contents('php://input');
         file_put_contents("apiDevice.log", $content, FILE_APPEND);
     }
-    
+
+    /**
+     * 阿里云对象云存储
+     */
+    public function actionOss()
+    {
+
+        $url = "https://ycycc.oss-cn-shanghai.aliyuncs.com/yc-ycc-images/live/yctbkh-sjjs002.jpg";
+        $content = CommonHelper::curl($url);
+        $res = CommonHelper::OssUpload($content, "1.jpg");
+    }
 }
