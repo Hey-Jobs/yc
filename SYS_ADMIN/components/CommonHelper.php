@@ -210,7 +210,7 @@ class CommonHelper
      */
     public static function checkMobile($mobile)
     {
-        if (preg_match('/^1[34578]\d{9}$/', $mobile)) {
+        if (preg_match('/^1[3456789]\d{9}$/', $mobile)) {
             return true;
         } else {
             return false;
