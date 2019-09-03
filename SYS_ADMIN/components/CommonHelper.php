@@ -10,6 +10,7 @@ namespace SYS_ADMIN\components;
 
 use Flc\Dysms\Client;
 use Flc\Dysms\Request\SendSms;
+use OSS\OssClient;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\SmsLog;
 
@@ -456,6 +457,23 @@ class CommonHelper
     public static function lensControl($macAddress, $operate){
         $url = "http://www.setrtmp.com/ptz.php?mac={$macAddress}&op={$operate}";
         CommonHelper::curl($url);
+    }
+
+
+    public static function OssUpload($content, $filename, $dir = "images/") {
+
+        $accessKeyId = getenv('ALIYUN_OSS_ACCESSKEYID');
+        $accessKeySecret = getenv('ALIYUN_OSS_ACCESSKEYSECRET');
+        $bucket = getenv('ALIYUN_OSS_BUCKET');
+        $endpoint = getenv('ALIYUN_OSS_ENDPOINT');
+        $client = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+        $res = $client->putObject($bucket, $dir.$filename, $content);
+        if ($res['x-oss-request-id']) {
+            return "https://ycycc.oss-cn-shanghai.aliyuncs.com/".$dir.$filename;
+        } else {
+            CommonHelper::writeLog($res, "ossuploadError");
+            return false;
+        }
     }
 
 

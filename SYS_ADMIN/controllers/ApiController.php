@@ -4,6 +4,7 @@ namespace SYS_ADMIN\controllers;
 
 use app\models\EquipmentCutoutTencent;
 use app\models\EquipmentTencent;
+use OSS\OssClient;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Equipment;
@@ -152,14 +153,23 @@ class ApiController extends CommonApiController
         if (isset($data['event_type']) && $data['event_type'] == 200) {
             if (md5($this->TencentKey . $data['t']) === $data['sign'] && (time() - $data['t']) < 60) {
                 $pic_url = str_replace('http', 'https', $data['pic_full_url']);
+
                 $stream_name = $data['stream_id'];
                 $app_name = 'live';
+
+                // 图片存储阿里云对象云存储
+                $content = CommonHelper::curl($pic_url);
+                $url = CommonHelper::OssUpload($content, $stream_name.".jpg");
+                if (!$url) {
+                    echo json_encode(['code' => ConStatus::$STATUS_ERROR_OSS_UPLOAD, 'data' =>ConStatus::$ERROR_OSS_UPLOAD_MSG ]);
+                    exit;
+                }
 
                 $model = Lens::find()
                     ->where(['app_name' => $app_name, 'stream_name' => $stream_name])
                     ->one();
                 if ($model != null) {
-                    $model->online_cover_url = $pic_url;
+                    $model->online_cover_url = $url;
                     $model->save();
                 }
 
@@ -263,4 +273,5 @@ class ApiController extends CommonApiController
         $content = file_get_contents('php://input');
         file_put_contents("apiDevice.log", $content, FILE_APPEND);
     }
+    
 }

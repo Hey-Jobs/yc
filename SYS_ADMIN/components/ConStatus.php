@@ -165,6 +165,7 @@ class ConStatus
     public static $ERROR_LENS_APPLY_MSG = '请先申请控制权'; // 授权码错误
     public static $ERROR_CHECK_LOGINOUT_MSG = '登录失效，请重新登录'; // 授权码错误
     public static $ERROR_CHECK_LOGIN_MSG = '请重新登录'; // 授权码错误
+    public static $ERROR_OSS_UPLOAD_MSG = '对象云存储上传失败'; // 对象云存储上传失败
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -186,5 +187,6 @@ class ConStatus
     public static $STATUS_ERROR_LENS_APPLY = 4016; // 镜头正在被操作
     public static $STATUS_ERROR_CHECK_LOGINOUT = 4017; // 镜头正在被操作
     public static $STATUS_ERROR_DEVICE_AUTH = 4018; // 授权失败
+    public static $STATUS_ERROR_OSS_UPLOAD = 4019; // 授权失败
 
 }
