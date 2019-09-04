@@ -330,7 +330,7 @@ class WechatController extends CommonController
     {
         $url = \Yii::$app->request->post('url');
         $apis = \Yii::$app->request->post('apis');
-        $js = (new Application(['conf' => \Yii::$app->params['wx']['mp']]))->driver('mp.jssdk');
+        $js = (new Application(['conf' => \Yii::$app->params['wx']['mp']]))->driver('mp.js');
 
         $apis = explode(',', $apis);
         $sdk = $js->buildConfigJs($apis, false, $url);
