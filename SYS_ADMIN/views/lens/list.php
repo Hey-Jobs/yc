@@ -88,6 +88,12 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                 {
                     "targets": 6,
                     "render" : function(data, type, row) {
+                        return "<a href=\""+row.preview+"\" target='_blank' class=\"m-l-sm\" > "+row.preview+" </a>";
+                    }
+                },
+                {
+                    "targets": 7,
+                    "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 编辑 </a>";
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteLens('"+ row.id +"')\"> 删除 </a>";

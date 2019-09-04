@@ -244,4 +244,25 @@ class LensController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_SYS, ConStatus::$ERROR_SYS_MSG);
         }
     }
+
+
+    /**
+     * 镜头预览
+     */
+    public function actionPreview()
+    {
+        $app = \Yii::$app->request->get('app');
+        $stream = \Yii::$app->request->get('stream');
+
+        $lens = Lens::find()
+            ->where(['app_name' => $app])
+            ->andWhere(['stream_name' => $stream])
+            ->one();
+
+        if (empty($lens)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        return $this->renderPartial('preview', ['uri' => $lens->online_url, 'title' => $lens->lens_name]);
+    }
 }
