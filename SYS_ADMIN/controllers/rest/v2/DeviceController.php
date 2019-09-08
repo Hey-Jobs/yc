@@ -166,11 +166,10 @@ class DeviceController extends CommonApiController
     {
         $auth = \Yii::$app->request->get('key');
         $uid = \Yii::$app->request->get('uid');
-        $play = \Yii::$app->request->get('play');
 
         $auth = HtmlPurifier::process($auth);
         $uid = HtmlPurifier::process($uid);
-        if (empty($auth) || empty($uid) || empty($play)) {
+        if (empty($auth) || empty($uid)) {
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
         }
 
@@ -179,7 +178,7 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/get_mac.php?uid={$uid}&play={$play}";
+        $url = "https://www.setipc.com/get_mac.php?uid={$uid}&play=KJ129ASANJIUI92IJWKE";
         echo CommonHelper::curl($url);
         exit;
     }
