@@ -135,4 +135,52 @@ class DeviceController extends CommonApiController
         echo CommonHelper::curl($url);
 		exit;
     }
+
+
+    // 查询MAC 地址
+    public function  actionMac()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $uid = \Yii::$app->request->get('uid');
+
+        $auth = HtmlPurifier::process($auth);
+        $uid = HtmlPurifier::process($uid);
+        if (empty($auth) || empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = "https://www.setipc.com/get_mac.php?uid={$uid}";
+        echo CommonHelper::curl($url);
+        exit;
+    }
+
+    /**
+     * 设备重启
+     */
+    public function  actionRestart()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $uid = \Yii::$app->request->get('uid');
+        $play = \Yii::$app->request->get('play');
+
+        $auth = HtmlPurifier::process($auth);
+        $uid = HtmlPurifier::process($uid);
+        if (empty($auth) || empty($uid) || empty($play)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = "https://www.setipc.com/get_mac.php?uid={$uid}&play={$play}";
+        echo CommonHelper::curl($url);
+        exit;
+    }
 }

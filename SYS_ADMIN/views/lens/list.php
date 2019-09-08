@@ -50,6 +50,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                             <th>点击量</th>
                             <th>排序</th>
                             <th>状态</th>
+                            <th>预览</th>
                             <th>操作</th>
                         </tr>
                         </thead>
