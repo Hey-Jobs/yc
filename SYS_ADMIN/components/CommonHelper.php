@@ -495,7 +495,7 @@ class CommonHelper
 
         $sign = CommonHelper::getAliSign($params, $accessKeySecret);
         $params['Signature'] = $sign;
-        $res = CommonHelper::curl('https://vs.aliyuncs.com', $params);
+        $res = CommonHelper::curl('https://vs.cn-shanghai.aliyuncs.com', $params);
         CommonHelper::writeLog('rest:' . $res, 'videoStream.log');
         return json_decode($res, true);
     }
