@@ -39,9 +39,9 @@
                 console.log("播放器创建了。");
             }
         );
-        
-        window.addEventListener('beforeunload', (e) => {
-            var deviceId = "<?= $deviceId?>"
+
+        var deviceId = "<?= $deviceId?>"
+        $(window).on("beforeunload", function () {
             $.ajax({
                 url: '<?php echo \yii\helpers\Url::to('/device/suspend')?>',
                 dataType: 'json',
@@ -51,7 +51,29 @@
                     console.log(result);
                 }
             });
-        }, false)
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            var url = "";
+            // 用户离开了当前页面
+            if (document.visibilityState === 'hidden') {
+                url = '<?php echo \yii\helpers\Url::to('/device/suspend')?>';
+            }
+
+            // 用户打开或回到页面
+            if (document.visibilityState === 'visible') {
+                url = '<?php echo \yii\helpers\Url::to('/device/pull')?>';
+            }
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                type: "GET",
+                data: {'id' : deviceId},
+                success: function (result) {
+                    console.log(result);
+                }
+            });
+        });
     });
 
 </script>

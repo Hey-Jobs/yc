@@ -63,6 +63,28 @@ class DeviceController extends CommonController
     /**
      * 停止拉流
      */
+    public function actionPull()
+    {
+        $deviceId = \Yii::$app->request->get('id');
+        $deviceId = HtmlPurifier::process($deviceId);
+        if (empty($deviceId)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $data = CommonHelper::operateDeviceStream(ConStatus::$DEVICE_STREAM_START,
+            $deviceId,
+            $this->accessKeyId,
+            $this->accessKeySecret);
+        if ($data && !empty($data['RequestId'])) {
+            return $this->successInfo();
+        } else {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+    }
+
+    /**
+     * 停止拉流
+     */
     public function actionSuspend()
     {
         $deviceId = \Yii::$app->request->get('id');
