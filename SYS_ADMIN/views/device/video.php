@@ -39,21 +39,8 @@
                 console.log("播放器创建了。");
             }
         );
-
-        $(window).on('beforeunload',function(){
-            var deviceId = "<?= $deviceId?>"
-            $.ajax({
-                url: '<?php echo \yii\helpers\Url::to('/device/suspend')?>',
-                dataType: 'json',
-                type: "GET",
-                data: {'id' : deviceId},
-                success: function (result) {
-                    console.log(result);
-                }
-            });
-        });
-
-        window.addEventListener('popstate', (e) => {
+        
+        window.addEventListener('beforeunload', (e) => {
             var deviceId = "<?= $deviceId?>"
             $.ajax({
                 url: '<?php echo \yii\helpers\Url::to('/device/suspend')?>',
