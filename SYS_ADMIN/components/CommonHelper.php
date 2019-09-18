@@ -477,4 +477,26 @@ class CommonHelper
     }
 
 
+    //操作设备视频
+    public static function operateDeviceStream($action, $deviceId, $accessKeyId, $accessKeySecret)
+    {
+
+        $params = [
+            'Action' => $action,
+            'Id' => $deviceId,
+            'Version' => getenv('ALIYUN_LIVE_STREAM_VERSION'),
+            'AccessKeyId' => $accessKeyId,
+            'SignatureMethod' => getenv('ALIYUN_LIVE_STREAM_SINGNATUREMETHOD'),
+            'Timestamp' => CommonHelper::getTimestamp(),
+            'SignatureVersion' => getenv('ALIYUN_LIVE_STREAM_SINGNATUREVERSION'),
+            'SignatureNonce' => uniqid(),
+            'Format' => 'JSON'
+        ];
+
+        $sign = CommonHelper::getAliSign($params, $accessKeySecret);
+        $params['Signature'] = $sign;
+        $res = CommonHelper::curl('http://vs.aliyuncs.com', $params);
+        CommonHelper::writeLog('rest:' . $res, 'videoStream.log');
+        return json_decode($res, true);
+    }
 }

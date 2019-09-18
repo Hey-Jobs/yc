@@ -154,6 +154,12 @@ class ConStatus
     // 轮播图类型
     public static $BANNER_TYPE_SYS = 1;
     public static $BANNER_TYPE_ROOM = 2;
+
+
+    // 设备视频操作码
+    public static $DEVICE_STREAM_START = 'StartDevice';
+    public static $DEVICE_STREAM_STOP = 'StopDevice';
+
     // 状态码
     public static $ERROR_PARAMS_MSG = '参数错误';
     public static $ERROR_SYS_MSG = '网络错误';
