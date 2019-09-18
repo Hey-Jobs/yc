@@ -52,6 +52,19 @@
                 }
             });
         });
+
+        window.addEventListener('popstate', (e) => {
+            var deviceId = "<?= $deviceId?>"
+            $.ajax({
+                url: '<?php echo \yii\helpers\Url::to('/device/suspend')?>',
+                dataType: 'json',
+                type: "GET",
+                data: {'id' : deviceId},
+                success: function (result) {
+                    console.log(result);
+                }
+            });
+        }, false)
     });
 
 </script>
