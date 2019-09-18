@@ -159,6 +159,7 @@ class ConStatus
     // 设备视频操作码
     public static $DEVICE_STREAM_START = 'StartDevice';
     public static $DEVICE_STREAM_STOP = 'StopDevice';
+    public static $DEVICE_STREAM_INFO = 'DescribeDevice';
 
     // 状态码
     public static $ERROR_PARAMS_MSG = '参数错误';

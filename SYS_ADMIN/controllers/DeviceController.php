@@ -41,12 +41,18 @@ class DeviceController extends CommonController
             $this->accessKeyId,
             $this->accessKeySecret);
 
+        // 获取流信息
+        $data = CommonHelper::operateDeviceStream(ConStatus::$DEVICE_STREAM_INFO,
+            $deviceId,
+            $this->accessKeyId,
+            $this->accessKeySecret);
+        $streamName = $data && $data['Name'] ? $data['Name'] : '';
         // 获取播放地址
         $time = time() + getenv("ALIYUN_LIVE_STREAM_AUTH_TIME");
         $auth_key = getenv("ALIYUN_LIVE_STREAM_AUTH_KEY");
         $domain = getenv("ALIYUN_LIVE_STREAM_URL");
-        $strviewm3u8 = "/$this->appName/$deviceId.m3u8-$time-0-0-$auth_key";
-        $videoUrl = "$domain/$this->appName/$deviceId.m3u8?auth_key=$time-0-0-".md5($strviewm3u8);
+        $strviewm3u8 = "/$this->appName/$streamName.m3u8-$time-0-0-$auth_key";
+        $videoUrl = "$domain/$this->appName/$streamName.m3u8?auth_key=$time-0-0-".md5($strviewm3u8);
         return $this->renderPartial('video', [
             'uri' => $videoUrl,
             'title' => $title,
@@ -69,7 +75,6 @@ class DeviceController extends CommonController
             $deviceId,
             $this->accessKeyId,
             $this->accessKeySecret);
-        file_put_contents("device.log", json_encode($data)."\r\n", FILE_APPEND);
         if ($data && !empty($data['RequestId'])) {
             return $this->successInfo();
         } else {

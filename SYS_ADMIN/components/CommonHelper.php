@@ -492,9 +492,13 @@ class CommonHelper
             'SignatureNonce' => uniqid(),
             'Format' => 'JSON'
         ];
-
         $sign = CommonHelper::getAliSign($params, $accessKeySecret);
         $params['Signature'] = $sign;
+
+        $dataString = "";
+        foreach ($params as $k => $v) {
+            $dataString .= "$k=" . urlencode($v) . "&";
+        }
         $res = CommonHelper::curl('https://vs.cn-shanghai.aliyuncs.com', $params);
         CommonHelper::writeLog('rest:' . $res, 'videoStream.log');
         return json_decode($res, true);
