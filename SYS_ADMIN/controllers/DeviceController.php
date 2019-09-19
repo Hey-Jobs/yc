@@ -103,4 +103,13 @@ class DeviceController extends CommonController
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
         }
     }
+
+
+    /**
+     * 推流地址设置
+     */
+    public function actionSetting()
+    {
+        return $this->renderPartial("setting");
+    }
 }

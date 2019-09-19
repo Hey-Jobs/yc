@@ -36,14 +36,16 @@ class DeviceController extends CommonApiController
         }
 
         $pushurl = urlencode($pushurl);
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl={$pushurl}";
+        $url = ConStatus::$DEVICE_SETTING_PUSH_URL;
+        $url = str_replace('{mac}', $mac, $url);
+        $url = str_replace('{pushurl}', $pushurl, $url);
         echo CommonHelper::curl($url);
         exit;
     }
 
 
     /**
-     * mac设备推流
+     * 清空推流地址
      */
     public function actionReset()
     {
@@ -62,7 +64,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl=reset";
+        $url = ConStatus::$DEVICE_SETTING_RESET;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
 		
@@ -109,7 +112,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=HOW";
+        $url = ConStatus::$DEVICE_SETTING_STATE;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
     }
@@ -131,7 +135,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON";
+        $url = ConStatus::$DEVICE_SETTING_ADDR;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
     }
@@ -154,7 +159,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/get_mac.php?uid={$uid}";
+        $url = ConStatus::$DEVICE_SETTING_GET_MAC;
+        $url = str_replace('{uid}', $uid, $url);
         echo CommonHelper::curl($url);
         exit;
     }
@@ -178,7 +184,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/get_mac.php?uid={$uid}&play=KJ129ASANJIUI92IJWKE";
+        $url = ConStatus::$DEVICE_SETTING_RESTART;
+        $url = str_replace('{uid}', $uid, $url);
         echo CommonHelper::curl($url);
         exit;
     }

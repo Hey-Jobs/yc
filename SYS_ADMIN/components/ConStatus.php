@@ -161,6 +161,20 @@ class ConStatus
     public static $DEVICE_STREAM_STOP = 'StopDevice';
     public static $DEVICE_STREAM_INFO = 'DescribeDevice';
 
+    // 获取mac地址
+    public static $DEVICE_SETTING_GET_MAC = "https://www.setipc.com/get_mac.php?uid={uid}";
+    // 重启设备
+    public static $DEVICE_SETTING_RESTART = "https://www.setipc.com/get_mac.php?uid={uid}&play=KJ129ASANJIUI92IJWKE";
+    // 设置推流地址
+    public static $DEVICE_SETTING_PUSH_URL = "https://www.setipc.com/golive.php?c={mac}&play=ON&pushurl={pushurl}";
+    // 推流地址清空
+    public static $DEVICE_SETTING_RESET = "https://www.setipc.com/golive.php?c={mac}&play=ON&pushurl=reset";
+    // 状态
+    public static $DEVICE_SETTING_STATE = "https://www.setipc.com/golive.php?c={mac}&play=HOW";
+    // 查看推流地址
+    public static $DEVICE_SETTING_ADDR= "https://www.setipc.com/golive.php?c={mac}&play=ON";
+
+
     // 状态码
     public static $ERROR_PARAMS_MSG = '参数错误';
     public static $ERROR_SYS_MSG = '网络错误';
@@ -173,6 +187,7 @@ class ConStatus
     public static $ERROR_CHECK_LOGINOUT_MSG = '登录失效，请重新登录'; // 授权码错误
     public static $ERROR_CHECK_LOGIN_MSG = '请重新登录'; // 授权码错误
     public static $ERROR_OSS_UPLOAD_MSG = '对象云存储上传失败'; // 对象云存储上传失败
+    public static $ERROR_DEVICE_UID_MSG = '设备id错误'; // 对象云存储上传失败
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -195,5 +210,6 @@ class ConStatus
     public static $STATUS_ERROR_CHECK_LOGINOUT = 4017; // 镜头正在被操作
     public static $STATUS_ERROR_DEVICE_AUTH = 4018; // 授权失败
     public static $STATUS_ERROR_OSS_UPLOAD = 4019; // 授权失败
+    public static $STATUS_ERROR_DEVICE_UID = 4020; // uid 错误
 
 }
