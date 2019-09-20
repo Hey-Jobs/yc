@@ -25,6 +25,7 @@ class DeviceController extends CommonApiController
         $auth = HtmlPurifier::process($auth);
         $mac = HtmlPurifier::process($mac);
         $pushurl = HtmlPurifier::process($pushurl);
+
         $pushurl = urldecode($pushurl);
         if (empty($auth) || empty($mac) || empty($pushurl)) {
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);

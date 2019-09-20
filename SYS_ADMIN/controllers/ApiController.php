@@ -300,6 +300,64 @@ class ApiController extends CommonApiController
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
         }
 
+        $data = $this->getDeviceState($uid);
+        if (empty($data) || empty($data['status'])) {
+            return $this->errorInfo($data);
+        }
+
+        // 获取直播地址
+        $txTime = strtoupper(base_convert(strtotime("2030-11-17 23:59:59"), 10, 16));
+        $txSecret = md5("yunchuanglive2019" . $uid . $txTime);
+        $ext_str = "?" . http_build_query(array(
+                "txSecret" => $txSecret,
+                "txTime" => $txTime
+            ));
+        $rtmp_url = "rtmp://tx1rtmp.yunchuanglive.com/live/" . $uid . (!empty($ext_str) ? $ext_str : "");
+        // 生成推流地址
+        $online_url = "https://tx1.yunchuanglive.com/live/$uid.m3u8";
+
+        $data = [
+            'status' => $data['status'],
+            'status_time' => $data['status_time'],
+            'uid' => $uid,
+            'rtmp_url' => $rtmp_url,
+            'online_url' => $online_url
+        ];
+        return $this->successInfo($data);
+    }
+
+
+    /**
+     * 获取设备状态
+     */
+    public function actionDeviceState()
+    {
+        $uid = \Yii::$app->request->post('uid');
+        $uid = HtmlPurifier::process($uid);
+
+        if (empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $data = $this->getDeviceState($uid);
+        if (empty($data) || empty($data['status'])) {
+            return $this->errorInfo($data);
+        }
+
+        return $this->successInfo($data);
+    }
+
+    public function actionDevicePush()
+    {
+        $uid = \Yii::$app->request->post('uid');
+        $pushurl = \Yii::$app->request->post('pushurl');
+        $uid = HtmlPurifier::process($uid);
+        $pushurl = HtmlPurifier::process($pushurl);
+        $pushurl = urldecode($pushurl);
+        if (empty($uid) || empty($pushurl)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
         // 根据uid 获取 mac 地址
         $macUrl = ConStatus::$DEVICE_SETTING_GET_MAC;
         $macUrl = str_replace('{uid}', $uid, $macUrl);
@@ -310,6 +368,26 @@ class ApiController extends CommonApiController
             return $this->errorInfo(ConStatus::$ERROR_DEVICE_UID_MSG);
         }
 
+        $pushurl = urlencode($pushurl);
+        $url = ConStatus::$DEVICE_SETTING_PUSH_URL;
+        $url = str_replace('{mac}', $macInfo['mac'], $url);
+        $url = str_replace('{pushurl}', $pushurl, $url);
+        echo CommonHelper::curl($url);
+        exit;
+    }
+
+    private function getDeviceState($uid)
+    {
+        // 根据uid 获取 mac 地址
+        $macUrl = ConStatus::$DEVICE_SETTING_GET_MAC;
+        $macUrl = str_replace('{uid}', $uid, $macUrl);
+        $macInfo = CommonHelper::curl($macUrl);
+        $macInfo = json_decode($macInfo, true);
+
+        if (empty($macInfo) || empty($macInfo['mac'])) {
+            return ConStatus::$ERROR_DEVICE_UID_MSG;
+        }
+
         // 获取设备状态
         $stateUrl = ConStatus::$DEVICE_SETTING_STATE;
         $stateUrl = str_replace('{mac}', $macInfo['mac'], $stateUrl);
@@ -317,7 +395,7 @@ class ApiController extends CommonApiController
         $device_state_info = json_decode($device_state_info, true);
 
         if ($device_state_info['status'] === 'disconnect') {
-            return $this->errorInfo(ConStatus::$ERROR_DEVICE_UID_MSG);
+            return ConStatus::$ERROR_DEVICE_UID_MSG;
         }
 
 
@@ -339,55 +417,10 @@ class ApiController extends CommonApiController
             $status = "空闲";
         } else if (strpos($device_state_info['status'], "Connecting") !== false) {
             $status = "连接中";
+        } else if (strpos($device_state_info['status'], "Waiting IPCAM Response") !== false) {
+            $status = "等待响应";
         }
 
-        // 获取直播地址
-        $txTime = strtoupper(base_convert(strtotime("2030-11-17 23:59:59"), 10, 16));
-        $txSecret = md5("yunchuanglive2019" . $uid . $txTime);
-        $ext_str = "?" . http_build_query(array(
-                "txSecret" => $txSecret,
-                "txTime" => $txTime
-            ));
-        $rtmp_url = "rtmp://tx1rtmp.yunchuanglive.com/live/" . $uid . (!empty($ext_str) ? $ext_str : "");
-        // 生成推流地址
-        $online_url = "https://tx1.yunchuanglive.com/live/$uid.m3u8";
-
-        $data = [
-            'status' => $status,
-            'status_time' => $status_time,
-            'uid' => $uid,
-            'rtmp_url' => $rtmp_url,
-            'online_url' => $online_url
-        ];
-        return $this->successInfo($data);
-    }
-
-    public function actionDevicePush()
-    {
-        $uid = \Yii::$app->request->post('uid');
-        $pushurl = \Yii::$app->request->post('pushurl');
-        $uid = HtmlPurifier::process($uid);
-        $pushurl = HtmlPurifier::process($pushurl);
-
-        if (empty($uid) || empty($pushurl)) {
-            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
-        }
-
-        // 根据uid 获取 mac 地址
-        $macUrl = ConStatus::$DEVICE_SETTING_GET_MAC;
-        $macUrl = str_replace('{uid}', $uid, $macUrl);
-        $macInfo = CommonHelper::curl($macUrl);
-        $macInfo = json_decode($macInfo, true);
-
-        if (empty($macInfo) || empty($macInfo['mac'])) {
-            return $this->errorInfo(ConStatus::$ERROR_DEVICE_UID_MSG);
-        }
-
-        $pushurl = urlencode($pushurl);
-        $url = ConStatus::$DEVICE_SETTING_PUSH_URL;
-        $url = str_replace('{mac}', $macInfo['mac'], $url);
-        $url = str_replace('{pushurl}', $pushurl, $url);
-        echo CommonHelper::curl($url);
-        exit;
+        return ['status' => $status, 'status_time' => $status_time];
     }
 }

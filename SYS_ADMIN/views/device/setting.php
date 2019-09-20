@@ -18,6 +18,8 @@
     <link rel="apple-touch-icon-precomposed" href="/static/assets/ico/apple-touch-icon-57-precomposed.png">
     <style>
         .step2,.step3, .step4{display: none}
+        .form-top-left{position: relative}
+        .form-top-left .refresh-button{position: absolute; right: 0; top: 20px;}
     </style>
 </head>
 <body>
@@ -62,6 +64,9 @@
                             <h3><span class="stream-name">SSSS-</span> &nbsp&nbsp<a href="javascript:;" onclick="initDevice()">切换设备</a></h3>
                             <p>状态： <a href="javascript:;"><span class="stream-status"></span></a>
                                 &nbsp&nbsp时间： <span class="stream-time"></span> <br></p>
+                            <button class="refresh-button btn" onclick="refreshState()">
+                                刷新
+                            </button>
                         </div>
                     </div>
                     <div class="form-bottom-2"  align="center">
@@ -78,6 +83,9 @@
                             <h3><span class="stream-name">SSSS-</span> &nbsp&nbsp<a href="javascript:;" onclick="initDevice()">切换设备</a></h3>
                             <p>状态： <a href="javascript:;"><span class="stream-status"></span></a>
                                 &nbsp&nbsp时间： <span class="stream-time"></span> <br></p>
+                            <button class="refresh-button btn" onclick="refreshState()">
+                                刷新
+                            </button>
                         </div>
                     </div>
                     <div class="form-bottom-2">已生成自动推流地址
@@ -99,6 +107,9 @@
                             <h3><span class="stream-name">SSSS-</span> &nbsp&nbsp<a href="javascript:;" onclick="initDevice()">切换设备</a></h3>
                             <p>状态： <a href="javascript:;"><span class="stream-status"></span></a>
                                 &nbsp&nbsp时间： <span class="stream-time"></span> <br></p>
+                            <button class="refresh-button btn" onclick="refreshState()">
+                                刷新
+                            </button>
                         </div>
                     </div>
                     <div class="form-bottom-2">请输入推流地址
@@ -132,7 +143,6 @@
     function getStreamInfo() {
         streamname = $("#streamname").val().trim();
         var uid = streamname.replace("SSSS-", "");
-        console.log(streamname);
         if (!uid) {
             return false;
         }
@@ -192,11 +202,25 @@
             url: '<?php echo \yii\helpers\Url::to('/api/device-push')?>',
             dataType: 'json',
             type: "POST",
-            data: {'uid' : streamname, 'pushurl': pushurl},
+            data: {'uid' : streamname, 'pushurl': encodeURIComponent(pushurl)},
             success: function (result) {
+                alert("设置成功");
                 $(".step3").hide();
                 $(".step4").hide();
                 $(".step2").show();
+            }
+        });
+    }
+
+    function refreshState() {
+        $.ajax({
+            url: '<?php echo \yii\helpers\Url::to('/api/device-state')?>',
+            dataType: 'json',
+            type: "POST",
+            data: {'uid' : streamname},
+            success: function (result) {
+                $(".stream-status").text(result.data.status);
+                $(".stream-time").text(result.data.status_time);
             }
         });
     }
