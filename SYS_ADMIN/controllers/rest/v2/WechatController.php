@@ -85,8 +85,10 @@ class WechatController extends BaseController
     {
         $code = \Yii::$app->request->get('code');
         $refer = \Yii::$app->request->get('refer', '');
-        $appid = Wechat::$APPID;
-        $appsecret = Wechat::$APPSECRET;
+
+        $conf = \Yii::$app->params['wx']['mp'];
+        $appid = $conf['app_id'];
+        $appsecret = $conf['secret'];
         if (empty($code)) {
             //$redirec_url = CommonHelper::getDomain()."/rest/v1/wechat/auth-login";
             $redirec_url = CommonHelper::getDomain().$_SERVER['REQUEST_URI'];
