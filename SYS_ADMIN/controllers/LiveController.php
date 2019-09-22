@@ -104,7 +104,10 @@ class LiveController extends CommonController
 
         // 分类
         $category = Category::getCategoryList();
-        if (empty($room_info['mini_code']) && !empty($room_info)) {
+        if (empty($room_info['mini_code'])
+            && !empty($room_info)
+            && \Yii::$app->params['wx']['mini']
+            && \Yii::$app->params['wx']['mini']['secret']) {
             //小程序码
             $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
