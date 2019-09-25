@@ -50,6 +50,7 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                             <th>点击量</th>
                             <th>排序</th>
                             <th>状态</th>
+                            <th>预览</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -87,6 +88,12 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
             aoColumnDefs: [
                 {
                     "targets": 6,
+                    "render" : function(data, type, row) {
+                        return "<a href=\""+row.preview+"\" target='_blank' class=\"m-l-sm\" > "+row.preview+" </a>";
+                    }
+                },
+                {
+                    "targets": 7,
                     "render" : function(data, type, row) {
                         var html = '';
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLens('"+ row.id +"')\"> 编辑 </a>";

@@ -4,6 +4,7 @@ namespace SYS_ADMIN\controllers;
 
 use app\models\EquipmentCutoutTencent;
 use app\models\EquipmentTencent;
+use OSS\OssClient;
 use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Equipment;
@@ -11,6 +12,7 @@ use SYS_ADMIN\models\EquipmentBack;
 use SYS_ADMIN\models\EquipmentCount;
 use SYS_ADMIN\models\EquipmentCutout;
 use SYS_ADMIN\models\Lens;
+use yii\helpers\HtmlPurifier;
 
 class ApiController extends CommonApiController
 {
@@ -152,14 +154,23 @@ class ApiController extends CommonApiController
         if (isset($data['event_type']) && $data['event_type'] == 200) {
             if (md5($this->TencentKey . $data['t']) === $data['sign'] && (time() - $data['t']) < 60) {
                 $pic_url = str_replace('http', 'https', $data['pic_full_url']);
+
                 $stream_name = $data['stream_id'];
                 $app_name = 'live';
+
+                // 图片存储阿里云对象云存储
+                $content = CommonHelper::curl($pic_url);
+                $url = CommonHelper::OssUpload($content, $stream_name . ".jpg");
+                if (!$url) {
+                    echo json_encode(['code' => ConStatus::$STATUS_ERROR_OSS_UPLOAD, 'data' => ConStatus::$ERROR_OSS_UPLOAD_MSG]);
+                    exit;
+                }
 
                 $model = Lens::find()
                     ->where(['app_name' => $app_name, 'stream_name' => $stream_name])
                     ->one();
                 if ($model != null) {
-                    $model->online_cover_url = $pic_url;
+                    $model->online_cover_url = $url;
                     $model->save();
                 }
 
@@ -185,7 +196,7 @@ class ApiController extends CommonApiController
 
         $info = json_decode($content, true);
         if (isset($info['event_type']) && ($info['event_type'] === 1 || $info['event_type'] === 0)) {
-            if (md5($this->TencentKey.$info['t']) === $info['sign'] && (time() - $info['t'] ) < 60) {
+            if (md5($this->TencentKey . $info['t']) === $info['sign'] && (time() - $info['t']) < 60) {
                 $appname = 'live';
                 $app = $info['app'];
                 $stream = $info['stream_id'];
@@ -259,8 +270,157 @@ class ApiController extends CommonApiController
     }
 
 
-    public function actionDevice(){
+    public function actionDevice()
+    {
         $content = file_get_contents('php://input');
         file_put_contents("apiDevice.log", $content, FILE_APPEND);
+    }
+
+    /**
+     * 阿里云对象云存储
+     */
+    public function actionOss()
+    {
+
+        $url = "https://ycycc.oss-cn-shanghai.aliyuncs.com/yc-ycc-images/live/yctbkh-sjjs002.jpg";
+        $content = CommonHelper::curl($url);
+        $res = CommonHelper::OssUpload($content, "1.jpg");
+    }
+
+
+    /**
+     * 获取设备推流地址
+     */
+    public function actionDeviceInfo()
+    {
+        $uid = \Yii::$app->request->post('uid');
+        $uid = HtmlPurifier::process($uid);
+
+        if (empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $data = $this->getDeviceState($uid);
+        if (empty($data) || empty($data['status'])) {
+            return $this->errorInfo($data);
+        }
+
+        // 获取直播地址
+        $txTime = strtoupper(base_convert(strtotime("2030-11-17 23:59:59"), 10, 16));
+        $txSecret = md5("yunchuanglive2019" . $uid . $txTime);
+        $ext_str = "?" . http_build_query(array(
+                "txSecret" => $txSecret,
+                "txTime" => $txTime
+            ));
+        $rtmp_url = "rtmp://tx1rtmp.yunchuanglive.com/live/" . $uid . (!empty($ext_str) ? $ext_str : "");
+        // 生成推流地址
+        $online_url = "https://tx1.yunchuanglive.com/live/$uid.m3u8";
+
+        $data = [
+            'status' => $data['status'],
+            'status_time' => $data['status_time'],
+            'uid' => $uid,
+            'rtmp_url' => $rtmp_url,
+            'online_url' => $online_url
+        ];
+        return $this->successInfo($data);
+    }
+
+
+    /**
+     * 获取设备状态
+     */
+    public function actionDeviceState()
+    {
+        $uid = \Yii::$app->request->post('uid');
+        $uid = HtmlPurifier::process($uid);
+
+        if (empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $data = $this->getDeviceState($uid);
+        if (empty($data) || empty($data['status'])) {
+            return $this->errorInfo($data);
+        }
+
+        return $this->successInfo($data);
+    }
+
+    public function actionDevicePush()
+    {
+        $uid = \Yii::$app->request->post('uid');
+        $pushurl = \Yii::$app->request->post('pushurl');
+        $uid = HtmlPurifier::process($uid);
+        $pushurl = HtmlPurifier::process($pushurl);
+        $pushurl = urldecode($pushurl);
+        if (empty($uid) || empty($pushurl)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        // 根据uid 获取 mac 地址
+        $macUrl = ConStatus::$DEVICE_SETTING_GET_MAC;
+        $macUrl = str_replace('{uid}', $uid, $macUrl);
+        $macInfo = CommonHelper::curl($macUrl);
+        $macInfo = json_decode($macInfo, true);
+
+        if (empty($macInfo) || empty($macInfo['mac'])) {
+            return $this->errorInfo(ConStatus::$ERROR_DEVICE_UID_MSG);
+        }
+
+        $pushurl = urlencode($pushurl);
+        $url = ConStatus::$DEVICE_SETTING_PUSH_URL;
+        $url = str_replace('{mac}', $macInfo['mac'], $url);
+        $url = str_replace('{pushurl}', $pushurl, $url);
+        echo CommonHelper::curl($url);
+        exit;
+    }
+
+    private function getDeviceState($uid)
+    {
+        // 根据uid 获取 mac 地址
+        $macUrl = ConStatus::$DEVICE_SETTING_GET_MAC;
+        $macUrl = str_replace('{uid}', $uid, $macUrl);
+        $macInfo = CommonHelper::curl($macUrl);
+        $macInfo = json_decode($macInfo, true);
+
+        if (empty($macInfo) || empty($macInfo['mac'])) {
+            return ConStatus::$ERROR_DEVICE_UID_MSG;
+        }
+
+        // 获取设备状态
+        $stateUrl = ConStatus::$DEVICE_SETTING_STATE;
+        $stateUrl = str_replace('{mac}', $macInfo['mac'], $stateUrl);
+        $device_state_info = CommonHelper::curl($stateUrl);
+        $device_state_info = json_decode($device_state_info, true);
+
+        if ($device_state_info['status'] === 'disconnect') {
+            return ConStatus::$ERROR_DEVICE_UID_MSG;
+        }
+
+
+        $status_time = explode('/', $device_state_info['status_time']);
+        $status_time[0] = date('Y');
+        $status_time = implode('/', $status_time);
+
+        $status = "";
+        if (strpos($device_state_info['status'], "Publishing") !== false) {
+            $status = "正在直播";
+            if (strtotime($status_time) < time() - 600) {
+                $status = "直播超时";
+            }
+        } else if (strpos($device_state_info['status'], "Will Restart") !== false) {
+            $status = "重新启动";
+        } else if (strpos($device_state_info['status'], "Initialize IPCAM") !== false) {
+            $status = "初始化";
+        } else if (strpos($device_state_info['status'], "Idle") !== false) {
+            $status = "空闲";
+        } else if (strpos($device_state_info['status'], "Connecting") !== false) {
+            $status = "连接中";
+        } else if (strpos($device_state_info['status'], "Waiting IPCAM Response") !== false) {
+            $status = "等待响应";
+        }
+
+        return ['status' => $status, 'status_time' => $status_time];
     }
 }

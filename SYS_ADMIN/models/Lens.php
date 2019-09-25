@@ -63,6 +63,7 @@ class Lens extends ActiveRecord
                 $len['created_at'] = date('Y-m-d H:i', $len['created_at']);
                 $len['status'] = ConStatus::$STATUS_LIST[$len['status']];
                 $len['pic_path'] = isset($pic_list[$len['cover_img']]) ? $pic_list[$len['cover_img']]['pic_path'] : '';
+                $len['preview'] = CommonHelper::getDomain().'/lens/preview?app='.$len['app_name'].'&stream='.$len['stream_name'];
             }
         }
 

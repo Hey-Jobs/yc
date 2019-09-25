@@ -25,6 +25,7 @@ class DeviceController extends CommonApiController
         $auth = HtmlPurifier::process($auth);
         $mac = HtmlPurifier::process($mac);
         $pushurl = HtmlPurifier::process($pushurl);
+
         $pushurl = urldecode($pushurl);
         if (empty($auth) || empty($mac) || empty($pushurl)) {
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
@@ -36,14 +37,16 @@ class DeviceController extends CommonApiController
         }
 
         $pushurl = urlencode($pushurl);
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl={$pushurl}";
+        $url = ConStatus::$DEVICE_SETTING_PUSH_URL;
+        $url = str_replace('{mac}', $mac, $url);
+        $url = str_replace('{pushurl}', $pushurl, $url);
         echo CommonHelper::curl($url);
         exit;
     }
 
 
     /**
-     * mac设备推流
+     * 清空推流地址
      */
     public function actionReset()
     {
@@ -62,7 +65,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON&pushurl=reset";
+        $url = ConStatus::$DEVICE_SETTING_RESET;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
 		
@@ -109,7 +113,8 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=HOW";
+        $url = ConStatus::$DEVICE_SETTING_STATE;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
     }
@@ -131,8 +136,58 @@ class DeviceController extends CommonApiController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
         }
 
-        $url = "https://www.setipc.com/golive.php?c={$mac}&play=ON";
+        $url = ConStatus::$DEVICE_SETTING_ADDR;
+        $url = str_replace('{mac}', $mac, $url);
         echo CommonHelper::curl($url);
 		exit;
+    }
+
+
+    // 查询MAC 地址
+    public function  actionMac()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $uid = \Yii::$app->request->get('uid');
+
+        $auth = HtmlPurifier::process($auth);
+        $uid = HtmlPurifier::process($uid);
+        if (empty($auth) || empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = ConStatus::$DEVICE_SETTING_GET_MAC;
+        $url = str_replace('{uid}', $uid, $url);
+        echo CommonHelper::curl($url);
+        exit;
+    }
+
+    /**
+     * 设备重启
+     */
+    public function  actionRestart()
+    {
+        $auth = \Yii::$app->request->get('key');
+        $uid = \Yii::$app->request->get('uid');
+
+        $auth = HtmlPurifier::process($auth);
+        $uid = HtmlPurifier::process($uid);
+        if (empty($auth) || empty($uid)) {
+            return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $authInfo = DeviceAuth::findOne(['auth_code' => $auth, 'status' => 1]);
+        if (empty($authInfo)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_DEVICE_AUTH);
+        }
+
+        $url = ConStatus::$DEVICE_SETTING_RESTART;
+        $url = str_replace('{uid}', $uid, $url);
+        echo CommonHelper::curl($url);
+        exit;
     }
 }

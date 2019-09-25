@@ -93,8 +93,9 @@ return [
             'login/logout',
             'login/captcha',
             'api/*',
+            'device/*',
             'console/*',
-            'admin/route/*'
+            'admin/route/*',
         ]
     ],
 

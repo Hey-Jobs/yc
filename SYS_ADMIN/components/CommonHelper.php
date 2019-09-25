@@ -10,6 +10,7 @@ namespace SYS_ADMIN\components;
 
 use Flc\Dysms\Client;
 use Flc\Dysms\Request\SendSms;
+use OSS\OssClient;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\SmsLog;
 
@@ -210,7 +211,7 @@ class CommonHelper
      */
     public static function checkMobile($mobile)
     {
-        if (preg_match('/^1[34578]\d{9}$/', $mobile)) {
+        if (preg_match('/^1[3456789]\d{9}$/', $mobile)) {
             return true;
         } else {
             return false;
@@ -459,4 +460,47 @@ class CommonHelper
     }
 
 
+    public static function OssUpload($content, $filename, $dir = "images/") {
+
+        $accessKeyId = getenv('ALIYUN_OSS_ACCESSKEYID');
+        $accessKeySecret = getenv('ALIYUN_OSS_ACCESSKEYSECRET');
+        $bucket = getenv('ALIYUN_OSS_BUCKET');
+        $endpoint = getenv('ALIYUN_OSS_ENDPOINT');
+        $client = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+        $res = $client->putObject($bucket, $dir.$filename, $content);
+        if ($res['x-oss-request-id']) {
+            return "https://ycycc.oss-cn-shanghai.aliyuncs.com/".$dir.$filename;
+        } else {
+            CommonHelper::writeLog($res, "ossuploadError");
+            return false;
+        }
+    }
+
+
+    //操作设备视频
+    public static function operateDeviceStream($action, $deviceId, $accessKeyId, $accessKeySecret)
+    {
+
+        $params = [
+            'Action' => $action,
+            'Id' => $deviceId,
+            'Version' => getenv('ALIYUN_LIVE_STREAM_VERSION'),
+            'AccessKeyId' => $accessKeyId,
+            'SignatureMethod' => getenv('ALIYUN_LIVE_STREAM_SINGNATUREMETHOD'),
+            'Timestamp' => CommonHelper::getTimestamp(),
+            'SignatureVersion' => getenv('ALIYUN_LIVE_STREAM_SINGNATUREVERSION'),
+            'SignatureNonce' => uniqid(),
+            'Format' => 'JSON'
+        ];
+        $sign = CommonHelper::getAliSign($params, $accessKeySecret);
+        $params['Signature'] = $sign;
+
+        $dataString = "";
+        foreach ($params as $k => $v) {
+            $dataString .= "$k=" . urlencode($v) . "&";
+        }
+        $res = CommonHelper::curl('https://vs.cn-shanghai.aliyuncs.com', $params);
+        CommonHelper::writeLog('rest:' . $res, 'videoStream.log');
+        return json_decode($res, true);
+    }
 }
