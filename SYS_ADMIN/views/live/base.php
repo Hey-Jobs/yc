@@ -164,20 +164,22 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">直播间模板</label>
 
-                        <div class="col-sm-10">
-                            <select name="templet_id" id="templet_id" class="form-control">
-                                <?php foreach ($templateList as $item) { ?>
-                                    <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
-                                <?php }?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
 
                     <?php if($is_admin === true) :?>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">直播间模板</label>
+
+                            <div class="col-sm-10">
+                                <select name="templet_id" id="templet_id" class="form-control">
+                                    <?php foreach ($templateList as $item) { ?>
+                                        <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
+                                    <?php }?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                    
                     <div class="form-group">
                         <label class="col-sm-2 control-label">所属用户</label>
                         <div class="col-sm-10">
@@ -218,8 +220,8 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
                             <div class="col-sm-10">
                                 <div class="">
-                                        <label> <input type="radio" name="mini_status" id="mini_status1" value="1" <?php echo $info['mini_status'] === 1 ? "checked" : "" ?>>显示</label>
-                                        <label> <input type="radio" name="mini_status" id="mini_status2" value="2" <?php echo $info['mini_status'] != 1 ? "checked" : "" ?>>隐藏</label>
+                                        <label> <input type="radio" name="mini_status" id="mini_status1" value="1" <?php echo  isset($info['mini_status']) && $info['mini_status'] === 1 ? "checked" : "" ?>>显示</label>
+                                        <label> <input type="radio" name="mini_status" id="mini_status2" value="2" <?php echo !isset($info['mini_status']) || $info['mini_status'] != 1 ? "checked" : "" ?>>隐藏</label>
                                 </div>
                             </div>
                         </div>
