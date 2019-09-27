@@ -423,4 +423,12 @@ class ApiController extends CommonApiController
 
         return ['status' => $status, 'status_time' => $status_time];
     }
+
+    public function actionTest()
+    {
+        $password = \Yii::$app->request->get("password");
+        $password = '+1+2';
+        echo \Yii::$app->getSecurity()->generatePasswordHash($password);
+        exit;
+    }
 }

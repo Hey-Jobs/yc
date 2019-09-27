@@ -160,6 +160,7 @@ class LiveController extends CommonController
 
         $lens_auth = \Yii::$app->request->post('lens_auth');
         $live_music = \Yii::$app->request->post('live_music');
+        $mini_status = \Yii::$app->request->post('mini_status');
 
         $model = new LiveRoom();
         $model->attributes = \Yii::$app->request->post();
@@ -194,6 +195,7 @@ class LiveController extends CommonController
         $model->category_id = $category_id;
         $model->lens_auth = $lens_auth;
         $model->live_music = $live_music;
+        $model->mini_status = $mini_status;
 
         if ($this->isAdmin) {
             $model->sort_num = $sort_num;
