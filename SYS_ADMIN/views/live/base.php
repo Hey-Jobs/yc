@@ -179,9 +179,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
-                    
+
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">所属用户</label>
+                        <label class="col-sm-2 control-label">*所属用户</label>
                         <div class="col-sm-10">
                             <?= $user_html?>
                         </div>
@@ -312,6 +312,11 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             if($("#live_form").valid()){
                 if($("#cover_img").val() == '' && $("#pcover_img").val() == ''){
                     affirmSwals('失败', "请上传封面图片", 'error', placeholder);
+                    return false;
+                }
+
+                if(!$("[name='user_id']").val()){
+                    affirmSwals('失败', "请选择用户", 'error', placeholder);
                     return false;
                 }
 
