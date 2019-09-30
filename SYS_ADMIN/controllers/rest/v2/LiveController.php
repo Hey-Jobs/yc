@@ -96,7 +96,7 @@ class LiveController extends BaseController
         $page = \Yii::$app->request->post('page', ConStatus::$PAGE_NUM);
 
         $model = LiveRoom::find()
-            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->where(['status' => ConStatus::$STATUS_ENABLE, 'mini_status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['>', 'category_id', 0]);
 
         if ($room_type == 2) { // 首页推荐，显示直播间  排序值为 1~10之间
