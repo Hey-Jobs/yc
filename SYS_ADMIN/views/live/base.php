@@ -228,6 +228,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                         <div class="hr-line-dashed"></div>
                     <?php else: ?>
                         <input type="hidden" name="user_id" value="<?= $info['user_id'] ?? 0 ?>"/>
+                        <input type="hidden" name="templet_id" value="<?= $info['templet_id'] ?? 0 ?>"/>
                     <?php endif;?>
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
