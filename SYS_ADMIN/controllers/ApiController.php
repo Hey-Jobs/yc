@@ -427,7 +427,7 @@ class ApiController extends CommonApiController
     public function actionTest()
     {
         $password = \Yii::$app->request->get("password");
-        $password = '+1+2';
+        $password = 'ncdby2019';
         echo \Yii::$app->getSecurity()->generatePasswordHash($password);
         exit;
     }
