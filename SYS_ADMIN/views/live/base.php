@@ -215,13 +215,24 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
+                    <div class="form-group">
                             <label class="col-sm-2 control-label">小程序显示</label>
 
                             <div class="col-sm-10">
                                 <div class="">
-                                        <label> <input type="radio" name="mini_status" id="mini_status1" value="1" <?php echo  isset($info['mini_status']) && $info['mini_status'] === 1 ? "checked" : "" ?>>显示</label>
-                                        <label> <input type="radio" name="mini_status" id="mini_status2" value="2" <?php echo !isset($info['mini_status']) || $info['mini_status'] != 1 ? "checked" : "" ?>>隐藏</label>
+                                    <label> <input type="radio" name="mini_status" id="mini_status1" value="1" <?php echo  isset($info['mini_status']) && $info['mini_status'] === 1 ? "checked" : "" ?>>显示</label>
+                                    <label> <input type="radio" name="mini_status" id="mini_status2" value="2" <?php echo !isset($info['mini_status']) || $info['mini_status'] != 1 ? "checked" : "" ?>>隐藏</label>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">小程序显示镜头</label>
+
+                            <div class="col-sm-10">
+                                <div class="">
+                                    <label> <input type="radio" name="lens_status" id="lens_status1" value="1" <?php echo  isset($info['lens_status']) && $info['lens_status'] === 1 ? "checked" : "" ?>>显示</label>
+                                    <label> <input type="radio" name="lens_status" id="lens_status2" value="2" <?php echo !isset($info['lens_status']) || $info['lens_status'] != 1 ? "checked" : "" ?>>隐藏</label>
                                 </div>
                             </div>
                         </div>
@@ -229,6 +240,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <?php else: ?>
                         <input type="hidden" name="user_id" value="<?= $info['user_id'] ?? 0 ?>"/>
                         <input type="hidden" name="templet_id" value="<?= $info['templet_id'] ?? 0 ?>"/>
+                        <input type="hidden" name="sort_num" value="<?= $info['sort_num'] ?? 10 ?>"/>
+                        <input type="hidden" name="status" value="<?= $info['status'] ?? 1 ?>"/>
+                        <input type="hidden" name="mini_status" value="<?= $info['mini_status'] ?? 1 ?>"/>
+                        <input type="hidden" name="lens_status" value="<?= $info['lens_status'] ?? 1 ?>"/>
                     <?php endif;?>
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-2">
