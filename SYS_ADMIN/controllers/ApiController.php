@@ -17,7 +17,22 @@ use yii\helpers\HtmlPurifier;
 class ApiController extends CommonApiController
 {
 
-    private $TencentKey = "7100e82a874a06ffcbf3c9ead04cdc89";
+    private $pushServerList = [
+        'Tx01' => [
+            'key' => 'yunchuanglive2019',
+            'rtmpUri' => 'tx1rtmp.yunchuanglive.com',
+            'playUri' => 'tx1.yunchuanglive.com',
+            'validDate' => '2030-11-17 23:59:59'
+        ],
+        'Tx02' => [
+            'key' => '03341632f89c15d2dfda2ff917603d5d',
+            'rtmpUri' => 'krtxrtmp1.setrtmp.com',
+            'playUri' => 'krtxplay1.setrtmp.com',
+            'validDate' => '2030-11-17 23:59:59'
+        ],
+    ];
+
+    private $defaultServer = 'Tx01';
 
     /**
      * 回放回写.
@@ -294,7 +309,9 @@ class ApiController extends CommonApiController
     public function actionDeviceInfo()
     {
         $uid = \Yii::$app->request->post('uid');
+        $sid = \Yii::$app->request->post('sid', $this->defaultServer);
         $uid = HtmlPurifier::process($uid);
+        $sid = HtmlPurifier::process($sid);
 
         if (empty($uid)) {
             return $this->errorInfo(ConStatus::$ERROR_PARAMS_MSG);
@@ -306,15 +323,16 @@ class ApiController extends CommonApiController
         }
 
         // 获取直播地址
-        $txTime = strtoupper(base_convert(strtotime("2030-11-17 23:59:59"), 10, 16));
-        $txSecret = md5("yunchuanglive2019" . $uid . $txTime);
+        $serverConfig = $this->pushServerList[$sid];
+        $txTime = strtoupper(base_convert(strtotime($serverConfig['validDate']), 10, 16));
+        $txSecret = md5($serverConfig['key'] . $uid . $txTime);
         $ext_str = "?" . http_build_query(array(
                 "txSecret" => $txSecret,
                 "txTime" => $txTime
             ));
-        $rtmp_url = "rtmp://tx1rtmp.yunchuanglive.com/live/" . $uid . (!empty($ext_str) ? $ext_str : "");
+        $rtmp_url = "rtmp://{$serverConfig['rtmpUri']}/live/" . $uid . (!empty($ext_str) ? $ext_str : "");
         // 生成推流地址
-        $online_url = "https://tx1.yunchuanglive.com/live/$uid.m3u8";
+        $online_url = "https://{$serverConfig['playUri']}/live/$uid.m3u8";
 
         $data = [
             'status' => $data['status'],

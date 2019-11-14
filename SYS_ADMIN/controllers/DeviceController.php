@@ -16,6 +16,7 @@ class DeviceController extends CommonController
 
     private $accessKeySecret;
 
+
     public function init()
     {
         parent::init();
@@ -110,6 +111,8 @@ class DeviceController extends CommonController
      */
     public function actionSetting()
     {
-        return $this->renderPartial("setting");
+        $sid = \Yii::$app->request->get('sid');
+        $sid = HtmlPurifier::process($sid);
+        return $this->renderPartial("setting", ['sid' => $sid]);
     }
 }

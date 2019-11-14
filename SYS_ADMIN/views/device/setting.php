@@ -42,7 +42,7 @@
                 <div class="col-sm-6 col-sm-offset-3 form-box step1">
                     <div class="form-top">
                         <div class="form-top-left">
-                            <h3>服务器：TX01云直播</h3>
+                            <h3>服务器：<?php echo $sid; ?>云直播</h3>
                             <p>输入设备UID<a href=""> 注:见设备/包装标签</a></p>
                         </div>
                         <div class="form-top-right">
@@ -126,7 +126,7 @@
     </div>
 
 </div>
-<div class="copyrights">Collect from <a href="http://www.cssmoban.com/"  title="云窗在线">云窗在线</a></div>
+<div class="copyrights">Collect from <a href="javascript:void(0)"  title="云窗在线">云窗在线</a></div>
 
 <!-- Javascript -->
 <script src="/static/assets/js/jquery-1.11.1.min.js"></script>
@@ -143,6 +143,7 @@
     function getStreamInfo() {
         streamname = $("#streamname").val().trim();
         var uid = streamname.replace("SSSS-", "");
+        var sid = "<?php echo $sid;?>";
         if (!uid) {
             return false;
         }
@@ -153,7 +154,7 @@
             url: '<?php echo \yii\helpers\Url::to('/api/device-info')?>',
             dataType: 'json',
             type: "POST",
-            data: {'uid' : streamname},
+            data: {'uid' : streamname, 'sid': sid},
             success: function (result) {
                 if (result.status == 200) {
                     $(".step1").hide();
