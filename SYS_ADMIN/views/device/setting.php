@@ -30,7 +30,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2 text">
-                    <h1><strong>云窗科技</strong> 直播管理系统</h1>
+                    <h1><strong>云直播</strong> 直播管理系统</h1>
                     <div class="description">
                         <p>
                             本系统为内部使用，请勿外传！
