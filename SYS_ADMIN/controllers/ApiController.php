@@ -17,6 +17,8 @@ use yii\helpers\HtmlPurifier;
 class ApiController extends CommonApiController
 {
 
+    private $TencentKey = "7100e82a874a06ffcbf3c9ead04cdc89";
+    
     private $pushServerList = [
         'Tx01' => [
             'key' => 'yunchuanglive2019',
