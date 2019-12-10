@@ -12,6 +12,7 @@ use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\components\SearchWidget;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\Video;
+use yii\web\UploadedFile;
 
 /**
  * Class VideoController
@@ -141,6 +142,23 @@ class VideoController extends CommonController
         } else {
             $model->click_num = 1;
             $model->created_at = time();
+        }
+
+        if(isset($_FILES['file']) && !empty($_FILES['file']['name'])){
+            $uploadFile = UploadedFile::getInstanceByName('file');
+            $base_path = "uploads/".date('Ymd').'/';
+            $file_name = md5(uniqid().mt_rand(100000, 9999999)). '.' . $uploadFile->extension;
+            $file_path = $base_path.$file_name;
+            $video_path = CommonHelper::OssUploadFile($uploadFile->tempName, $file_path, ConStatus::$OSS_BASE_DIR);
+            if(!empty($video_path)){
+                $video_url = $video_path;
+            } else {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_OSS_UPLOAD, ConStatus::$ERROR_OSS_UPLOAD_MSG);
+            }
+        }
+
+        if (empty($video_url)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
         $model->video_name = $video_name;

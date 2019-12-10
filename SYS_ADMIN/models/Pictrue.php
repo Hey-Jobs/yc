@@ -59,6 +59,42 @@ class Pictrue extends ActiveRecord
         }
     }
 
+
+    public function uploadOss()
+    {
+        $err = "";
+        $pic_list = [];
+        $this->setScenario('pic');
+        $base_path = "uploads/".date('Ymd').'/';
+        if($this->validate()){
+            if(!is_dir($base_path) || !is_writable($base_path)){
+                \yii\helpers\FileHelper::createDirectory($base_path, 0777, true);
+            }
+
+            $file_name = md5(uniqid().mt_rand(100000, 9999999)). '.' . $this->imageFile->extension;
+            $file_path = $base_path.$file_name;
+
+            $file_path = CommonHelper::OssUploadFile($this->imageFile->tempName, $file_path, ConStatus::$OSS_BASE_DIR);
+            if($file_path){
+                $model = new Pictrue();
+                $model->pic_name = $this->imageFile->baseName;
+                $model->md5_name = $file_name;
+                $model->pic_path = $file_path;
+                $model->pic_size = $this->imageFile->size;
+                $model->created_at = time();
+                $model->save(false);
+
+                $pic_list = \Yii::$app->db->getLastInsertID();
+                return ['status' => 1, 'images' => $pic_list, 'img_path' => $file_path];
+            } else {
+                return ['status' => 401, 'info' => '上传失败'];
+            }
+
+        } else {
+            return ['status' => 401, 'info' => implode(',', $this->getFirstErrors())];
+        }
+    }
+
     public function uploadBase64($data, $extend)
     {
         $err = "";
@@ -142,7 +178,7 @@ class Pictrue extends ActiveRecord
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         if($pictrue_info['pic_path']){
-            $pictrue_info['pic_path'] = $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pictrue_info['pic_path']);
+            $pictrue_info['pic_path'] = strpos($pictrue_info['pic_path'], 'http') === false ? $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pictrue_info['pic_path']) : $pictrue_info['pic_path'];
             //$pictrue_info['pic_path'] = "https://yc.adaxiang.com".CommonHelper::getPicPath($pictrue_info['pic_path']);
         }
 
@@ -171,7 +207,7 @@ class Pictrue extends ActiveRecord
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         if(count($pic_list)){
             foreach ($pic_list as &$pic){
-                $pic['pic_path'] = $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pic['pic_path']);
+                $pic['pic_path'] = strpos($pic['pic_path'], 'http') === false ? $protocol.$_SERVER['HTTP_HOST'].CommonHelper::getPicPath($pic['pic_path']) : $pic['pic_path'];
             }
         }
 

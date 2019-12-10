@@ -161,6 +161,9 @@ class ConStatus
     public static $DEVICE_STREAM_STOP = 'StopDevice';
     public static $DEVICE_STREAM_INFO = 'DescribeDevice';
 
+    // oss base dir
+    public static $OSS_BASE_DIR = 'yclive/';
+
     // 获取mac地址
     public static $DEVICE_SETTING_GET_MAC = "https://www.setipc.com/get_mac.php?uid={uid}";
     // 重启设备

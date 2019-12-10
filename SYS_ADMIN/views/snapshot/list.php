@@ -47,6 +47,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     Standard table
                 </div>
                 <div class="panel-body">
+                    <p>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="updateSnapshot()">添加图片</button>
+                    </p>
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -307,7 +310,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
   {
     $("#img").fileinput({
       language: 'zh', //设置语言
-      uploadUrl: '/upload/img', //上传的地址
+      uploadUrl: '/upload/oss-img', //上传的地址
       allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
       uploadAsync: true, //默认异步上传
       showUpload: false, //是否显示上传按钮

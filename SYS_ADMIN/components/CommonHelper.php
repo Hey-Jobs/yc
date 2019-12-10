@@ -476,6 +476,30 @@ class CommonHelper
         }
     }
 
+    /**
+     * 上传文件到对象云存储
+     * @param $file
+     * @param $filename
+     * @param string $dir
+     * @return bool|string
+     * @throws \OSS\Core\OssException
+     */
+    public static function OssUploadFile($file, $filename, $dir = "images/") {
+
+        $accessKeyId = getenv('ALIYUN_OSS_ACCESSKEYID');
+        $accessKeySecret = getenv('ALIYUN_OSS_ACCESSKEYSECRET');
+        $bucket = getenv('ALIYUN_OSS_BUCKET');
+        $endpoint = getenv('ALIYUN_OSS_ENDPOINT');
+        $client = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+        $res = $client->uploadFile($bucket, $dir.$filename, $file);
+        if ($res['x-oss-request-id']) {
+            return "https://ycycc.oss-cn-shanghai.aliyuncs.com/".$dir.$filename;
+        } else {
+            CommonHelper::writeLog($res, "ossuploadError");
+            return false;
+        }
+    }
+
 
     //操作设备视频
     public static function operateDeviceStream($action, $deviceId, $accessKeyId, $accessKeySecret)

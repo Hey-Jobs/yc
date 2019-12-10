@@ -115,7 +115,7 @@ class SnapshotController extends CommonController
 
         $model = Snapshot::findOne($id);
         if (empty($model)) {
-            return $this->errorInfo(ConStatus::$STATUS_ERROR_ID, ConStatus::$ERROR_PARAMS_MSG);
+            $model = new Snapshot();
         }
 
         $model->attributes = $data;

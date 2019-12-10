@@ -58,7 +58,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                     <h4 class="modal-title"><span id="btnText">添加视频</span></h4>
                                 </div>
                                 <div class="modal-body" style="300px;">
-                                    <form id="video_form" method="post" >
+                                    <form id="video_form" method="post" enctype="multipart/form-data">
                                         <div class="form-group row text-left" style="display: none;">
                                             <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
                                         </div>
@@ -81,6 +81,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                             <label class="col-sm-3 control-label position">视频链接：</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="video_url" placeholder="视频链接"/>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row text-left">
+                                            <label class="col-sm-3 control-label position">选择视频文件：</label>
+                                            <div class="col-sm-9">
+                                                <input type="file" class="form-control" name="file" placeholder="选择视频文件"/>
                                             </div>
                                         </div>
 
@@ -162,10 +170,6 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             rules:{
                 video_name:{
                     required: true,
-                },
-                video_url: {
-                    required: true,
-                    url: true
                 },
                 sort_num: {
                     required: true,
@@ -311,11 +315,15 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             return false;
         }
 
+        var formData = new FormData($("#video-form")[0]);
+
         $.ajax({
             type:'POST',
             dataType: 'json',
+            contentType: false,
+            processData: false,
             url : '<?php echo yii\helpers\Url::to('/video/save')?>',
-            data : $("#video-form").serialize(),
+            data : formData,
             success: function(result) {
                 if ('200' == result.status) {
                     affirmSwals('成功', '成功', 'success', confirmFunc);
