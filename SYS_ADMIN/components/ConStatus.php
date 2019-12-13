@@ -26,6 +26,8 @@ class ConStatus
     public static $STATUS_ENABLE = 1;
     public static $STATUS_DISABLE = 2;
     public static $STATUS_DELETED = 4;
+    public static $STATUS_NEED_CHECK = 5;
+    public static $STATUS_CHECK_FAIL = 6;
 
     public static $USER_ENABLE = 10;
 
@@ -33,6 +35,8 @@ class ConStatus
         '1' => '正常',
         '2' => '暂停',
         '4' => '删除',
+        '5' => '待审核',
+        '6' => '审核不通过',
     ];
 
     // ORDER 订单
@@ -116,6 +120,13 @@ class ConStatus
         2 => '断流',
     ];
 
+
+    // 审核结果
+    public static $CHECK_RESULT_TYPE_PASS = 1;
+    public static $CHECK_RESULT_TYPE = [
+        1 => '审核通过',
+        2 => '审核不通过',
+    ];
 
     // 直播流运营商
     public static $STEARM_TYPE_ALIYUN = 1;

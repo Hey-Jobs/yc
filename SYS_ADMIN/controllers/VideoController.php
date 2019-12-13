@@ -161,6 +161,11 @@ class VideoController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_PARAMS_MSG);
         }
 
+        $status = ConStatus::$STATUS_NEED_CHECK;
+        if ($this->isAdmin) {
+            $status = ConStatus::$STATUS_ENABLE;
+        }
+
         $model->video_name = $video_name;
         $model->video_url = $video_url;
         $model->sort_num = $sort_num;
@@ -169,6 +174,7 @@ class VideoController extends CommonController
         $model->video_length = $video_length;
         $model->cover_img = $cover_img;
         $model->updated_at = time();
+        $model->status = $status;
 
         if ($model->save()) {
             return $this->successInfo(true);

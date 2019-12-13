@@ -54,11 +54,17 @@ class SnapshotController extends CommonController
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, $errors);
         }
 
+        $status = ConStatus::$STATUS_NEED_CHECK;
+        if ($this->isAdmin) {
+            $status = ConStatus::$STATUS_ENABLE;
+        }
+
         $model->cover = $cover;
         $model->title = $title;
         $model->remark = $remark;
         $model->sort_num = $sort_num;
         $model->room_id = $room_id;
+        $model->status = $status;
 
         if ($model->save()) {
             return $this->successInfo(true);
