@@ -326,6 +326,10 @@ class CommonHelper
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // 在尝试连接时等待的秒数
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 5);
+        // 最大执行时间
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         //https 请求
         if (strlen($url) > 5 && strtolower(substr($url, 0, 5)) == "https") {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
