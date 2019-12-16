@@ -1,6 +1,7 @@
 <?php
 
 use SYS_ADMIN\assets\AppAsset;
+use yii\helpers\Url;
 
 $this->title = "设备管理";
 
@@ -69,7 +70,55 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
 
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                        <button type="button" class="btn btn-primary" onclick="saveDevice()">保存截图</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveDevice()">保存</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="deviceModal"  role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form id="device_base_form" method="post" action="<?php echo yii\helpers\Url::to("/equipment/save-base"); ?>">
+                                    <div class="color-line"></div>
+                                    <div class="modal-header text-center">
+                                        <h4 class="modal-title"><span id="btnText">编辑设备信息</span></h4>
+                                    </div>
+                                    <div class="modal-body" style="300px;">
+                                        <form id="device_base_form" method="post" >
+                                            <div class="form-group row text-left" style="display: none;">
+                                                <div class="col-sm-9"><input style="display: none" type="text" name="id" class="form-control params" placeholder="autoId"></div>
+                                            </div>
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">appname：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" readonly name="appname" placeholder="appname"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">stream：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" readonly name="stream" placeholder="stream"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row text-left">
+                                                <label class="col-sm-3 control-label position">推流域名：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="app"  placeholder="域名"/>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveDeviceBase()">保存</button>
                                     </div>
                                 </form>
                             </div>
@@ -144,6 +193,7 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
             html+= "<a href=\"javascript:void(0);\"  class=\"m-l-sm\" onclick=\"videoDevice('"+ row.appname +"','"+row.stream+"')\"> 视频文件 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"TaskDevice('"+ row.id +"')\"> 定时推断流 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDevice('"+ row.id +"')\"> API回调 </a>";
+            html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"EditDeviceBase('"+ row.id +"')\"> 编辑 </a>";
             html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteDevice('"+ row.id +"')\"> 删除 </a>";
             <?php endif;?>
             return html;
@@ -267,6 +317,34 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     }
   }
 
+  function  EditDeviceBase(autoId = '') {
+      if (autoId.length != 0) {
+          // 初始化选中 所属直播间
+          var data;
+          $.ajax({
+              url: '<?php echo \yii\helpers\Url::to('/equipment/info')?>',
+              dataType: 'json',
+              type: "POST",
+              async : false,
+              data: {'id' : autoId},
+              success: function (result) {
+                  if (result.status == 200) {
+                      data = result.data;
+
+                      $("[name='id']").val(data.id);
+                      $("[name='app']").val(data.app);
+                      $("[name='appname']").val(data.appname);
+                      $("[name='stream']").val(data.stream);
+                  }
+              }
+          });
+
+          $('#deviceModal').modal('show');
+
+      } else {
+          $("#btnText").html('添加回调信息');
+      }
+  }
 
   function saveDevice()
   {
@@ -289,4 +367,25 @@ AppAsset::addScript($this, '/vendor/jquery-validation/messages_zh.min.js?v=' . Y
     });
   }
 
+
+  function saveDeviceBase()
+  {
+      if(!$("#device_base_form").valid()){
+          return false;
+      }
+
+      $.ajax({
+          type:'POST',
+          dataType: 'json',
+          url : '<?php echo yii\helpers\Url::to('/equipment/save-base')?>',
+          data : $("#device_base_form").serialize(),
+          success: function(result) {
+              if ('200' == result.status) {
+                  affirmSwals('成功', '成功', 'success', confirmFunc);
+              } else {
+                  affirmSwals('失败', result.message, 'error', placeholder);
+              }
+          },
+      });
+  }
 </script>

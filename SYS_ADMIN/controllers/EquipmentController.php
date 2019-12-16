@@ -218,6 +218,36 @@ class EquipmentController extends CommonController
     }
 
     /**
+     * 回调地址管理
+     */
+    public function actionSaveBase()
+    {
+        $id = \Yii::$app->request->post('id');
+        $app = \Yii::$app->request->post('app');
+        $appname = \Yii::$app->request->post('appname');
+        $stream = \Yii::$app->request->post('stream');
+
+        $model = Equipment::findOne($id);
+        if (empty($model)) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_NONE, '参数错误');
+        }
+
+        if (!$this->isAdmin) {
+            // 检测镜头直播流
+            if (!$this->checkEquipement($model->appname, $model->stream)) {
+                return $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, '参数错误');
+            }
+        }
+
+        $model->app = $app;
+        if ($model->save()) {
+            return $this->successInfo(true);
+        } else {
+            return $this->errorInfo(400, '操作失败，请稍后重试');
+        }
+    }
+
+    /**
      * 删除设备
      */
     public function actionDel()
