@@ -47,13 +47,13 @@ if( Yii::$app->getSession()->hasFlash('success') ) {
                 <div class="panel-body">
                     <?php $form = ActiveForm::begin(['id' => 'loginForm']); ?>
                     <div class="form-group">
-                        <?= $form->field($model, '用户名')->textInput(['autofocus' => true]) ?>
+                        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
                     </div>
                     <div class="form-group">
-                        <?= $form->field($model, '密码')->passwordInput(['autofocus' => true]) ?>
+                        <?= $form->field($model, 'password')->passwordInput(['autofocus' => true]) ?>
                     </div>
                     <div class="checkbox">
-                        <?= $form->field($model, '保存登录')->checkbox() ?>
+                        <?= $form->field($model, 'rememberMe')->checkbox() ?>
                     </div>
                     <div class="form-group">
                         <?= Html::submitButton('登录', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
