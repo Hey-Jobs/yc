@@ -41,25 +41,24 @@ if( Yii::$app->getSession()->hasFlash('success') ) {
     <div class="row">
         <div class="col-md-12">
             <div class="text-center m-b-md">
-                <h2>云窗直播</h2>
-                <small>This is the best idea ever!</small>
+                <h2>云窗科技</h2>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
                     <?php $form = ActiveForm::begin(['id' => 'loginForm']); ?>
                     <div class="form-group">
-                        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                        <?= $form->field($model, '用户名')->textInput(['autofocus' => true]) ?>
                     </div>
                     <div class="form-group">
-                        <?= $form->field($model, 'password')->passwordInput(['autofocus' => true]) ?>
+                        <?= $form->field($model, '密码')->passwordInput(['autofocus' => true]) ?>
                     </div>
                     <div class="checkbox">
-                        <?= $form->field($model, 'rememberMe')->checkbox() ?>
+                        <?= $form->field($model, '保存登录')->checkbox() ?>
                     </div>
                     <div class="form-group">
-                        <?= Html::submitButton('Login', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
+                        <?= Html::submitButton('登录', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
                     </div>
-                    <a class="btn btn-default btn-block" href="/login/register">Register</a>
+                    <a class="btn btn-default btn-block" href="/login/register">清空</a>
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>
