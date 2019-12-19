@@ -109,7 +109,8 @@ class ConStatus
 
     //地址
     public static $ADDR_COMMON = 1;
-
+    public static $STEARM_STATUS_ONLINE = 1;
+    public static $STEARM_STATUS_OFFLINE = 2;
     // 流状态
     public static $STREAM_STATUS = [
         'publish' => 1, // 推流
