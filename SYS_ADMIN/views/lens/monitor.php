@@ -73,7 +73,7 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
                                 ]);?>
                             </div>
                             <div class="col-sm-5">
-                                <div>预览轮训镜头</div>
+                                <div>预览轮巡镜头</div>
                                 <input class="form-control search" data-target="assigned"
                                        placeholder="搜索镜头">
                                 <select multiple size="20" class="form-control list" data-target="assigned">
@@ -87,13 +87,13 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
                                     <button  class="btn btn-primary" id="fullscreen" onClick="handleFullScreen()">全屏</button>
                                 </div>
                                 <div class="inline-block monitor-intro">
-                                    自动轮训
+                                    自动轮巡
                                     <select class="changeTime" id="changeTime">
                                         <option value="60">60秒</option>
                                         <option value="120">120秒</option>
                                         <option value="180">180秒</option>
                                     </select>
-                                    选中镜头超过9个，系统会自动轮训
+                                    选中镜头超过9个，系统会自动轮巡
                                 </div>
                                 <div class="monitor-page pagination">
                                 </div>

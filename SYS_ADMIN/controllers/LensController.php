@@ -277,7 +277,7 @@ class LensController extends CommonController
             return $this->render('monitor');
         }
     }
-    
+
     /**
      * 镜头预览
      */
