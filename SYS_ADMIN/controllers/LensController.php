@@ -247,6 +247,38 @@ class LensController extends CommonController
 
 
     /**
+     * 镜头监控
+     */
+    public function actionMonitor()
+    {
+        if (\Yii::$app->request->get('api')) {
+            $user_room = $this->user_room;
+            $room_id = array_keys($user_room);
+            $model = Lens::find()
+                ->select(['id', 'room_id', 'lens_name', 'online_url', 'online_cover_url', 'app_name', 'stream_name'])
+                ->where(['<>', 'status', ConStatus::$STATUS_DELETED])
+                ->andWhere(['stream_status' => ConStatus::$STEARM_STATUS_ONLINE]); //监控在线
+
+            if (!CommonHelper::isAdmin()) { // 非管理员
+                $model->andWhere(['in', 'room_id', $room_id]);
+            }
+
+            $lens_list = $model->orderBy('sort_num asc, id desc')->asArray()->all();
+            $data = [];
+            if (count($lens_list)) {
+                foreach ($lens_list as $len) {
+                    $len['room_name'] = isset($user_room[$len['room_id']]) ? $user_room[$len['room_id']]['room_name'] : '';
+                    $data[$len['id']] = $len;
+                }
+            }
+
+            return $this->successInfo($data);
+        } else {
+            return $this->render('monitor');
+        }
+    }
+    
+    /**
      * 镜头预览
      */
     public function actionPreview()
