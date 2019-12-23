@@ -394,15 +394,20 @@ class RoomController extends CommonController
 
             $redis = \Yii::$app->redis;
             $auth_token_key = ConStatus::$ROOM_LOGIN.$id;
-            if (ConStatus::$AUTH_TEMPLATE_EDUCATION_SIGNLE === $room_info->auth_template) {
-                $auth_token = $redis->get($auth_token_key);
-                if (empty($auth_token) || (!empty($auth_token) && $redis->get($auth_token_key) == $room_sign)) {
-                    $check = true;
-                } else {
-                    return $this->errorInfo(ConStatus::$STATUS_ERROR_LOGIN_EXIT, ConStatus::$ERROR_LOGIN_EXIT_MSG);
-                }
-            } else if (strpos($room_info->secret_key, $secret_key) !== false) {
+
+            if (strpos($room_info->secret_key, $secret_key) !== false) {
                 $check = true;
+                if (ConStatus::$AUTH_TEMPLATE_EDUCATION_SIGNLE === $room_info->auth_template) {
+                    $auth_token = $redis->get($auth_token_key);
+                    if (empty($auth_token) && !empty($room_sign)) {
+                        $check = false;
+                    } else if ((!empty($auth_token) && $auth_token == $room_sign)
+                        || (empty($auth_token) && empty($room_sign) )) {
+                        $check = true;
+                    } else {
+                        return $this->errorInfo(ConStatus::$STATUS_ERROR_LOGIN_EXIT, ConStatus::$ERROR_LOGIN_EXIT_MSG);
+                    }
+                }
             }
         }
 
