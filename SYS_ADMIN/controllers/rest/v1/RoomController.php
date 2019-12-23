@@ -398,6 +398,8 @@ class RoomController extends CommonController
                 $auth_token = $redis->get($auth_token_key);
                 if (empty($auth_token) || (!empty($auth_token) && $redis->get($auth_token_key) == $room_sign)) {
                     $check = true;
+                } else {
+                    return $this->errorInfo(ConStatus::$STATUS_ERROR_LOGIN_EXIT, ConStatus::$ERROR_LOGIN_EXIT_MSG);
                 }
             } else if (strpos($room_info->secret_key, $secret_key) !== false) {
                 $check = true;
