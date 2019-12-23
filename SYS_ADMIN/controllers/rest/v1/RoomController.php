@@ -385,12 +385,21 @@ class RoomController extends CommonController
     {
         $id = \Yii::$app->request->post('id', 0);
         $secret_key = \Yii::$app->request->post('secretKey', 0);
+        $room_sign = \Yii::$app->request->post('roomSign', '');
 
         $check = false;
         $auth_template = 0;
         $room_info = LiveRoomExtend::findOne(['room_id' => $id]);
         if (!empty($room_info)) {
-            if (strpos($room_info->secret_key, $secret_key) !== false) {
+
+            $redis = \Yii::$app->redis;
+            $auth_token_key = ConStatus::$ROOM_LOGIN.$id;
+            if (ConStatus::$AUTH_TEMPLATE_EDUCATION_SIGNLE === $room_info->auth_template) {
+                if (ConStatus::$AUTH_TEMPLATE_EDUCATION_SIGNLE === $room_info->auth_template
+                    && $redis->get($auth_token_key) && $redis->get($auth_token_key) == $room_sign) {
+                    $check = true;
+                }
+            } else if (strpos($room_info->secret_key, $secret_key) !== false) {
                 $check = true;
             }
         }
@@ -403,6 +412,7 @@ class RoomController extends CommonController
         $id = \Yii::$app->request->post('id', 0);
         $mobile= \Yii::$app->request->post('mobile', 0);
         $code = \Yii::$app->request->post('sms', 0);
+        $room_sign = \Yii::$app->request->post('roomSign', '');
 
         if (empty($id) || empty($mobile) || empty($code)) {
             return $this->errorInfo(ConStatus::$STATUS_ERROR_SMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
@@ -418,13 +428,23 @@ class RoomController extends CommonController
         }
 
         $redis = \Yii::$app->redis;
+        $auth_token_key = ConStatus::$ROOM_LOGIN.$id;
+        if (ConStatus::$AUTH_TEMPLATE_EDUCATION_SIGNLE === $room_info->auth_template
+            && $redis->get($auth_token_key) && $redis->get($auth_token_key) != $room_sign) {
+            return $this->errorInfo(ConStatus::$STATUS_ERROR_LOGIN_EXIT, ConStatus::$ERROR_LOGIN_EXIT_MSG);
+        }
+
+
         $uid = !empty($this->user_info) ? $this->user_info['uid'] : 0;
         $key = ConStatus::$RECEIVER.$uid.':'.$mobile.':'.$code;
         if (!$redis->get($key)) { // 无效验证码
             return $this->errorInfo(ConStatus::$STATUS_ERROR_PARAMS, ConStatus::$ERROR_MOBILE_CODE_MSG);
         }
 
-        return $this->successInfo(['check' => true]);
+        $auth_token = md5(time());
+        $redis->set($auth_token_key, $auth_token);
+        $redis->expire($auth_token_key, 300); // 缓存5分钟
+        return $this->successInfo(['check' => true, 'token' => $auth_token]);
     }
 
 

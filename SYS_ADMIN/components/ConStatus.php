@@ -141,7 +141,10 @@ class ConStatus
     public static $AUTH_TEMPLATE = [
         1 => '教育版本',
         2 => '宠物版本',
+        3 => '教育授权单人版',
     ];
+
+    public static $AUTH_TEMPLATE_EDUCATION_SIGNLE = 3;
 
     // 存储域名
     public static $STORAGE_DOMAIN = [
@@ -163,6 +166,7 @@ class ConStatus
     public static $RECEIVER = 'receiver';
     public static $APP_KEY = 'YCLIVE';
     public static $BIND_WECHAT = 'bindWechat:';
+    public static $ROOM_LOGIN = 'roomLogin:';
     // 轮播图类型
     public static $BANNER_TYPE_SYS = 1;
     public static $BANNER_TYPE_ROOM = 2;
@@ -203,6 +207,7 @@ class ConStatus
     public static $ERROR_CHECK_LOGIN_MSG = '请重新登录'; // 授权码错误
     public static $ERROR_OSS_UPLOAD_MSG = '对象云存储上传失败'; // 对象云存储上传失败
     public static $ERROR_DEVICE_UID_MSG = '设备id错误'; // 对象云存储上传失败
+    public static $ERROR_LOGIN_EXIT_MSG = '该账号已登录，无法重复登录'; // 对象云存储上传失败
 
     public static $STATUS_SUCCESS = 200; // 获取成功
     public static $STATUS_ERROR_SYS = 4000; // 服务器错误
@@ -226,5 +231,6 @@ class ConStatus
     public static $STATUS_ERROR_DEVICE_AUTH = 4018; // 授权失败
     public static $STATUS_ERROR_OSS_UPLOAD = 4019; // 授权失败
     public static $STATUS_ERROR_DEVICE_UID = 4020; // uid 错误
+    public static $STATUS_ERROR_LOGIN_EXIT = 4021; // uid 错误
 
 }
