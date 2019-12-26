@@ -19,7 +19,7 @@ class Video extends ActiveRecord
     public function rules()
     {
         return [
-            [['room_id', 'video_name', 'video_url', 'sort_num'], 'required' ],
+            [['room_id', 'video_name', 'sort_num'], 'required' ],
             ['sort_num', 'integer']
         ];
     }
