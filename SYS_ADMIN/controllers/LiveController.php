@@ -92,6 +92,9 @@ class LiveController extends CommonController
                 $pic_info = Pictrue::getPictrueById($room_info['logo_img']);
             }
             $user_id = $room_info['user_id'];
+
+            // 直播间加密密钥
+            $room_info['secret'] = decoct($id) * ConStatus::$ROOM_SECRET_KEY;
         }
 
         $title = empty($id) ? '新增直播间' : '编辑直播间';
@@ -130,8 +133,7 @@ class LiveController extends CommonController
             $room_info['mini_code'] = CommonHelper::getPicPath($file);
         }
 
-        // 直播间加密密钥
-        $room_info['secret'] = $id ? decoct($id) * ConStatus::$ROOM_SECRET_KEY: '';
+
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,
