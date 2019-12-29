@@ -91,6 +91,13 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">直播间密钥</label>
+
+                        <div class="col-sm-10"><input type="text" class="form-control" value="<?= $info['secret'] ?? "" ?>" readonly></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">直播间LOGO</label>
 
                         <div class="col-sm-10"><input type="file" class="form-control" name="pcover_img" id="pcover_img" value="<?= $info['cover_img'] ?? "" ?>"></div>

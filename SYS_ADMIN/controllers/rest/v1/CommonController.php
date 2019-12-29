@@ -29,7 +29,7 @@ class CommonController extends \yii\rest\Controller
         $action_name = str_replace('rest/v1/wechat/', '', $base_url);
         $action_name = str_replace('rest/v1/', '', $action_name);
         $action_name = trim($action_name, '/');
-        $no_auth = ['jssdk', 'auth-login', 'notify', 'auth-login-back', 'add-menu', 'message', 'client/sms'];
+        $no_auth = ['jssdk', 'auth-login', 'notify', 'auth-login-back', 'add-menu', 'message', 'client/sms', 'live/monitor'];
 
         // 校验参数
         if (\Yii::$app->request->isGet) {

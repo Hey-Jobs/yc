@@ -15,6 +15,7 @@ use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Activity;
 use SYS_ADMIN\models\Banner;
 use SYS_ADMIN\models\Category;
+use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
 use SYS_ADMIN\models\Pictrue;
 use SYS_ADMIN\models\ShoppingMall;
@@ -205,5 +206,38 @@ class LiveController extends  CommonController
     {
         //$res = CommonHelper::sendSms('13750509674', 'verify', ['code' => rand(1000, 9999)]);
         //var_dump($res);
+    }
+
+    /**
+     * 监控查看在线视频
+     */
+    public function actionMonitor()
+    {
+        $secret = \Yii::$app->request->post('secret');
+        $secret = intval($secret);
+        $room_id = octdec($secret / ConStatus::$ROOM_SECRET_KEY);
+
+        if ($room_id <= 0) {
+            return  $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+        $room_info = LiveRoom::findOne($room_id);
+        if (empty($room_info)) {
+            return  $this->errorInfo(ConStatus::$STATUS_ERROR_ROOMID, ConStatus::$ERROR_PARAMS_MSG);
+        }
+
+
+        // 获取在线镜头
+        $lens = Lens::find()
+            ->select(['lens_name', 'online_url', 'online_cover_url'])
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['room_id' => $room_id])
+            ->andWhere(['stream_status' => ConStatus::$STEARM_STATUS_ONLINE])
+            ->asArray()
+            ->all();
+
+        $info['room_name'] = $room_info->room_name;
+        $info['lens'] = $lens;
+        return $this->successInfo($info);
     }
 }

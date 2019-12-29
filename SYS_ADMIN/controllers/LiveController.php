@@ -130,6 +130,8 @@ class LiveController extends CommonController
             $room_info['mini_code'] = CommonHelper::getPicPath($file);
         }
 
+        // 直播间加密密钥
+        $room_info['secret'] = decoct($room_info['id']) * ConStatus::$ROOM_SECRET_KEY;
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,

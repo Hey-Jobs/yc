@@ -180,6 +180,8 @@ class ConStatus
     // oss base dir
     public static $OSS_BASE_DIR = 'yclive/';
 
+    public static $ROOM_SECRET_KEY = 2019;
+
     // 获取mac地址
     public static $DEVICE_SETTING_GET_MAC = "https://www.setipc.com/get_mac.php?uid={uid}";
     // 重启设备
