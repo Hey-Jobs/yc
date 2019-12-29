@@ -90,12 +90,14 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                     </div>
                     <div class="hr-line-dashed"></div>
 
+                    <?php if (!empty($info['secret'])) { ?>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">直播间密钥</label>
 
                         <div class="col-sm-10"><input type="text" class="form-control" value="<?= $info['secret'] ?? "" ?>" readonly></div>
                     </div>
                     <div class="hr-line-dashed"></div>
+                    <?php }?>
 
                     <div class="form-group">
                         <label class="col-sm-2 control-label">直播间LOGO</label>
