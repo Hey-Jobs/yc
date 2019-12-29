@@ -131,7 +131,7 @@ class LiveController extends CommonController
         }
 
         // 直播间加密密钥
-        $room_info['secret'] = $room_info['id'] ? decoct($room_info['id']) * ConStatus::$ROOM_SECRET_KEY: '';
+        $room_info['secret'] = $id ? decoct($id) * ConStatus::$ROOM_SECRET_KEY: '';
         return $this->render('base', [
             'info' => $room_info,
             'user_html' => $user_html,
