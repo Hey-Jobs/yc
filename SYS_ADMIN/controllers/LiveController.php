@@ -111,7 +111,7 @@ class LiveController extends CommonController
             //小程序码
             $qrcode = (new Application(['conf' => \Yii::$app->params['wx']['mini']]))->driver("mini.qrcode");
 
-            $qr_name = substr($room_info['room_name'], 0,10);
+            $qr_name = mb_substr($room_info['room_name'], 0,10);
             $path = "/pages/live/live?roomId=". $room_info['id'] . "&title= " . $qr_name;
 
             $data = $qrcode->forever($path);
