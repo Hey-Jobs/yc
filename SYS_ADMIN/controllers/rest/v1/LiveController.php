@@ -236,6 +236,15 @@ class LiveController extends  CommonController
             ->asArray()
             ->all();
 
+        if (count($lens) > 0) {
+            foreach ($lens as &$len) {
+                if (strpos($len['online_url'], 'https') !== false) {
+                    $rtmp_url = str_replace('https', 'rtmp', $len['online_url']);
+                    $rtmp_url = str_replace('.m3u8', '', $rtmp_url);
+                    $len['online_url'] = $rtmp_url;
+                }
+            }
+        }
         $info['room_name'] = $room_info->room_name;
         $info['lens'] = $lens;
         return $this->successInfo($info);
