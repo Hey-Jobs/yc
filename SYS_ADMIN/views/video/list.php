@@ -161,9 +161,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 <script type="application/javascript">
     $(function () {
 
-       var initialPreview = [];
+       /*var initialPreview = [];
        var initialPreviewConfig = [];
-       editImage(initialPreview, initialPreviewConfig);
+       editImage(initialPreview, initialPreviewConfig);*/
 
         $("#video-form").validate({
             rules:{
@@ -293,7 +293,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
 
                         $("[name='cover_img']").val(data.cover_img);
-                       var initialPreview = [data.pic_path];
+                       var initialPreview = [data.cover_img];
                        var initialPreviewConfig = [{showRemove: false}];
                        $("#img").fileinput('destroy');
                        editImage(initialPreview, initialPreviewConfig);
