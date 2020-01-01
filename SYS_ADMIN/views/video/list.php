@@ -96,7 +96,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                             <label class="col-sm-3 control-label position">视频封面：</label>
                                             <div class="col-sm-9">
 <!--                                                <input type="file" class="form-control" name="img" id="img" data-show-preview="true" placeholder="视频封面" ">-->
-                                                <input type="text" class="form-control" name="cover_img" id="cover_img" placeholder="视频封面">
+                                                <input type="file" class="form-control" name="img" id="img" data-show-preview="true" placeholder="视频封面">
                                             </div>
                                         </div>
 
@@ -126,13 +126,12 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
                                                 </label>
                                             </div>
                                         </div>
-                                    </form>
-
                                 </div>
 
                                 <div class="modal-footer">
+                                    <input type="hidden" class="form-control" name="cover_img" id="cover_img">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭窗口</button>
-                                    <button type="button" class="btn btn-primary" onclick="saveVideo()">保存截图</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveVideo()">保存视频</button>
                                 </div>
                                 </form>
                             </div>
@@ -162,9 +161,9 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 <script type="application/javascript">
     $(function () {
 
-//        var initialPreview = [];
-//        var initialPreviewConfig = [];
-//        editImage(initialPreview, initialPreviewConfig);
+       var initialPreview = [];
+       var initialPreviewConfig = [];
+       editImage(initialPreview, initialPreviewConfig);
 
         $("#video-form").validate({
             rules:{
@@ -294,10 +293,10 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
 
 
                         $("[name='cover_img']").val(data.cover_img);
-//                        var initialPreview = [data.pic_path];
-//                        var initialPreviewConfig = [{showRemove: false}];
-//                        $("#img").fileinput('destroy');
-//                        editImage(initialPreview, initialPreviewConfig);
+                       var initialPreview = [data.pic_path];
+                       var initialPreviewConfig = [{showRemove: false}];
+                       $("#img").fileinput('destroy');
+                       editImage(initialPreview, initialPreviewConfig);
                     }
                 }
             });
@@ -338,7 +337,7 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
     {
         $("#img").fileinput({
             language: 'zh', //设置语言
-            uploadUrl: '/upload/img', //上传的地址
+            uploadUrl: '/upload/oss-img', //上传的地址
             allowedFileExtensions: ['png', 'jpg'],//接收的文件后缀
             uploadAsync: true, //默认异步上传
             showUpload: false, //是否显示上传按钮
@@ -355,15 +354,15 @@ AppAsset::addScript($this, '/vendor/bootstrap-fileinput/js/zh.js?v=' . Yii::$app
             $(this).fileinput("upload");
         });
 
-//        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
-//            console.log(data.response);
-//            if (data.response.status == 200) {
-//                $("#cover_img").val(data.response.data.images)
-//            }
-//        });
-
         $("#img").on('fileerror', function (event, data, msg) {//异步上传失败结果处理
             alert("uploadError");
+        });
+
+        $("#img").on('fileuploaded', function (event, data, previewId, index) {//异步上传成功结果处理
+            if (data.response.status == 200) {
+                $("#cover").val(data.response.data.images)
+                $("#cover_img").val(data.response.data.img_path)
+            }
         });
     }
 </script>

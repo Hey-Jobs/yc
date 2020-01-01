@@ -409,19 +409,34 @@ class ApiController extends CommonApiController
         }
 
         // 获取设备状态
-        $stateUrl = ConStatus::$DEVICE_SETTING_STATE;
-        $stateUrl = str_replace('{mac}', $macInfo['mac'], $stateUrl);
-        $device_state_info = CommonHelper::curl($stateUrl);
+        $stateUrl1 = ConStatus::$DEVICE_SETTING_STATE1;
+        $stateUrl1 = str_replace('{mac}', $macInfo['mac'], $stateUrl1);
+        $device_state_info = CommonHelper::curl($stateUrl1);
         $device_state_info = json_decode($device_state_info, true);
+
+        $stateUrl2 = ConStatus::$DEVICE_SETTING_STATE2;
+        $stateUrl2 = str_replace('{mac}', $macInfo['mac'], $stateUrl2);
+        $device_state_info2 = CommonHelper::curl($stateUrl2);
+        $device_state_info2 = json_decode($device_state_info2, true);
+
+        $status_time = explode('/', $device_state_info['status_time']);
+        $status_time[0] = date('Y');
+        $status_time = implode('/', $status_time);
+
+
+        $status_time2 = explode('/', $device_state_info2['status_time']);
+        $status_time2[0] = date('Y');
+        $status_time2 = implode('/', $status_time2);
+
+        if(strtotime($status_time) <strtotime($status_time2)) {
+            $status_time = $status_time2;
+            $device_state_info = $device_state_info2;
+        }
 
         if ($device_state_info['status'] === 'disconnect') {
             return ConStatus::$ERROR_DEVICE_UID_MSG;
         }
 
-
-        $status_time = explode('/', $device_state_info['status_time']);
-        $status_time[0] = date('Y');
-        $status_time = implode('/', $status_time);
 
         $status = "";
         if (strpos($device_state_info['status'], "Publishing") !== false) {

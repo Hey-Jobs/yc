@@ -192,6 +192,13 @@ class ConStatus
     public static $DEVICE_SETTING_RESET = "https://www.setipc.com/golive.php?c={mac}&play=ON&pushurl=reset";
     // 状态
     public static $DEVICE_SETTING_STATE = "https://www.setipc.com/golive.php?c={mac}&play=HOW";
+
+    // 状态
+    public static $DEVICE_SETTING_STATE1 = "http://193.112.224.58/golive.php?c={mac}&play=HOW";
+
+    // 状态
+    public static $DEVICE_SETTING_STATE2 = "http://118.89.34.137/golive.php?c={mac}&play=HOW";
+
     // 查看推流地址
     public static $DEVICE_SETTING_ADDR= "https://www.setipc.com/golive.php?c={mac}&play=ON";
 
