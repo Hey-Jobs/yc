@@ -428,7 +428,8 @@ class ApiController extends CommonApiController
         $status_time2[0] = date('Y');
         $status_time2 = implode('/', $status_time2);
 
-        if(strtotime($status_time) <strtotime($status_time2)) {
+        if((empty($status_time) || strtotime($status_time) <strtotime($status_time2)
+            || empty($device_state_info)) && (!empty($status_time2) && !empty($device_state_info2))) {
             $status_time = $status_time2;
             $device_state_info = $device_state_info2;
         }
