@@ -423,17 +423,16 @@ class ApiController extends CommonApiController
 
         if (isset($device_state_info['status_time']) && !empty($device_state_info['status_time'])) {
             $status_time = explode('/', $device_state_info['status_time']);
-            $status_time[0] = date('Y');
+            $status_time[0] += 2000;
             $status_time = implode('/', $status_time);
         }
 
 
         if (isset($device_state_info2['status_time']) && !empty($device_state_info2['status_time'])) {
             $status_time2 = explode('/', $device_state_info2['status_time']);
-            $status_time2[0] = date('Y');
+            $status_time2[0] += 2000;
             $status_time2 = implode('/', $status_time2);
         }
-
         
         if((empty($status_time) || strtotime($status_time) <strtotime($status_time2)
             || empty($device_state_info)) && (!empty($status_time2) && !empty($device_state_info2))) {
