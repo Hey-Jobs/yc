@@ -408,6 +408,8 @@ class ApiController extends CommonApiController
             return ConStatus::$ERROR_DEVICE_UID_MSG;
         }
 
+        $status_time = null;
+        $status_time2 = null;
         // 获取设备状态
         $stateUrl1 = ConStatus::$DEVICE_SETTING_STATE1;
         $stateUrl1 = str_replace('{mac}', $macInfo['mac'], $stateUrl1);
@@ -419,15 +421,20 @@ class ApiController extends CommonApiController
         $device_state_info2 = CommonHelper::curl($stateUrl2);
         $device_state_info2 = json_decode($device_state_info2, true);
 
-        $status_time = explode('/', $device_state_info['status_time']);
-        $status_time[0] = date('Y');
-        $status_time = implode('/', $status_time);
+        if (isset($device_state_info['status_time']) && !empty($device_state_info['status_time'])) {
+            $status_time = explode('/', $device_state_info['status_time']);
+            $status_time[0] = date('Y');
+            $status_time = implode('/', $status_time);
+        }
 
 
-        $status_time2 = explode('/', $device_state_info2['status_time']);
-        $status_time2[0] = date('Y');
-        $status_time2 = implode('/', $status_time2);
+        if (isset($device_state_info2['status_time']) && !empty($device_state_info2['status_time'])) {
+            $status_time2 = explode('/', $device_state_info2['status_time']);
+            $status_time2[0] = date('Y');
+            $status_time2 = implode('/', $status_time2);
+        }
 
+        
         if((empty($status_time) || strtotime($status_time) <strtotime($status_time2)
             || empty($device_state_info)) && (!empty($status_time2) && !empty($device_state_info2))) {
             $status_time = $status_time2;
