@@ -14,6 +14,7 @@ use SYS_ADMIN\components\CommonHelper;
 use SYS_ADMIN\components\ConStatus;
 use SYS_ADMIN\models\Activity;
 use SYS_ADMIN\models\Banner;
+use SYS_ADMIN\models\Campus;
 use SYS_ADMIN\models\Category;
 use SYS_ADMIN\models\Lens;
 use SYS_ADMIN\models\LiveRoom;
@@ -248,5 +249,45 @@ class LiveController extends  CommonController
         $info['room_name'] = $room_info->room_name;
         $info['lens'] = $lens;
         return $this->successInfo($info);
+    }
+
+    // 获取校园直播间
+    public function actionCampus()
+    {
+        $key = \Yii::$app->request->post('key');
+        $user_id = octdec($key / ConStatus::$USER_SECRET_KEY);
+
+        $campus_model = Campus::findOne(['user_id' => $user_id]);
+        $campus_info = [];
+        $default_bg = CommonHelper::getDomain().'/images/campus_bg.jpg';
+        if (!empty($campus_model)) {
+            $campus_info = $campus_model->toArray();
+            // 获取封面
+            if (!empty($campus_info['cover_id'])) {
+                $logo_info = Pictrue::getPictrueById($campus_info['cover_id']);
+                $campus_info['cover'] = $logo_info['pic_path'];
+            }
+
+            // 获取背景图
+            if (!empty($campus_info['bg_cover_id'])) {
+                $bg_img_info = Pictrue::getPictrueById($campus_info['bg_cover_id']);
+                $campus_info['bg_cover'] = $bg_img_info['pic_path'];
+            }
+        }
+
+        $room_list = LiveRoom::find()
+            ->where(['status' => ConStatus::$STATUS_ENABLE])
+            ->andWhere(['user_id' => $user_id])
+            ->select(['id', 'room_name'])
+            ->orderBy('sort_num asc, id desc')
+            ->asArray()
+            ->all();
+
+        $data['title'] = $campus_info['title'] ?? '';
+        $data['cover'] = $campus_info['cover'] ?? '';
+        $data['bg_cover'] = $campus_info['bg_cover'] ?? $default_bg;
+        $data['room_list'] = $room_list;
+
+        return $this->successInfo($data);
     }
 }

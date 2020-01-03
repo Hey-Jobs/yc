@@ -167,6 +167,7 @@ class ConStatus
     public static $APP_KEY = 'YCLIVE';
     public static $BIND_WECHAT = 'bindWechat:';
     public static $ROOM_LOGIN = 'roomLogin:';
+    public static $USER_SECRET_KEY = 2020;
     // 轮播图类型
     public static $BANNER_TYPE_SYS = 1;
     public static $BANNER_TYPE_ROOM = 2;
