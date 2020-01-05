@@ -177,7 +177,7 @@ class ApiController extends CommonApiController
 
                 // 图片存储阿里云对象云存储
                 $content = CommonHelper::curl($pic_url);
-                $url = CommonHelper::OssUpload($content, $stream_name . ".jpg");
+                $url = CommonHelper::OssUpload($content, $app_name ."/". $stream_name . ".jpg");
                 if (!$url) {
                     echo json_encode(['code' => ConStatus::$STATUS_ERROR_OSS_UPLOAD, 'data' => ConStatus::$ERROR_OSS_UPLOAD_MSG]);
                     exit;
