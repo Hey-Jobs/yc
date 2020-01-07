@@ -363,9 +363,9 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
             $("#lens-container").attr("style","display:none !important");
             $(".online-container").removeClass("col-sm-8");
             $(".online-container").addClass("col-sm-12");
-            var itemWidth = $(".video-item").width() - 10;
-            var videoWidth = itemWidth + "px";
-            var videoHeight = itemWidth * 0.5625 + "px";
+            var itemHeight = (document.documentElement.clientHeight - 60) /4;
+            var videoWidth = itemHeight * 1.77 + "px";
+            var videoHeight = itemHeight + "px";
             $(".video-item-player").attr("style","width: "+videoWidth+"!important; height: "+videoHeight+"!important;");
             $("#fullscreen").html("退出全屏");
         }
