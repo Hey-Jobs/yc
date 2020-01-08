@@ -230,7 +230,7 @@ class LiveController extends  CommonController
 
         // 获取在线镜头
         $lens = Lens::find()
-            ->select(['lens_name', 'online_url', 'online_cover_url', 'addr_url'])
+            ->select(['lens_name', 'online_url', 'online_cover_url'])
             ->where(['status' => ConStatus::$STATUS_ENABLE])
             ->andWhere(['room_id' => $room_id])
             ->andWhere(['stream_status' => ConStatus::$STEARM_STATUS_ONLINE])
@@ -247,6 +247,7 @@ class LiveController extends  CommonController
             }
         }
         $info['room_name'] = $room_info->room_name;
+        $info['addr_url'] = $room_info->addr_url;
         $info['lens'] = $lens;
         return $this->successInfo($info);
     }
