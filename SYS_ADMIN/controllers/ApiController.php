@@ -32,6 +32,12 @@ class ApiController extends CommonApiController
             'playUri' => 'krtxplay1.setrtmp.com',
             'validDate' => '2030-11-17 23:59:59'
         ],
+        'Tx03' => [
+            'key' => 'f7dd976db75dd2d8089c6417658cfac6',
+            'rtmpUri' => 'jx1rtmp.yunchuanglive.com',
+            'playUri' => 'jx1.yunchuanglive.com',
+            'validDate' => '2030-11-17 23:59:59'
+        ],
     ];
 
     private $defaultServer = 'Tx01';
