@@ -38,6 +38,12 @@ class ApiController extends CommonApiController
             'playUri' => 'jx1.yunchuanglive.com',
             'validDate' => '2030-11-17 23:59:59'
         ],
+        'BSL01' => [
+            'key' => 'b64a9b29ebe276e51dddf87b38cba545',
+            'rtmpUri' => 'tx1rtmp.tjbsl.com',
+            'playUri' => 'tx1.tjbsl.com',
+            'validDate' => '2030-11-17 23:59:59'
+        ],
     ];
 
     private $defaultServer = 'Tx01';
