@@ -15,6 +15,7 @@ AppAsset::addScript($this, '/vendor/data-tables/js/dataTables.bootstrap.js?v=' .
 AppAsset::addCss($this, '/vendor/data-tables/css/dataTables.bootstrap.css?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert.min.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addScript($this, '/vendor/sweetalert/js/sweet-alert-extend.js?v=' . Yii::$app->params['versionJS']);
+AppAsset::addScript($this, '/vendor/clipboard.js?v=' . Yii::$app->params['versionJS']);
 AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app->params['versionJS']);
 
 ?>
