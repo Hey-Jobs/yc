@@ -93,6 +93,8 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                     "targets": 6,
                     "render" : function(data, type, row) {
                         var html = '';
+                        html+= "<a href=\"/front/#/room?room_id="+ row.id +"\" target='_blank' class=\"m-l-sm\" onclick=\"preview('"+ row.id +"')\"> 点击预览 </a>";
+                        html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm copy-url\" data-text=\"<?= \yii\helpers\Url::to('/front/#/room?room_id=')?>"+ row.id +"\" > 复制链接 </a>";
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"updateLive('"+ row.id +"')\"> 编辑 </a>";
                         html+= "<a href=\"javascript:void(0);\" class=\"m-l-sm\" onclick=\"deleteLive('"+ row.id +"')\"> 删除 </a>";
                         return html;
@@ -112,6 +114,23 @@ AppAsset::addCss($this, '/vendor/sweetalert/css/sweet-alert.css?v=' . Yii::$app-
                     "targets":3,
                 }
             ],
+        });
+
+        $(document).on('click', '.copy-url', function () {
+            var corpy_url = window.location.protocol+"//"+window.location.host + $(this).attr("data-text")
+            var clipboard = new ClipboardJS(this, {
+                text: function () {
+                    return corpy_url
+                }
+            });
+
+            clipboard.on("success", function(e) {
+                affirmSwals('温馨提示', '复制成功！', 'success');
+            });
+
+            clipboard.on("error", function(e) {
+                affirmSwals('温馨提示!', '复制失败！', 'success');
+            });
         });
     });
 
